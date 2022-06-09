@@ -38,7 +38,7 @@ train, test = split_train_test(all_data)
 
 size_wd = size(train, 1)-depth-num_preds
 
-# plot_sma_data(adj_close_train, adj_close_test, 3, 1)
+plot_sma_data(adj_close_train, adj_close_test, 3, 1)
 
 # we only care about the prices but we want to account for volume as well 
 # do behavioural algorithm with both volume and adj_close but only plot adj_close prices
@@ -49,10 +49,15 @@ adj_close_rescaled = rescale(adj_close, adj_close_train)
 plot_behavioural_data(adj_close_rescaled, pred_rescaled, size_wd, depth, num_preds)
 
 holding = Holding(0, 0, 10000)
-buy_sell_hold(holding, 0.02, 0.05, 1500.0, 500.0, pred_rescaled, adj_close_train, adj_close_test)
+holding, value, curr_price = buy_sell_hold(holding, 0.025, 0.025, 1000.0, 1000.0, pred_rescaled, adj_close_train, adj_close_test)
+
+println()
+println(holding)
+println(value+holding.funds_available)
 
 # put the data together
-# abs_matx, rel_matx, perc_matx= get_error_matrix(pred_rescaled, adj_close_test, adj_close_train)
+abs_matx, rel_matx, perc_matx= get_error_matrix(pred_rescaled, adj_close_test, adj_close_train)
+plot_histogram(perc_matx, 30, "Relative")
 # avg_matrix = get_avg_error(rel_matx)
 # plot_error_data(rel_matx, depth, num_preds, 7, "Relative")
 # plot_error_data(abs_matx, depth, num_preds, 7, "Absolute")

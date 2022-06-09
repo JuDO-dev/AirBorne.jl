@@ -46,12 +46,12 @@ function plot_naive_data(train_data::Array, test_data::Array, graphs::Int)
         calc_mse_naive(predictions, train_data, mse, i) # Prepare data for MSE
 
         plot_comparison(train_data, predictions, "Train Data", "Predictions", "Graph Showing Predictions with Lag = $i", "Day", "Price")  # Plot data
-        savefig(string(lag_folder,"_Train_data_$i"))
+        Plots.savefig(string(lag_folder,"_Train_data_$i"))
 
     end
 
     plot_mse_vals(1:graphs,mse, "MSE", "MSE values for different Lag Values", "Lag", "MSE") # Plot mse values various lag values
-    savefig(string(lag_folder,"_MSE_Train_data"))
+    Plots.savefig(string(lag_folder,"_MSE_Train_data"))
 
     # Test Data
 
@@ -63,11 +63,11 @@ function plot_naive_data(train_data::Array, test_data::Array, graphs::Int)
         calc_mse_naive(predictions, test_data, mse, i) 
         
         plot_comparison(test_data, predictions, "Test Data", "Predictions", "Graph Showing Predictions with Lag = $i", "Day", "Price")
-        savefig(string(lag_folder,"_Test_data_$i"))
+        Plots.savefig(string(lag_folder,"_Test_data_$i"))
     end 
 
     plot_mse_vals(1:graphs, mse, "MSE", "MSE values for different Lag Values", "Lag", "MSE")
-    savefig(string(lag_folder,"_MSE_Test_data"))
+    Plots.savefig(string(lag_folder,"_MSE_Test_data"))
 end
 
 # plots the predictions and the mean-squared error for the simple moving average predictions for both train and test_data using "start" number of data points
@@ -81,10 +81,10 @@ function plot_sma_data(train_data::Array, test_data::Array, start::Int, graphs::
         calc_mse_sma(predictions, train_data, mse, i)
 
         plot_comparison(train_data, predictions, "Train_data", "Predictions", "Graph Showing Predicitions with Average = $i", "Day", "Price")
-        savefig(string(sma_folder,"_Train_data_$i"))
+        Plots.savefig(string(sma_folder,"_Train_data_$i"))
     end 
     plot_mse_vals(start:start + graphs,mse, "MSE", "MSE values for different AVG Values", "AVG", "MSE")
-    savefig(string(sma_folder,"_MSE_Train_data"))
+    Plots.savefig(string(sma_folder,"_MSE_Train_data"))
     
     mse = zeros(0) # Test_data
     for i = start:start + graphs
@@ -93,10 +93,10 @@ function plot_sma_data(train_data::Array, test_data::Array, start::Int, graphs::
         calc_mse_sma(predictions, test_data, mse, i)
 
         plot_comparison(test_data, predictions, "Test_data", "Predictions", "Graph Showing Predicitions with Average = $i", "Day", "Price")
-        savefig(string(sma_folder,"_Test_data_$i"))
+        Plots.savefig(string(sma_folder,"_Test_data_$i"))
     end 
     plot_mse_vals(start:start + graphs, mse, "MSE", "MSE values for different AVG Values", "AVG", "MSE")
-    savefig(string(sma_folder,"_MSE_Test_data"))
+    Plots.savefig(string(sma_folder,"_MSE_Test_data"))
 end
 
 # plots the predictions and the mean-squared error for the linear predictions for both train and test_data using "start" number of data points
@@ -108,21 +108,21 @@ function plot_linear_data(train_data::Array, test_data::Array, start::Int, graph
 
         predictions = linear_prediction(train_data, i)
         plot_comparison(train_data, predictions, "Train Data", "Line", "Graph for Linear Model using Last $i days", "Day", "Price")
-        savefig(string(linear_folder,"_Train_data_$i"))
+        Plots.savefig(string(linear_folder,"_Train_data_$i"))
 
     end 
     for i = start:start + graphs
 
         predictions = linear_prediction(test_data, i)
         plot_comparison(test_data, predictions, "Test Data", "Line", "Graph for Linear Model using Last $i days", "Day", "Price")
-        savefig(string(linear_folder,"_Test_data_$i"))
+        Plots.savefig(string(linear_folder,"_Test_data_$i"))
 
     end 
 end
 
 function plot_behavioural_data(data::Array, predictions::Array, size_wd, depth, num_preds)
     plot_comparison(data, predictions[:, 1], "Test Data", "Prediction", "Behavioural Pred, wd = $size_wd, L = $depth , ahead = $num_preds", "Day", "Price")
-    savefig(string(behave_folder,"_Train_data wd_$size_wd L_$depth Ahead_$num_preds"))
+    Plots.savefig(string(behave_folder,"_Train_data wd_$size_wd L_$depth Ahead_$num_preds"))
 end 
 
 function plot_error_data(error_matrix::Array, depth, num_preds, day, error_type::String)

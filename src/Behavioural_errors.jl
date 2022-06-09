@@ -1,5 +1,14 @@
 # will estimate error between the prediction trajectory
 # and the true values of the signal (test_data)
+
+using PyPlot
+using Plots
+using SciPy
+using Distributions
+using KernelDensity
+
+const plt = PyPlot
+
 include("Behavioural.jl")
 
 export plot_error_vs_depth
@@ -8,8 +17,8 @@ export get_error_matrix
 
 function errors(pred, true_value)
     abs_error = true_value - pred
-    rel_error = abs(1-(pred/true_value))
-    perc = abs(abs_error/true_value)*100
+    rel_error = 1-(pred/true_value)
+    perc = abs_error/true_value*100
     abs_error, rel_error, perc
 end
 
@@ -45,11 +54,11 @@ function plot_error_vs_gamma(all_data, train_data, test_data, depth, num_preds)
 
     Plots.plot(γM, ms_vals, seriestype = :scatter)
     Plots.display(Plots.plot!(title = "Mean Squared Error vs Gamma for Depth = $depth", xlabel = "Gamma", ylabel = "MS Error"))
-    savefig("C:\\Users\\Alexander scos\\Documents\\FYP\\MS_Error_vs_Gamma_vol")
+    Plots.savefig("C:\\Users\\Alexander scos\\Documents\\FYP\\MS_Error_vs_Gamma_vol")
 
     Plots.plot(γM, ma_vals, seriestype = :scatter)
     Plots.display(Plots.plot!(title = "Mean Absolute Error vs Gamma for Depth = $depth", xlabel = "Gamma", ylabel = "MA Error"))
-    savefig("C:\\Users\\Alexander scos\\Documents\\FYP\\MA_Error_vs_Gamma_vol")
+    Plots.savefig("C:\\Users\\Alexander scos\\Documents\\FYP\\MA_Error_vs_Gamma_vol")
 
 end      
 
@@ -123,6 +132,28 @@ function rescale(array::Array, train_data::Array) # in order to calculate errors
         end
     end
     empty_array
+end
+
+function plot_histogram(array::Array, num_bins::Int, error_type::String)
+    d = Distributions.fit(Normal, array) # estimate a normal distribution from errors
+    mean = round(d.μ, digits = 2)
+    std = round(d.σ, digits = 2)
+
+    lo, hi = Distributions.quantile.(d, [0.01, 0.99])  
+    x = range(lo, hi; length = 100)
+    pdf = Distributions.pdf.(d, x)
+
+    kde = KernelDensity.kde(vec(array))  # perform kernel density estimation   
+    plt.figure()                      # start new figure
+
+     
+    (values, bins, _) = PyPlot.hist(array, bins=num_bins, density=true, alpha = 0.5) # estimate histogram with custom number of bins
+    plt.plot(x, pdf, label = "Normal μ = $mean σ = $std")                                                  # plot the pdf
+    plt.plot(kde.x, kde.density, label = "KDE")                                      # plot kernel density estimation
+    plt.title("Histogram and PDF estimation of $error_type Errors")
+    plt.legend()
+    
+    display(gcf())
 end
 
 

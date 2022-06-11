@@ -7,6 +7,8 @@
 #Cannot spend more than I amount
 #Calculate amount of money left 
 
+export buy_sell_hold
+
 
 mutable struct Holding
     shares::Float64

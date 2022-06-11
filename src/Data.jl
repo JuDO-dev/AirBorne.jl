@@ -1,4 +1,4 @@
-using CSV, DataFrames
+using DataFrames
 using Statistics
 using StatsBase
 using StatsPlots

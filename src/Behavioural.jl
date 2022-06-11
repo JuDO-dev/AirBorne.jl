@@ -62,8 +62,7 @@ function Lasso(Y, X, γ, λ = 0)
     #taken from https://jump.dev/Convex.jl/stable/examples/general_examples/lasso_regression/
     # this function can't solve for matrix of matrices
     (T, K) = (size(X, 1), size(X, 2))
-    b_ls = 0.0
-    # b_ls = X \ Y                    #LS estimate of weights, no restrictions
+    b_ls = X \ Y                    #LS estimate of weights, no restrictions
 
     Q = X'X / T
     c = X'Y / T                      #c'b = Y'X*b
@@ -150,17 +149,6 @@ function get_adj_close_predictions(predictions::Array, space::Int)
     adj_close_predictions
 end
 
-# possibilites when doing the predictions
-# for num_preds = 1 we just take the first prediction
-# for num_preds > 1 we can take the first value of the prediction or we can take all 
-
-# What are best technical indicators to use?
-# function get_ROC(data::Array, start::String, finish::String, n)
-#     values = (datetime = )
-#     ROC = MarketTechnicals.roc(data, n)
-#     ROC
-# end
-
 function get_MACD(df::DataFrames.DataFrame, data::Array, n)
     dates = df[1:size(data,1), 1]
     ta = TimeArray(dates, data)
@@ -173,21 +161,6 @@ function get_RSI(df::DataFrames.DataFrame, data::Array, n)
     rsi = MarketTechnicals.rsi(ta, n)
     rsi
 end
-
-# Volume
-# Volume-Weighted Adjusted Price (VWAP)
-
-# Momentum 
-# ROC (Rate of Change)
-# MACD (Moving Average Convergence/Divergence)
-# RSI (Relative Strength Index)
-
-# Volatility
-# Bollinger Bands 
-# ATR (Average True Range)
-
-# Select a couple indicators then come up with an algorithm that generates a price prediction
-# and ultimately a buy sell or hold signal
 
 
 

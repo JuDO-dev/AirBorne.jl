@@ -8,7 +8,6 @@ using SCS
 using Convex
 using ShiftedArrays
 using Flux
-using ToeplitzMatrices
 using MarketTechnicals
 using TimeSeries
 using Dates

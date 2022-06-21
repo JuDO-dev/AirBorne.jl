@@ -43,18 +43,6 @@ function standardize(data, train)
     standardized
 end
 
-function normalize(data)
-    norm = data
-    min = minimum(data)
-    max = maximum(data)
-    for i=1:size(data, 1)
-        norm[i] = (data[i]-min)/(max-min)
-    end
-    norm
-end
-
-
-
 # get_train_data selects the first 2/3 of data from get_data
 function split_train_test(df)
     train_data = df[1:floor(Int64,size(df,1)*2/3), :]
@@ -63,16 +51,10 @@ function split_train_test(df)
     train_data, test_data
 end
 
-function form_matrix_of_data(adj_close::Array, volume::Array)
-    empty_array = Array{Array}(undef, size(adj_close, 1), 1)
-    for i = 1:size(adj_close, 1)
-        empty_array[i] = [adj_close[i], volume[i]]
-        # empty_array[i] = adjoint([adj_close[i], volume[i]])
-    end
-    empty_array
+function normalize(data::Array)
+    dt = fit(UnitRangeTransform, data)
+    data_norm = StatsBase.transform(dt, data)
+    data_norm
 end
-
-
-# get_test_data selects the last 1/3 of data from get_data
 
 

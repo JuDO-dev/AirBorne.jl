@@ -149,18 +149,6 @@ function get_adj_close_predictions(predictions::Array, space::Int)
     adj_close_predictions
 end
 
-function get_MACD(df::DataFrames.DataFrame, data::Array, n)
-    dates = df[1:size(data,1), 1]
-    ta = TimeArray(dates, data)
-    ta
-end
-
-function get_RSI(df::DataFrames.DataFrame, data::Array, n)
-    dates = df[1:size(data,1), 1]
-    ta = TimeArray(dates, data)
-    rsi = MarketTechnicals.rsi(ta, n)
-    rsi
-end
 
 
 

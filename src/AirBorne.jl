@@ -2,10 +2,12 @@
 module AirBorne
 # Write your package code here.
 
-include("data.jl")
-include("plotting.jl")
-include("simple.jl")
-include("errors.jl")
+include("Data.jl")
+include("Plotting.jl")
+include("Simple.jl")
+include("Errors.jl")
+include("Behavioural.jl")
+include("Buy_sell.jl")
 
 
 end

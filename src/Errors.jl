@@ -19,6 +19,9 @@ export calc_mse_sma
 export get_error_vs_depth
 export get_error_vs_gamma
 export get_error_matrix
+export estimate_errors
+export errors
+export rescale
 
 function remove_first_i_vals(vector::Array, j::Int)
     some_vector = vec(vector)
@@ -42,19 +45,17 @@ end
 
 # Calculates the mean squared error values for the naive algorithm by preparing the set of values
 
-function calc_mse_naive(data1::Array, data2::Array, output::Array, size::Int)
-
-    without_miss_vals = collect(skipmissing(data1))
-    temp_vec = remove_first_i_vals(data2, size)
+function calc_mse_naive(predictions::Array, true_data::Array, output::Array, delay::Int)
+    without_miss_vals = collect(skipmissing(predictions))
+    temp_vec = remove_first_i_vals(true_data, delay)
     append!(output, Flux.mse(without_miss_vals,temp_vec)) 
-
 end
 
 # Calculates the mean squared error values for the SMA slgorithm by preparing the set of values 
 
-function calc_mse_sma(data1::Array, data2::Array, output::Array, size::Int) 
-    without_miss_vals = remove_last_i_vals(collect(skipmissing(data1)), 1)
-    temp_vec = remove_first_i_vals(data2, size)
+function calc_mse_sma_lin(predictions::Array, true_data::Array, output::Array, n::Int) 
+    without_miss_vals = remove_last_i_vals(collect(skipmissing(predictions)), 1)
+    temp_vec = remove_first_i_vals(true_data, n)
     append!(output, Flux.mse(without_miss_vals,temp_vec))
 end
 
@@ -77,14 +78,14 @@ function estimate_errors(predictions::Array, true_values::Array)
     estimation_error = 0 
 
     for i=1:size(pred_clean, 1)                                     #need to check if this is correct for estimation error
-        val = (true_values[i] - pred_clean[i])/true_values[i]
+        val = abs(true_values[i] - pred_clean[i])/true_values[i]
         estimation_error = val + estimation_error
     end 
 
     mean_squared, mean_absolute, estimation_error
 end
 
-# obtain errors for a fixed depth and a range of gamme values
+# obtain errors for a fixed depth and a range of gamma values
 function get_error_vs_gamma(all_data::Array, train_data::Array, rescaled_train_data::Array, test_data::Array, depth::Int, num_preds::Int)
     n = 10
     γM = range(0; stop = 1.0, length = n)
@@ -128,21 +129,25 @@ function get_error_vs_depth(all_data::Array, train_data::Array, rescaled_train_d
 end
 
 # Construct an error matrix from the predictions equal to the size of test data*num predictions ahead
-function get_error_matrix(predictions::Array, test_data::Array, train_data::Array) 
+function get_error_matrix(predictions::Any, test_data::Array, train_data::Array) 
     # remove all missing values and last value from the predictions
-    pred_clean = remove_last_i_vals(predictions, 1)
-    pred_clean = pred_clean[size(train_data, 1)+1:size(pred_clean,1), :]
+    if (size(predictions, 1) != size(test_data, 1))
+        pred_clean = remove_last_i_vals(predictions, size(predictions, 2))
+        pred_clean = pred_clean[size(train_data, 1)+1:size(pred_clean,1), :]
+    else 
+        pred_clean = predictions
+    end
 
-    perc_matrix = Array{Float64}(undef, size(test_data,1), num_preds)
-    rel_matrix = Array{Float64}(undef, size(test_data,1), num_preds)
-    abs_matrix = Array{Float64}(undef, size(test_data,1), num_preds)
+    perc_matrix = Array{Union{Float64, Missing}}(undef, size(test_data,1), size(predictions, 2))
+    rel_matrix = Array{Union{Float64, Missing}}(undef, size(test_data,1), size(predictions, 2))
+    abs_matrix = Array{Union{Float64, Missing}}(undef, size(test_data,1), size(predictions, 2))
 
     for i = 1:size(pred_clean, 1)
         for j = 1:size(pred_clean, 2)
             if (i+j-1 > size(test_data, 1)) 
-                perc_matrix[i, j] = 0.0
-                rel_matrix[i, j] = 0.0
-                abs_matrix[i, j] = 0.0
+                perc_matrix[i, j] = missing
+                rel_matrix[i, j] = missing
+                abs_matrix[i, j] = missing
             else 
                 abs, rel, perc = errors(pred_clean[i, j], test_data[i+j-1, 1])
                 perc_matrix[i, j] = perc
@@ -177,14 +182,28 @@ function rescale(array::Array, train_data::Array)
 end
 
 # fit data to a normal distribution as well as perform a kernel density estimation
-function est_distribution(array::Array, num_bins::Int) 
-    d = Distributions.fit(Normal, array) # estimate a normal distribution from errors
+function est_distribution(array::Array{Union{Float64, Missing}}, num_bins::Int) 
+    tmp = collect(skipmissing(array)) 
+    d = Distributions.fit(Normal, tmp) # estimate a normal distribution from errors
 
     lo, hi = Distributions.quantile.(d, [0.01, 0.99])  
     x = range(lo, hi; length = 100)
     pdf = Distributions.pdf.(d, x)
 
-    kde = KernelDensity.kde(vec(array))  # perform kernel density estimation 
+    kde = KernelDensity.kde(vec(tmp))  # perform kernel density estimation 
     return d, x, pdf, kde
 end
+
+# user specified confidence interval. 
+# returns lower and upper bound.
+# function has this confidence between these two values.
+# i.e the algorithm is this 'confident' the prediction will be between these two values
+function get_confidence_int(distribution, confidence::Float64)
+    val = 1.0 - confidence
+    bounds = Distributions.quantile.(distribution, [val, 1.0-val])
+    lower = bounds[1]
+    upper = bounds[2]
+    return lower, upper  
+end
+
 

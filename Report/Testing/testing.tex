@@ -1,0 +1,60 @@
+\chapter{Testing}
+\label{chapter: Testing}
+% Describe your Test Plan -- how the program or system
+% was verified. Put the actual test results in an Appendix
+% if they are repetitive but relevant. Detailed test data
+% may be omitted from the report if not relevant,
+% however an accurate summary of tests should be
+% included in the Report itself. Sometimes non-working
+% designs are described in project reports as though
+% they work, when in reality they don’t, or only partially
+% work. Therefore a precise description of what works
+% and how this has been established is important.
+% Examiners may try to compile, use, or test
+% deliverables themselves (even after your report is
+% submitted), and your report should accurately reflect
+% the state of the project.
+% This section is normally useful for software or
+% hardware deliverables and less relevant in analytical
+% projects.
+\section{Testing Plan}
+In terms of meeting the requirements specified in Chapter \ref{chapter: Requirements}, all necessary requirements described, files and functions created had to be utilised in order to produce the graphs and errors necessary to explore the performance characteristics of the implemented prediction techniques. The following will explore how the measures are intended to test performance whilst results are presented and analyzed in Chapter \ref{chapter: Results}. 
+
+\noindent In order to correctly and consistently quantify performance, a variety of different tests were carried out. Firstly, a benchmark had to be established, the simple prediction techniques implemented in Chapter \ref{chapter: Implement} serve this purpose. The results from these predictions are then compared and contrasted to previous Machine learning based attempts as well as this year's implementation of Behavioural Control Theory. The measures used and their criteria will be explored in the following sub-sections.
+
+\subsection{Comparison of Simple and Machine Learning}
+
+Simple prediction techniques are compared to the Machine Learning methods used in the previous year \cite{ml_paper} in terms of accuracy of prediction. The following errors are used. It is important to note that the same data set used in the previous year had to be used in order to provide consistent comparison. The data set used in that of the stock \textbf{Apple} over the time period \textit{"09-06-2016"} to \textit{"09-06-2021"}.
+
+\begin{itemize}
+    \item Mean-Squared Error of Predictions
+    \item Mean-Absolute Error of Predictions
+\end{itemize}
+
+\noindent The results of this comparison, presented in Chapter \ref{chapter: Results} prompted the investigation of of a new method of prediction, namely Behavioural Control Theory.
+
+\subsection{Comparison of Simple and Behavioural Control Theory}
+
+The same simple prediction techniques are then compared to the Behavioural Control Theory implementation described in Section \ref{back: behavioural}. The measures of performance used are:
+
+\begin{itemize}
+    \item Mean-Squared Error of Predictions
+    \item Mean-Absolute Error of Predictions
+\end{itemize}
+
+\noindent Based on these comparisons we can gauge whether Behavioural Control Theory is a suitable approach to stock prediction. 
+
+\clearpage
+
+\subsection{Buy Sell Testing}
+
+The simple prediction techniques are then compared to the Behavioural Control Theory implementation in terms of their profit generating potential over a specified time period. The implementation of the Buy/Sell Strategy is stated in Section \ref{section: buy_sell}. Although one may perform better in terms of prediction accuracy does not necessarily mean it will generate more profit than the other. Therefore the total value generated is measured over a specified time period for both the simple and behavioural techniques and compared. The results are presented in Chapter \ref{chapter: Results}.
+
+\subsection{Unit Testing}
+A part of the deliverable is software based, several unit tests were written in order to establish the functional correctness of the methods implemented. Unit tests were particularly important for the files, \textbf{Data.jl} as well as \textbf{Errors.jl} to ensure that the data manipulation and retrieval was correct in addition to the errors in \ref{chapter: Results}. The testing done can be viewed by accessing \hyperlink{}{https://github.com/JuDO-dev/AirBorne.jl/tree/dev/test}.
+
+
+
+
+
+

@@ -1,0 +1,103 @@
+\subsubsection{Momentum}
+
+\noindent The momentum of a stock can be defined as the rate of change of price, meaning how fast or how quickly a stock changes price over a specified time period \cite{??}. \\
+
+\noindent The Relative Strength Index (RSI) is a popular momentum indicator that measures the magnitude of recent price changes in order to evaluate whether the stock is overbought or oversold. Thus, the \textit{strength} of the stock can be thought of as a measure of whether or not it is a good time to enter or exit the market \cite{??}. \\
+
+\noindent The RSI is calculated in a two-step procedure. In general the first step is calculated using already available data of a specified time period\cite{??}.
+
+
+\begin{equation}
+    RSI_1 = 100- \frac{100}{1+ \frac{G_{t}}{L_{t}}}
+\end{equation}
+
+\noindent where, \\
+G = Average Gain over the specified time-period, t \\
+L = Average Loss over the Specified time-period, t \\
+
+\noindent The specified time-period is commonly taken to be $t=14$ days \cite{??}.
+
+\noindent The second step can then be calculated as follows,
+
+\begin{equation}
+    RSI_2 = 100 - \frac{100}{1+ \frac{G*(t-1) + C_g}{L*(t-1) + C_L}}
+\end{equation}
+
+\noindent where, \\
+G = Previous Average Gain  \\
+L = Previous Average Loss \\
+$C_g$ = Current Gain \\
+$C_L$ = Current Loss \\
+
+\noindent The interpretation of RSI values can be found in Appendix \ref{Appendix: RSI_vals}
+
+
+\subsubsection{ADX}
+
+The direction of a stock can be thought of as an upward or downward price change. The Average Directional Index quantifies the strength of these up/downtrends \cite{??}. The ADX is calculated via a series of different calculations, The Directional Movement (DM) and True Range (TR) needs to be computed for each day of the specified time period. 
+
+\begin{equation}
+    +DM_t = CH - PH \\
+\end{equation}
+\begin{equation}
+    -DM_t = CL - PL \\
+\end{equation}
+    
+
+
+\noindent where, \\
+$+DM_t$ = Positive Directional Movement at time, t \\
+$-DM_t$ = Negative Directional Movement at time, t \\
+CH = Current High \\
+PH = Previous High \\
+CL = Current Low \\
+PL = Previous Low \\
+
+\noindent We then assign each day, a $+DM$ or $-DM$ and TR. $+DM$ is used if $+DM$ > $-DM$ or vice versa. \\
+
+\noindent True Range is defined to be the greater of CH - CL, CH - PC, CL-PC, where PC is previous closing price. The Average True Range (ATR) is then calculated as follows, \\
+
+\begin{equation}
+    ATR = \sum^{t}_{t=1}TR_t - \frac{\sum^{t}_{t=1}TR_t}{t} + CTR
+\end{equation}
+
+\noindent where, \\
+CTR = Current True Range
+
+\noindent The smoothed $+/-DM$ is then calulated for each day and assigned.
+
+\begin{equation}
+    +/-DM_{smooth} = \sum^{t}_{t=1}DM_t - \frac{\sum^{t}_{t=1}DM_t}{t} + CDM
+\end{equation}
+
+\noindent where, 
+CDM = Current Directional Movement
+
+\noindent The Directional Indicator (DI) and in turn Directional Index (DX) the is then calculated for each day.
+
+\begin{equation}
+    +/-DI = \frac{+/-DM_{smooth}}{ATR}* 100\%
+\end{equation}
+
+\begin{equation}
+    DX_t = \frac{|(+DI_t)-(-DI_t)|}{|(+DI_t)+(-DI_t)|}
+\end{equation}
+where, \\
+$DX_t$ = Direction index at time, t \\
+$+DI_t$ = Positive Directional indicator at time, t \\
+$-DI_t$ = Negative directional indicator at time, t \\
+
+The first $ADX_1$ and every ADX after ($ADX_2$) is given to be,
+\begin{equation}
+    ADX_1 = \frac{\sum^{t}_{t=1}DX_t}{t}
+\end{equation}
+\begin{equation}
+    ADX_2 = \frac{ADX_p * (t-1) + CADX}{t}
+\end{equation}
+
+\noindent where, \\
+$ADX_p$ = Prior ADX
+CADX = Current ADX
+t = specicfied time-period
+
+\noindent In general, a "good" time-period is $t=14$ days \cite{??}.

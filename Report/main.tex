@@ -1,0 +1,69 @@
+\documentclass[a4paper, twoside]{report}
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[newfloat]{minted}
+\usepackage{listings}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=black]{hyperref}
+\usepackage[numbers]{natbib} 
+\usepackage{parskip}
+\usepackage[most]{tcolorbox}
+\newtcbinputlisting[auto counter,list inside=lol,list type={lstlisting}]{\mylisting}[2][]{%
+  listing file={#2},
+  title=Listing,
+  colback=white,
+  colframe=gray!75!black,
+  fonttitle=\bfseries,
+  listing only,
+  breakable,
+  title=List of Code Listings \thetcbcounter: #2,
+  #1
+}
+
+
+\renewcommand{\lstlistingname}{List of Code Listings}
+
+\newcommand{\listingsfont}{\ttfamily}   
+
+% Update supervisor and other title stuff in title/title.tex
+
+\begin{document}
+\input{title/cover-page}
+
+
+
+\input{Plag/statement.tex}
+\tableofcontents
+\listoffigures
+\listoftables
+\tcblistof[\chapter*]{lol}{\lstlistingname}
+\clearpage
+
+\input{acknowledgements/ack.tex}
+\input{abstract/abstract.tex}
+\input{introduction/introduction.tex}
+\input{background/background.tex}
+\input{RequirementsCapture/Req.tex}
+\input{Analysis_and_Design/an_des.tex}
+\input{Implementation/implement.tex}
+\input{Testing/testing.tex}
+\input{Results/results.tex}
+\input{evaluation/evaluation.tex}
+\input{conclusion/conclusion.tex}
+\input{User_Guide/user.tex}
+\input{appendix/appendix.tex}
+
+\bibliographystyle{IEEEtranN}
+\bibliography{References}
+
+\end{document}

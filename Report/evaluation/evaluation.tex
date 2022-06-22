@@ -1,0 +1,57 @@
+\chapter{Evaluation}
+\label{chapter: Evaluation}
+
+\section{Data Manipulation and Analysis}
+As shown in Figure \ref{fig: package_flow} the files,
+
+\begin{itemize}
+    \item Data.jl
+    \item Plotting.jl
+    \item Errors.jl
+\end{itemize}
+
+\noindent were successfully implemented in the package \textbf{Airborne.jl} to facilitate the user in carrying out the necessary requirements of, data manipulation, plotting and error analysis. The functions contained were used and demonstrated as they were a core element in the investigation of the performance of implemented algorithms.  
+
+\section{Algorithm Implementation}
+The three Simple prediction methods as well the Behavioural Control Theory algorithm contained in the files, \begin{itemize}
+    \item Simple.jl 
+    \item Behavioural.jl 
+\end{itemize}
+fulfil the necessary requirements of algorithm implementation. For improvement and package expansion, more simple prediction methods should be added. The three chosen, established a performance baseline when in reality there are a variety of different methods to explore. Additionally, the behavioural control theory algorithm implemented is centered around one method of optimisation problem formulation. The chosen formulation was an L1 norm approximation as this had the best results in terms of prediction accuracy in the paper \cite{markovsky}. There are many other  approaches to solving the problem \cite{markovsky} such as, 
+
+\begin{itemize}
+    \item A two-step model based approach
+    \item Low Rank Approximation
+    \item Pseudo-inverse
+\end{itemize}
+
+\noindent which are worth further investigation as they may perform better on stock data which is a non-linear system.
+
+\section{Investigation of Algorithm Performance}
+
+Showcased in Chapter \ref{chapter: Results}, the implemented algorithms were investigated to an extent but there are aspects that need further research in terms of both prediction testing and buy/sell strategy testing. The time-frame of the project and complexity of the problem meant that several aspects remained undiscovered which will be highlighted in the following subsections. 
+
+\subsection{Prediction Results}
+
+ The comparison shown in Table \ref{tab: simp_ml_mse} and subsequent result of the simple prediction methods outperforming previous Machine learning based attempts \cite{ml_paper} in their current state presented two options. Option 1 consisted of attempting to improve and explore new and existing problem formulations of Machine learning based prediction. Option 2 was exploring an entirely new method centered around Behavioural Control Theory. Being familiar with control, the second option was chosen. 
+
+\noindent The results of the comparison between Simple prediction algorithms and the current implementation of Behavioural control theory suggest that, in its current state, the behavioural control implementation does not outperform the three simple prediction methods in terms of prediction accuracy - see Table \ref{tab: behave_mse_simple}. It is important to note that this is not a definite fact as only a limited number of depth and parameter values were tested due to the time and computational power required to compute all possible combinations. Shown in Section \ref{section: simp_vs_behave} it was found that there are several ways to improve accuracy which include:
+
+\begin{itemize}
+    \item Optimisation of Hankel matrix depth, $L$.
+    \item Optimisation of the parameter $\gamma$.
+\end{itemize}
+
+ \noindent Furthermore, only a single input system consisting of raw price data and a two input system consisting of price and volume data was tested. It was shown in Table \ref{tab: mse_price_vol} that including more inputs which may be correlated with price movement can also have the effect of improving prediction accuracy for some combinations of depth and optimisation parameter values. For example, the inclusion of volatility and sentiment analysis data which is a measure of investor attitude towards a stock or the market. Therefore, more research into optimising inputs and parameters needs to be done before coming to a conclusion on the suitability of Behavioural Control Theory in a financial setting.
+
+\subsection{Buy/Sell Strategy Results}
+
+As a second basis of comparison a simple Buy/Sell strategy was implemented. The strategy is highlighted in Section \ref{section: buy_sell}. Results recorded in Table \ref{tab: Buy_sell_1} show that the Behavioural Control implementation outperformed the simple methods of prediction significantly on a one day ahead basis but failed to outperform the market. Furthermore, Table \ref{tab: Buy_sell_2} shows that the behavioural control implementation did not outperform the simple method of linear prediction as well as the market for a 7 day ahead buy/sell strategy. Both the behavioural control and linear prediction methods under-performed when compared to the market. 
+
+\noindent It is important to note that the statistical analysis was only done on a fixed amount of test data, it is possible that producing the statistics based on a moving window, similar to the predictions, would have the effect of improving the strategy. Additionally, the strategy is a simplified version of what occurs in reality when buying and selling stock. The implementation can be improved by the addition of the elements described in Sub-section \ref{subsection: buy_sell_strat}. Furthermore, as mentioned in the previous section optimisation of parameter values and inputs having the effect of improving prediction accuracy may also improve the Buy/sell strategy. 
+
+
+
+
+
+

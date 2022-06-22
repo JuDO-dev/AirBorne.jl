@@ -1,0 +1,292 @@
+\chapter{Background}
+\label{Chapter: Background}
+
+% What problem are you solving? \\
+% \textbf{Why is this problem interesting or worthwhile to solve?} \\
+% \textbf{Who cares if you solve it?} \\
+% How does this relate to other work in this
+% area? \\
+% \textbf{What work does it build on?} \\
+
+% \noindent For 'research-style' projects involving the
+% design and analysis of specific algorithms
+% there is a large amount of relevant
+% background both of general theory, and very
+% specific to the algorithm you investigate.
+
+\section{Problem Definition}
+
+As stated in Chapter \ref{chapter: Intro} this project aims to unravel the mystery that is the unpredictability of stocks as well as to build a tool that would be used by investors daily to gain a competitive edge. Although technical analysis of the market is commonplace to optimise profit generation, analysis  from a Behavioural Control Theory perspective is new. 
+
+\noindent Exploring an unimplemented method comes with both risk and potential reward. Thus, establishing the suitability of Behavioural Control Theory in a financial setting as compared to other popular methods of prediction and technical Analysis is a main goal.  
+
+\noindent The implementation is compared to traditional forms of analysis as well as algorithms implemented in the previous year that explored the application of Machine and Reinforcement Learning in finance \cite{ml_paper}. 
+
+\noindent The following sections aim to provide all necessary background information. A brief insight into the world of finance jargon, formulae as well as an introduction to Behavioural Control Theory is essential in enabling the reader to interpret and understand the report to its fullest extent.
+
+
+\section{Stock and the Market}
+\subsection{Stock}
+
+\noindent Stock, equity, or shares are a way of representing ownership of a small part of a company or corporation. Someone can purchase company stock as a way of investing money and essentially become a shareholder of the corporation. Shareholders then have a claim on the company’s assets and earnings \cite{stock_def}. Companies sell shares to raise capital for their business. As a company grows, your initial investment may increase, thus the equity previously purchased has become more valuable and may be sold at a higher price than previously purchased, generating a return on investment.
+
+\subsection{The Stock Market}
+\noindent Stocks are traditionally purchased through a stockbroker from companies listed on a stock exchange. A stock exchange is essentially a list or collection of companies that are willing to sell equity and other securities such as commodities and bonds \cite{stock_def}. Stock exchanges facilitate trading between investors and companies. Some popular stock exchanges are the NASDAQ, NYSE, and the FTSE 100 \cite{stock_exch}. 
+
+\subsection{Common Factors Affecting the Market}
+\noindent The price of a stock can be influenced by many factors such as:
+
+\begin{itemize}
+    \item Company news
+    \item Industry Performance
+    \item Investor Sentiment (High/Low Confidence)
+    \item Inflation
+    \item Deflation
+    \item Interest Rates
+    \item Economic and Political Shocks (E.g. COVID -19)
+    \item Economic Policy
+\end{itemize}
+
+\noindent These are just some of the many factors that influence stock price \cite{factors}, \cite{factors2}. To decide on the most important ones is a topic of controversy. Thus, it can be incredibly challenging to predict the future price of a stock. The overall goal of the project will be focused on Day Trading, which is buying and selling stock daily, this is generally what algorithmic trading revolves around. If we can accurately forecast tomorrow stock price, an informed decision can be made on whether to buy/sell or hold the stock shares we currently own to maximize
+profits.
+
+\section{Julia}
+\subsection{Learning Julia}
+Since learning a new programming language can be challenging, it is essential to surround yourself with a variety of sources to accelerate the learning process. As with all programming languages, Julia has its ins and outs and thus dedicating a significant amount of time to becoming familiar with Julia was needed to utilize the language to its maximum potential. Additionally, several packages were utilized in the development of \textbf{AirBorne.jl}, the full list can be in Appendix \ref{appendix: pack_list}. The methods used the learn Julia are covered in the Interim Report.
+
+\section{Technical Analysis}
+\subsection{What is Technical Analysis of the Market?}
+
+\noindent Technical analysis of the market is largely based on the belief that the future price movements of a stock are driven by historical values of price and volume. By examining past values of price and volume, technical indicators can be can be extracted to gain more information about the stock/market movements in order to make informed decisions, predictions or forecasts \cite{tech_analysis}. 
+
+\subsection{Common Technical Indicators}
+\label{subsection: comm_t_ind}
+
+\noindent Simple technical indicators include standard moving averages whilst others may be more sophisticated, which can be used to gain more information about a stock or market \cite{tech_indic}.  
+
+\noindent Some common technical indicators include:
+
+\begin{itemize}
+    \item Price
+    \item Volume
+    \item Volatility
+    \item Moving Averages
+\end{itemize}
+
+\subsubsection{Price}
+\label{subsubsection: Price Definitions}
+
+Historical values of price are essential to form the basis for the calculation of   technical indicators which include those mentioned in the following sections \cite{tech_analysis}.
+
+There are several definitions of price worth noting such as:
+
+\begin{itemize}
+    \item High 
+    
+    This is the highest price the stock has been traded in a specified time period such as the day, week, month or year. In the context of this paper, the time-period is daily. \cite{high}
+    \item Low 
+    
+    The lowest price the stock has been traded reached/reported throughout the day \cite{high}.
+    \item Close 
+    
+    This is the last reported trading price of the stock at the end of the day before the market is officially closed \cite{close}.
+    \item Adjusted Close 
+    
+    This is an adjustment made to a stock's closing price in order to account for any corporate actions such as dividends or stock splits \cite{adj_close}. 
+\end{itemize}
+
+
+\subsubsection{Volume}
+In addition, historical values of volume also form an essential foundation in understanding the price movements of a stock and are also included in the calculation of many key technical indicators. Volume is essentially a measure of how much of a given stock in traded within in a specified time period. It can be used as a metric to measure how much 'interest' there is in a particular security \cite{tech_analysis}. Additionally, it may provide more information in terms of "information quality" \cite{tech_analysis}.
+
+\subsubsection{Volatility}
+For stocks, volatility is a measure of how much a stock price  swings up or down around its mean price. In general the more volatile a stock, the riskier it is \cite{volatility}. 
+
+\subsubsection{Moving Averages}
+
+There are a variety of moving averages, in the context of this paper only the Simple Moving Average will be used:
+
+\begin{itemize}
+    \item Simple Moving Average (SMA) \cite{SMA}
+    
+    The Simple moving average can be calculated as,
+    
+    \begin{equation}
+    \label{eqn: SMA}
+        SMA_t = \frac{(P_1 + P_2 + ...+ P_t)}{t}
+    \end{equation}
+    where, 
+    
+    P = Price of stock 
+    
+    t = specified time 
+    
+    
+\end{itemize}
+
+\clearpage
+
+\section{Behavioural Control Theory}
+
+\subsection{Intro to Behavioural Control Theory}
+\label{back: behavioural}
+The idea behind behavioural control theory is to treat a dynamical system as a set of trajectories \cite{markovsky}, it diverges from the traditional parametric state-space model in an effort to form a non-parametric representation of the system \cite{markovsky}. The idea stems from Willem's Fundamental Lemma \cite{will}. 
+
+\noindent Given a sufficiently 'long' and 'rich' trajectory, $w_d$ we can construct what is called a Hankel matrix, $\mathcal{H}$ \cite{markovsky2}. The Hankel matrix of depth $L$, $\mathcal{H_L}(w_d)$, constructed from this trajectory is defined as,
+
+\begin{equation}
+    \label{eqn: hank}
+    \mathcal{H_L}(w_d) = 
+    \begin{bmatrix} 
+        w_{d}(1) & w_{d}(2) & ... & w_{d}(T_{d}-L+1) \\
+        w_{d}(2) & w_{d}(3) & ... & w_{d}(T_{d}-L+2) \\
+        \vdots & \vdots & &\vdots \\
+        w_{d}(L) & w_{d}(L+1) & ... & w_{d}(T_{d})
+    \end{bmatrix}
+\end{equation}
+
+\noindent where, 
+
+$w_d$ = trajectory of the system
+
+$T_d$ = Length of $w_d$ 
+
+$L$   = depth of $\mathcal{H}$ \cite{markovsky}.  
+
+\noindent Note that in order for $w_d$ to be sufficiently 'rich' and 'long' $T \geq T_{min} = (m+1)*L - 1$ samples. where, $m$ is the dimension of the system. Additionally, the structure of the Hankel matrix, $\mathcal{H_L}(w_d)$ must be such that it has more columns than rows, which means that $L \leq L_{max} = \frac{T+1}{q+1}$ where, $T$ is the length of the trajectory and q is the dimension of the system \cite{markovsky}. 
+
+\noindent Given that these conditions are satisfied, any trajectory of the Linear time invariant system L samples long, can be formed as a linear combination of the columns of the Hankel matrix, $\mathcal{H}$. In other words, the image of the Hankel matrix, $\mathcal{H_L}(w_d)$ is an equivalent representation the the LTI system, 
+
+\begin{equation}
+    image(\mathcal{H_L}(w_d)) = \mathcal{B_L}
+\end{equation}
+
+\noindent where, 
+
+$\mathcal{B_L}$ = LTI system 
+
+$\mathcal{H_L}(w_d)$ = Hankel matrix of depth $L$. 
+
+\noindent In order to use the above information in a setting applicable to a financial environment, it must be formulated as a missing data estimation problem \cite{markovsky}.
+
+\subsection{Missing Data Estimation Problem}
+
+We can estimate a trajectory $w$ as a linear combination of the columns of the Hankel Matrix, $\mathcal{H_L}(w_d)$ \cite{markovsky}. Thus, 
+
+$$\mathcal{H_L}(w_d)*g = w.$$
+
+\noindent The idea is to estimate $g$ such that $w$ is as close to its true trajectory, $\hat{w}$ as possible, i.e., 
+
+\begin{center}
+    minimize  over  $\hat{w}$ $||w-\hat{w}||$ subject to $w\in \mathcal{B_L}$
+\end{center}
+
+\noindent where, 
+
+$\hat{w}$ = True trajectory of the system. 
+
+$w$ = trajectory of the system with missing data 
+
+$\mathcal{B_L}$ = System. 
+
+\clearpage
+
+\noindent We then transform the problem and solve, taking an L1-norm regularized least squares approach \cite{markovsky}. 
+
+\begin{equation}
+    \label{eqn: opt}
+    \text{Minimize over}\hspace{0.2cm} g \hspace{0.2cm} ||w_{J_{tba}}-\mathcal{H_L}(w_d)|_{J_{tba}}*g||^{2} + \gamma ||g||_1 \hspace{0.2cm}
+    \text{s.t.} \hspace{0.2cm} \hat{w}|_{J_{exact}}=w|_{J_{exact}}
+\end{equation}
+
+\noindent where, 
+
+$\hat{w}$ = True trajectory, 
+
+$w$ = Trajectory with missing data, 
+
+$w_{J_{tba}}$ = To be approximated values of trajectory, 
+
+$\hat{w}|_{J_{exact}}$ = Exact values of true trajectory,
+
+$w|_{J_{exact}}$ = Exact values of trajectory with missing data, 
+
+$\mathcal{H_L}(w_d)|_{J_{tba}}$ = Hankel matrix constructed  from $w_d$ with rows matching $w_{J_{tba}}$,
+
+$\gamma$ = optimisation parameter, 
+
+$g$ = column selection vector to be estimated. 
+
+\section{Error Analysis}
+\label{section: errors}
+\noindent In terms of evaluating the performance of the algorithm implemented a variety of different errors were used. 
+
+\noindent The important errors to take note of are:
+\begin{itemize}
+    \item Mean-Squared Error (MSE) \cite{mse} 
+    
+    \begin{equation}
+    MSE = \frac{1}{n}\sum^{n}_{i=1}(Y_{i}-\hat{Y_{i}})^2
+    \end{equation}
+    \noindent where, 
+    
+    n = number of data points, 
+    
+    $Y_i$ = true values, 
+    
+    $\hat{Y_i}$ = predicted/estimated values. 
+    
+    \item Mean-Absolute Error (MAE) \cite{mae}
+    \begin{equation}
+    MAE = \frac{1}{n}\sum^{n}_{i=1}|Y_{i}-\hat{Y_{i}}|
+    \end{equation}
+    
+    \noindent where, 
+    
+    n = number of data points, 
+    
+    $Y_i$ = true values, 
+    
+    $\hat{Y_i}$ = predicted/estimated values. 
+    
+    \item Absolute Error (AE) \cite{abs}
+    
+    \begin{equation}
+    AE = Y - \hat{Y}
+    \end{equation}
+    
+    \noindent where, 
+    
+    $Y$ = true value 
+    
+    $\hat{Y}$ = estimated/predicted value 
+    
+    \item Relative Error (RE) \cite{rel}
+    
+    \begin{equation}
+    RE = \frac{Y - \hat{Y}}{Y}
+    \end{equation}
+    
+    \noindent where, 
+    
+    $Y$ = true value 
+    
+    $\hat{Y}$ = estimated/predicted value
+    
+    \item Percentage Error or Estimation Error (PE)
+    \cite{markovsky}
+    
+    \begin{equation}
+    PE = \frac{Y - \hat{Y}}{Y}*100
+    \end{equation}
+    
+    \noindent where, 
+    
+    $Y$ = true value 
+    
+    $\hat{Y}$ = estimated/predicted value 
+    
+\end{itemize}
+
+\noindent  The errors listed are frequently used in the upcoming sections. Understanding how they are calculated is essential to the reader's understanding and interpretation of the results and implementation. 
+

@@ -14,7 +14,9 @@ using Dates
 
 import MathOptInterface
 
-export hankel
+export hankel_vector
+export form_w_given
+export hankel_scalar
 export Lasso
 export find_w_given
 export behavioural

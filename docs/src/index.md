@@ -2,7 +2,7 @@
 CurrentModule = AirBorne
 ```
 
-# Progradio
+# AirBorne
 
 Documentation for [AirBorne](https://github.com/JuDO-dev/AirBorne.jl).
 

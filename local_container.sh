@@ -14,6 +14,7 @@ winpty docker run --rm -it \
 --mount  type=bind,source="$HOME/.gitconfig",target=/root/.gitconfig \
 --name ${PROJECT_NAME}-container \
 -p 8080:8080 \
+-p 8000:8000 \
 --entrypoint bash \
 ${PROJECT_NAME}-image 
 

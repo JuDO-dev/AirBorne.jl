@@ -1,15 +1,22 @@
 run:
-	julia --project=./project ./test/runtests.jl 
+	julia --project=../AirBorne -e 'using Pkg;  Pkg.activate("../AirBorne"); Pkg.test()'
 
 dev:
 	julia --project=./dev_project 
 
 julia:
-	cd /root & julia --project=./AirBorne
-
+	julia --project=../AirBorne
+ 
 juliaDoc:
 	julia --project=./docs
 
+doc:
+	julia --project=./docs -e 'using Pkg; Pkg.instantiate()' 
+	julia --project=./docs ./docs/make.jl
+
+docDeploy:
+	julia --project=./dev_project  -e 'using LiveServer; serve(dir="docs/build",port=8000,host="0.0.0.0")'
+	
 sync:
 	julia --project=./project -e 'using Pkg; Pkg.instantiate()'
 

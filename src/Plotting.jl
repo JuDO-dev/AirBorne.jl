@@ -18,19 +18,19 @@ export plot_linear_data_range
 export plot_behavioural_data
 
 
-# Specify folders for your plots to go in
-# default folder will be.........
+"""Replace folder_path if you want to save the plots"""
 
-lag_folder = "C:\\Users\\Alexander scos\\Documents\\FYP\\Lag_Predictions\\Lag_Predictions"
-linear_folder = "C:\\Users\\Alexander scos\\Documents\\FYP\\Linear_Predictions\\Linear_Pred_"
-sma_folder = "C:\\Users\\Alexander scos\\Documents\\FYP\\Moving_Avg_Predictions\\Moving_Avgs"
-behave_folder = "C:\\Users\\Alexander scos\\Documents\\FYP\\Behavioural\\Behavioural_"
+lag_folder = "C:\\Folder_path"
+linear_folder = "C:\\Folder_path"
+sma_folder = "C:\\Folder_path"
+behave_folder = "C:\\Folder_path"
 
 # plots two sets of data on the same plot using the Plots package
 
-function plot_comparison(data1::Array, data2::Array, data1label::String, data2label::String, title1::String, xlabel1::String, ylabel1::String)
+function plot_comparison(data1::Array, data2::Array, data3, data1label::String, data2label::String, title1::String, xlabel1::String, ylabel1::String)
     Plots.plot(data1, label = data1label)  #xlims = (floor(Int64,size(data1,1)*2/3)+1, size(data2,1)))
     Plots.plot!(data2, label = data2label)
+    Plots.plot!(data3, label = "SMA")
     Plots.display(Plots.plot!(title = title1, xlabel = xlabel1, ylabel = ylabel1))
 end
 
@@ -150,19 +150,21 @@ end
 
 #function for plotting histogram and fitted pdf of the data generated from get_error_matrix()
 function plot_histogram(array::Array, normal_dist, x_vals, pdf, kde, lower, upper, error_type::String, num_bins::Int)
-    mean = round(normal_dist.μ, digits = 2)
-    std = round(normal_dist.σ, digits = 2)
+    mean = round(normal_dist.μ, digits = 4)
+    std = round(normal_dist.σ, digits = 4)
     PyPlot.figure()                      # start new figure
 
     (values, bins, _) = PyPlot.hist(array, bins=num_bins, density=true, alpha = 0.5) # estimate histogram with custom number of bins
+    PyPlot.xlabel("Relative Errors")
+    PyPlot.ylabel("Probability Density")
     PyPlot.plot(x_vals, pdf, label = "Normal μ = $mean σ = $std")                                                  # plot the pdf
-    PyPlot.plot(kde.x, kde.density, label = "KDE") # plot kernel density estimation
+    PyPlot.plot(kde.x, kde.density, label = "Kernel density estimation") # plot kernel density estimation
 
     max = Distributions.pdf(normal_dist, lower)
     # PyPlot.vlines(lower, ymax = 0.04, ymin = 0,  color = "black", alpha = 0.5)
     # PyPlot.vlines(upper, ymax = 0.04, ymin = 0, color = "black", alpha = 0.5)
-    PyPlot.axvline(lower, color = "black", alpha = 0.5, linestyle = "--", label = "Lower and Upper Bounds")
-    PyPlot.axvline(upper, color = "black", alpha = 0.5, linestyle = "--")
+    #PyPlot.axvline(lower, color = "black", alpha = 0.5, linestyle = "--", label = "Lower and Upper Bounds")
+    #PyPlot.axvline(upper, color = "black", alpha = 0.5, linestyle = "--")
 
     PyPlot.title("Histogram and PDF estimation of $error_type Errors")
     PyPlot.legend()

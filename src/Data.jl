@@ -1,3 +1,4 @@
+"""This file is mainly for data manipulation functions"""
 using DataFrames
 using Statistics
 using StatsBase
@@ -20,6 +21,7 @@ export get_data
 export standardize
 export form_matrix_of_data
 
+
 numpy = pyimport("numpy")
 pandas = pyimport("pandas")
 yfinance = pyimport("yfinance")
@@ -31,7 +33,8 @@ function get_data(tickr::String, start::String, finish::String, range::String, i
     live_data = yfinance.download(tickr, start, finish, period = range, interval = int) #import data from any period desired
     info = Pandas.DataFrame(live_data) # Wrap in a pandas DataFrame
     info = Pandas.reset_index(info) # set the index 
-    info = DataFrames.DataFrame(info) # Convert to julia DataFrame
+    # info = DataFrames.DataFrame(info) # Convert to julia DataFrame
+    info = DataFrames.DataFrame([col => collect(info[col]) for col in info.pyo.columns])
     Pandas.display(info) # display
     all_data = info
     all_data # return data
@@ -43,18 +46,28 @@ function standardize(data, train)
     standardized
 end
 
-# get_train_data selects the first 2/3 of data from get_data
-function split_train_test(df)
-    train_data = df[1:floor(Int64,size(df,1)*2/3), :]
-    test_data = df[floor(Int64,size(df,1)*2/3)+1:size(df,1),:]
+# This function splits the data based on the user defined major. Either split by the rows
+# or by columns. The first 2/3 of the data used for constructing the hankel matrix and the last
+# 1/3 is used for calculating the relative errors then the standard deviation
+function split_train_test(df, splitting_type::String)
+    if (splitting_type == "row")
+        train_data = df[1:floor(Int64,size(df,1)*3/4), :]
+        test_data = df[floor(Int64,size(df,1)*3/4)+1:size(df,1),:]
+    else
+        train_data = df[:, 1:floor(Int64,size(df,2)*3/4)]
+        test_data = df[:, floor(Int64,size(df,2)*3/4)+1:size(df,2)]
+    end
     
     train_data, test_data
 end
+
 
 function normalize(data::Array)
     dt = fit(UnitRangeTransform, data)
     data_norm = StatsBase.transform(dt, data)
     data_norm
 end
+
+
 
 

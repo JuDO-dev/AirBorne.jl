@@ -15,6 +15,8 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "High Level Design" => "./pages/highLevelDesign.md",
+        "Autodocs" => "./pages/autodocs.md",
     ],
 )
 

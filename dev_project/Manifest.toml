@@ -139,6 +139,12 @@ uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 deps = ["Libdl", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
+[[LiveServer]]
+deps = ["HTTP", "MIMEs", "Pkg", "Sockets"]
+git-tree-sha1 = "557e48aa71f59cedd2c079f2e82a7f4a14fb96ee"
+uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"
+version = "1.1.2"
+
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 

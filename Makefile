@@ -10,6 +10,12 @@ julia:
 juliaDoc:
 	julia --project=./docs
 
+doc:
+	julia --project=./docs ./docs/make.jl
+
+docDeploy:
+	julia --project=./dev_project  -e 'using LiveServer; serve(dir="docs/build",port=8000,host="0.0.0.0")'
+	
 sync:
 	julia --project=./project -e 'using Pkg; Pkg.instantiate()'
 

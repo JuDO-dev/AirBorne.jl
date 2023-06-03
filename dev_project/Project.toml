@@ -5,6 +5,7 @@ version = "1.0.0-DEV"
 
 [deps]
 AirBorne = "4a232ea9-7d1f-4dd8-a126-b47d2ae9e134"
+LiveServer = "16fef848-5104-11e9-1b77-fb7a48bbb589"
 Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
 
 [compat]

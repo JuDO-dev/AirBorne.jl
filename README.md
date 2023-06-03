@@ -33,3 +33,17 @@ julia> t("Pizza") # NB: without the ".jl" suffix
 2. Commit changes and push to origin*.
 
 *You may use [GitHub Desktop](https://desktop.github.com/).
+
+# Developer Notes
+This notes are meant for developers using the development environment provided in this repository.
+
+##### How to import package 
+Until package is released, the package can be locally imported by using 
+```bash
+develop "../AirBorne"
+```
+
+##### How to test connection to GitHub
+```bash
+ssh -T git@github.com
+```

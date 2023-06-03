@@ -1,7 +1,7 @@
-using Progradio
+using AirBorne
 using Documenter
 
-DocMeta.setdocmeta!(Progradio, :DocTestSetup, :(using Progradio); recursive=true)
+DocMeta.setdocmeta!(AirBorne, :DocTestSetup, :(using AirBorne); recursive=true)
 
 makedocs(;
     modules=[AirBorne],

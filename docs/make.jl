@@ -1,7 +1,10 @@
 using AirBorne
+using AirBorne.ETL
+using AirBorne.ETL.Quandl
 using Documenter
 
 DocMeta.setdocmeta!(AirBorne, :DocTestSetup, :(using AirBorne); recursive=true)
+Documenter.Writers.HTMLWriter.HTML(collapselevel=1)
 
 makedocs(;
     modules=[AirBorne],
@@ -15,9 +18,12 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        "High Level Design" => "./pages/highLevelDesign.md",
+        "High Level Design" => [
+            "Glossary" =>"./pages/highLevelDesign.md",
+            "Data Pipeline" => "./pages/etl/etl.md"
+            ],
         "Autodocs" => "./pages/autodocs.md",
-    ],
+    ]
 )
 
 deploydocs(;

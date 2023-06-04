@@ -1,5 +1,13 @@
+
 # High Level Design
 In this section definition for the main objects in this package are presented as well as an introduction to the main logic behind the structure of the package.
+
+## ETL Pipeline
+> ETL, standing for Extract, Transform and Load, is the process of combining data from multiple sources into a large central repository of data.
+> [What is ETL? (AWS)](https://aws.amazon.com/what-is/etl/)
+
+This package needs to have an ETL capability to retrieve and store financial data, for reproducibility and post-analytics purposes.
+
 
 ## Objects
 In this section we will describe the objects present in the package, some are related to physical and financial entities found in the real world. To ensure our definitions well aligned with the financial we leverage most of the definitions from well established financial entities and/or acadamic sources. In particular [**IG International Limited: Glossary of Trading Terms**](https://www.ig.com/en/glossary-trading-terms) is substantially used to support our definitions.

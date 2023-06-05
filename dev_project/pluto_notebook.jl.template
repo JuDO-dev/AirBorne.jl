@@ -1,0 +1,35 @@
+### A Pluto.jl notebook ###
+# v0.19.26
+
+using Markdown
+using InteractiveUtils
+
+# ╔═╡ 0d1ab65c-c840-11ed-2aa4-cdcc1a3695cd
+x=2+2
+
+# ╔═╡ 1f26b687-a9c3-4ce4-a03f-9dee266f6e78
+
+
+# ╔═╡ d7643c2c-526e-4e55-ad05-b663b5ce840e
+
+
+# ╔═╡ 00cd79b7-b2ac-4d33-8bbc-a9e7e6de8523
+
+
+# ╔═╡ 15a75b2a-be91-40bf-a913-b711af600685
+print(x)
+
+# ╔═╡ 0be3406a-6c6e-4c27-bc00-ad92badb2406
+
+
+# ╔═╡ 8a884e57-580f-43f4-8edd-ecc79c62ee81
+
+
+# ╔═╡ Cell order:
+# ╠═0d1ab65c-c840-11ed-2aa4-cdcc1a3695cd
+# ╠═1f26b687-a9c3-4ce4-a03f-9dee266f6e78
+# ╠═d7643c2c-526e-4e55-ad05-b663b5ce840e
+# ╠═00cd79b7-b2ac-4d33-8bbc-a9e7e6de8523
+# ╠═15a75b2a-be91-40bf-a913-b711af600685
+# ╠═0be3406a-6c6e-4c27-bc00-ad92badb2406
+# ╠═8a884e57-580f-43f4-8edd-ecc79c62ee81

@@ -1,5 +1,7 @@
 # Template for JuDO Packages
-![Dev status](https://github.com/github/docs/actions/workflows/CI.yml/badge.svg?branch=dev)
+<!-- TODO: Add status badge, will need Eric or Lucian for this as I do not have the permissions for this. -->
+<!-- Afterwards uncomment the code below to display the badge -->
+<!-- ![Dev status](https://github.com/github/docs/actions/workflows/CI.yml/badge.svg?branch=dev) -->
 
 ## Create GitHub Repository
 1. Start by clicking the green **'Use this template'** button;

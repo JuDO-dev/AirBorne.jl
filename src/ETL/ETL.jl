@@ -3,6 +3,6 @@
     connections, cache management and data transformations as part of the data pipeline.
 """
 module ETL
-
+include("./Quandl/Quandl.jl")
 
 end

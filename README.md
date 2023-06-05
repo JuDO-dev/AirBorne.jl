@@ -52,5 +52,5 @@ ssh -T git@github.com
 ##### Best practices for merging
 
 1. **Function docstrings**: Each function needs to be adequately documented, with inputs and outputs defined,
-2. **Object docstrings**: Each object needs to have a docstring explaining its function and what it represents
-3. **Respect unit tests**: Unit tests are put for a reason, make sure all pass before merging into a shared development branch.
+1. **Object docstrings**: Each object needs to have a docstring explaining its function and what it represents
+1. **Respect unit tests**: Unit tests are put for a reason, make sure all pass before merging into a shared development branch.

@@ -1,5 +1,6 @@
 using AirBorne
 using AirBorne.ETL
+using AirBorne.ETL.YFinance
 using Documenter
 
 DocMeta.setdocmeta!(AirBorne, :DocTestSetup, :(using AirBorne); recursive=true)

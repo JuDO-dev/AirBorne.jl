@@ -4,6 +4,5 @@
 """
 module ETL
 
-include("./Quandl/Quandl.jl")
 
 end

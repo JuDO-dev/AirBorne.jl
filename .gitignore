@@ -25,3 +25,4 @@ docs/site/
 # VSCode
 .vscode/
 .env
+dev_project/pluto_notebook.jl

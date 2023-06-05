@@ -1,4 +1,5 @@
 # Template for JuDO Packages
+![Dev status](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=dev)
 
 ## Create GitHub Repository
 1. Start by clicking the green **'Use this template'** button;

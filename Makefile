@@ -4,13 +4,14 @@ run:
 dev:
 	julia --project=./dev_project 
 
-julia:
+J:
 	julia --project=../AirBorne
  
-juliaDoc:
+docJ:
 	julia --project=./docs
 
 doc:
+	julia --project=./docs -e 'using Pkg; Pkg.develop(path="../AirBorne")' 
 	julia --project=./docs -e 'using Pkg; Pkg.instantiate()' 
 	julia --project=./docs ./docs/make.jl
 

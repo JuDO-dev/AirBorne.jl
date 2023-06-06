@@ -30,11 +30,8 @@ The features we aim to obtain with caching are the following:
 ### How does it work?
 First one needs a cache folder, which can be set by the environment variable `AIRBORNE_ROOT`. If this variable is not defined for Linux and MacOS it will defaulted to `/root/tmp/.AirBorne/.cache` whilst in windows it shall be `$HOME/.AirBorne/.cache"`.
 
-On said folder there will be many subdirectories, each one corresponding to a separate data bundle. A bundle is the most fundamental level of cache, that is composed by 3 elements. The data file, which is stored in Parquet Format, the specification file that is a JSON describing how to handle the file, and the archive subfolder containing previous iterations of the cached file.
+On said folder there will be many subdirectories, each one corresponding to a separate data bundle. A bundle is the most fundamental level of cache, that is composed by 3 elements. The data file, which is stored in Parquet Format, the metadata that is attached to the parquet file itself, and the archive subfolder containing previous iterations of the cached file.
 
-In order to be mindful of storage options to trim or flush the archive as well as the deletion of the bundle all together will be avaiable.
-
-Albeit this system can be improved it does satisfy the design guidelines of the feature aims.
 
 ## Supported schemas and file structure
 

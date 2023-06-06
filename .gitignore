@@ -26,3 +26,4 @@ docs/site/
 .vscode/
 .env
 dev_project/pluto_notebook.jl
+test/.test_cache123456789/

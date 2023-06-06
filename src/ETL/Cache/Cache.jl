@@ -14,10 +14,10 @@ export store_bundle
 export load_bundle
 export list_bundles
 
-#TODO: Add list_archives
+# TODO: 
+# - Add method to list archive (Best practice will be to enabled an optional keyword on list_bundle)
+# - Add method to load archive (Best practice will be to enabled an optional keyword on load_bundle) 
 
-# export get_cache_path
-# import Base.Sys as Sys 
 """
     hello_cache()
 

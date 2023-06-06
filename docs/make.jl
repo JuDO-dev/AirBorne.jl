@@ -2,6 +2,8 @@ using AirBorne
 using AirBorne.ETL
 using AirBorne.ETL.YFinance
 using AirBorne.ETL.Cache
+using AirBorne.Backtest
+using AirBorne.Backtest.DEDS
 using Documenter
 
 DocMeta.setdocmeta!(AirBorne, :DocTestSetup, :(using AirBorne); recursive=true)
@@ -21,7 +23,8 @@ makedocs(;
         "Home" => "index.md",
         "High Level Design" => [
             "Glossary" =>"./pages/highLevelDesign.md",
-            "Data Pipeline" => "./pages/etl/etl.md"
+            "Data Pipeline" => "./pages/etl/etl.md",
+            "Event Driven Simulation" => "./pages/backtesting/eventDrivenSimulation.md",
             ],
         "Autodocs" => "./pages/autodocs.md",
     ]

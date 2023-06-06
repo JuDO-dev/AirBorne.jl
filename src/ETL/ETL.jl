@@ -5,4 +5,6 @@
 module ETL
 
 include("./YFinance/YFinance.jl")
+include("./Cache/Cache.jl")
+
 end

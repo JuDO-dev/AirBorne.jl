@@ -17,6 +17,22 @@ Once the data is extracted it locally is formatted and cleaned to standarize the
 #### 3. Load
 Lastly the data is served into a variable accesible for the package and persisted in an efficient file format.
 
+## Cache Structure
+Caching is the local storage of information. Once data has been gathered from a datasource such as Yahoo Finance, Quandl or even simply loaded in memory from a file. Once can choose to store this data so that it can be efficiently retrieved once again by AirBorne.
+
+The features we aim to obtain with caching are the following:
+
+1. **I/O Speed**: Loading and storing data should be fast, faster than the average loading from a CSV or JSON file. And definitely faster than any API call. 
+2. **Intuitive**: Users should not have to struggle to retrieve data or store data, if possible this should be done seamlessly in the workflow of the user.
+3. **Version Controlled**: We all make mistakes and sometimes we would like to roll back changes made to our data. This should be possible to achieve.
+4. **Standarized**: Although is good to have ample formats available when it comes to storage is good to have standard file formats, this makes the data compliant with many algorithms as the algorithms will be designed with this standard in mind. This also greatly helps speed as the load and storage of data happen in a predefined manner.
+
+### How does it work?
+First one needs a cache folder, which can be set by the environment variable `AIRBORNE_ROOT`. If this variable is not defined for Linux and MacOS it will defaulted to `/root/tmp/.AirBorne/.cache` whilst in windows it shall be `$HOME/.AirBorne/.cache"`.
+
+On said folder there will be many subdirectories, each one corresponding to a separate data bundle. A bundle is the most fundamental level of cache, that is composed by 3 elements. The data file, which is stored in Parquet Format, the metadata that is attached to the parquet file itself, and the archive subfolder containing previous iterations of the cached file.
+
+
 ## Supported schemas and file structure
 
 ### OHLCV

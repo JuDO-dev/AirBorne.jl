@@ -1,0 +1,22 @@
+name: Spell Check
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  typos-check:
+    name: Spell Check with Typos
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1.8.5'
+        os:
+          - ubuntu-latest
+        arch:
+          - x64
+    steps:
+      - name: Checkout Actions Repository
+        uses: actions/checkout@v3
+      - name: Check spelling
+        uses: crate-ci/typos@v1.14.12

@@ -27,5 +27,3 @@ The objective of event driven simulation is to do calculations only when necessa
 This framework allows to have variable timewindows for the agent controlled dynamically by the agent himself.
 
 
-
-<!-- Current version of Documenter is 0.27 mermaid diagrams are available on the developing version of Documenter at master 0.28 -->

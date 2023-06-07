@@ -1,5 +1,9 @@
 # AirBorne
-[![CI](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml)
+[![CI](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml/badge.svg?branch=dev)](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml)
+
+<!-- TODO: Check the coverage badge once we have the coverage token secret set up -->
+
+[![Coverage](https://codecov.io/gh/ImperialCollegeLondon/AirBorne.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/ImperialCollegeLondon/AirBorne.jl)
 
 Welcome to the AirBorne a complete algorithmic trading framework for Julia. This package is currently under construction more documentation will be put forward soon.
 

@@ -5,7 +5,7 @@
 module DEDS
 
 """
-    DES module hello world
+    DEDS module hello world
 """
 function hello_deds()
     return "Hello D.E.D.S.!"
@@ -15,7 +15,8 @@ end
     Run DEDS simulation
 """
 function run()
-event_queue = [] # Potentially this can be inside context, so that the client can interact with it. Assuming the client is modelled through a Module.
+    event_queue = [] # Potentially this can be inside context, so that the client can interact with it. Assuming the client is modelled through a Module.
+    return event_queue
 end
 
 end

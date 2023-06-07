@@ -29,3 +29,9 @@ setgit:
 	git config --global user.name ${GITHUB_NAME}
 	git config --global github.user ${GITHUB_USERNAME}
 	git config --global credential.helper store
+
+lint-fix:
+	julia --project=./dev_project -e 'using JuliaFormatter;  format("./src")' 
+	
+lint:
+	julia --project=../AirBorne ./test/lint_test.jl

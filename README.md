@@ -1,41 +1,7 @@
-# Template for JuDO Packages
-<!-- TODO: Add status badge, will need Eric or Lucian for this as I do not have the permissions for this. -->
-<!-- Afterwards uncomment the code below to display the badge -->
-<!-- ![Dev status](https://github.com/github/docs/actions/workflows/CI.yml/badge.svg?branch=dev) -->
+# AirBorne
+[![CI](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml)
 
-## Create GitHub Repository
-1. Start by clicking the green **'Use this template'** button;
-2. Name your repository with the `.jl` suffix, like `Pizza.jl`;
-3. Decide on its visibility: `Public`/`Private`;
-4. Leave **'Include all branches'** unticked;
-5. Clone the repository to your machine* (e.g., inside `\Documents`).
-
-## Generate Julia Package
-1. Open Julia and create a package template by running:
-```julia 
-julia> using Pkg; Pkg.add("PkgTemplates");
-julia> using PkgTemplates
-julia> t = Template(
-    user="JuDO-dev",
-    dir=pwd(),
-    julia=v"1.6",
-    plugins=[
-        !License,
-        Git(branch="dev"),
-        GitHubActions(linux=true, x64=true, x86=true, extra_versions=[v"1.7", "nightly"]),
-        Codecov(),
-        Documenter{GitHubActions}()])
-```
-2. Generate the package files by running:
-```julia
-julia> t("Pizza") # NB: without the ".jl" suffix
-```
-
-## Assemble Julia Package
-1. Copy the contents of `Pizza` into `Pizza.jl`, overwritting `README.md`;
-2. Commit changes and push to origin*.
-
-*You may use [GitHub Desktop](https://desktop.github.com/).
+Welcome to the AirBorne a complete algorithmic trading framework for Julia. This package is currently under construction more documentation will be put forward soon.
 
 # Developer Notes
 This notes are meant for developers using the development environment provided in this repository.

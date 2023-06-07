@@ -7,7 +7,7 @@ using AirBorne.Backtest.DEDS
 using Documenter
 
 DocMeta.setdocmeta!(AirBorne, :DocTestSetup, :(using AirBorne); recursive=true)
-Documenter.Writers.HTMLWriter.HTML(collapselevel=1)
+Documenter.Writers.HTMLWriter.HTML(; collapselevel=1)
 
 makedocs(;
     modules=[AirBorne],
@@ -22,15 +22,12 @@ makedocs(;
     pages=[
         "Home" => "index.md",
         "High Level Design" => [
-            "Glossary" =>"./pages/highLevelDesign.md",
+            "Glossary" => "./pages/highLevelDesign.md",
             "Data Pipeline" => "./pages/etl/etl.md",
             "Event Driven Simulation" => "./pages/backtesting/eventDrivenSimulation.md",
-            ],
+        ],
         "Autodocs" => "./pages/autodocs.md",
-    ]
+    ],
 )
 
-deploydocs(;
-    repo="github.com/JuDO-dev/AirBorne.jl",
-    devbranch="dev",
-)
+deploydocs(; repo="github.com/JuDO-dev/AirBorne.jl", devbranch="dev")

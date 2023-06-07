@@ -1,4 +1,4 @@
 # import Pkg
-import Pluto
+using Pluto: Pluto
 
-Pluto.run(;host="0.0.0.0",port=8080)
+Pluto.run(; host="0.0.0.0", port=8080)

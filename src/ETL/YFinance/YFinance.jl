@@ -1,20 +1,19 @@
 
-
 """
     This modules provides an interface between AirBorne and Yahoo Finance API. 
 """
 module YFinance
-import HTTP
-import JSON
-import Dates
-import DataFrames
+using HTTP: HTTP
+using JSON: JSON
+using Dates: Dates
+using DataFrames: DataFrames
 
 export get_interday_data
 export hello_yfinance
 
-import Logging
+using Logging: Logging
 
-rate_limits=""""""
+rate_limits = """"""
 
 """
     hello_yfinance()
@@ -51,33 +50,35 @@ julia> r = AirBorne.ETL.YFinance.get_chart_data("AAPL","1577836800","1580515200"
 ```
 """
 function get_chart_data(symbol, period1, period2, freq)
-    
-    YAHOO_CHART_V8_URL="https://query1.finance.yahoo.com/v8/finance/chart/$symbol?"
-    params=Dict(
-        "period1"=>period1,
-        "period2"=>period2,
-        "interval"=>freq,
-        "events"=>"div%7Csplit",
-        "includePrePost "=>"true",
+    YAHOO_CHART_V8_URL = "https://query1.finance.yahoo.com/v8/finance/chart/$symbol?"
+    params = Dict(
+        "period1" => period1,
+        "period2" => period2,
+        "interval" => freq,
+        "events" => "div%7Csplit",
+        "includePrePost " => "true",
     )
-    url=YAHOO_CHART_V8_URL *  HTTP.URIs.escapeuri(params)
-    r=HTTP.request("GET",url)
+    url = YAHOO_CHART_V8_URL * HTTP.URIs.escapeuri(params)
+    r = HTTP.request("GET", url)
     return r
 end
 
 function parse_intraday_raw_data(r)
-    resp=deepcopy(r.body)
+    resp = deepcopy(r.body)
     resp_json = JSON.parse(String(resp))
     df = DataFrames.DataFrame(resp_json["chart"]["result"][1]["indicators"]["quote"][1])
     gmt_offset = resp_json["chart"]["result"][1]["meta"]["gmtoffset"]
     unix_timestamps_vector = resp_json["chart"]["result"][1]["timestamp"]
-    date_vector= [Dates.unix2datetime(x+gmt_offset) for x in resp_json["chart"]["result"][1]["timestamp"]]
-    df[:,:"date"]=date_vector
-    df[:,:"unix"]=unix_timestamps_vector
-    df[:,:"exchangeName"].=resp_json["chart"]["result"][1]["meta"]["exchangeName"]
-    df[:,:"timezone"].=resp_json["chart"]["result"][1]["meta"]["exchangeTimezoneName"]
-    df[:,:"currency"].=resp_json["chart"]["result"][1]["meta"]["currency"]
-    df[:,:"symbol"].=resp_json["chart"]["result"][1]["meta"]["symbol"]
+    date_vector = [
+        Dates.unix2datetime(x + gmt_offset) for
+        x in resp_json["chart"]["result"][1]["timestamp"]
+    ]
+    df[:, :"date"] = date_vector
+    df[:, :"unix"] = unix_timestamps_vector
+    df[:, :"exchangeName"] .= resp_json["chart"]["result"][1]["meta"]["exchangeName"]
+    df[:, :"timezone"] .= resp_json["chart"]["result"][1]["meta"]["exchangeTimezoneName"]
+    df[:, :"currency"] .= resp_json["chart"]["result"][1]["meta"]["currency"]
+    df[:, :"symbol"] .= resp_json["chart"]["result"][1]["meta"]["symbol"]
     return df
 end
 
@@ -98,13 +99,12 @@ data = AirBorne.ETL.YFinance.get_interday_data(["AAPL","GOOG"],"1577836800","158
 ```
 """
 function get_interday_data(symbols, period1, period2)
-    freq="1d"
-    df=DataFrames.DataFrame()
-    for ticker=symbols
+    freq = "1d"
+    df = DataFrames.DataFrame()
+    for ticker in symbols
         df = DataFrames.vcat(
-             df,
-             parse_intraday_raw_data(get_chart_data(ticker,period1,period2,freq))
-            )   
+            df, parse_intraday_raw_data(get_chart_data(ticker, period1, period2, freq))
+        )
     end
     return df
 end

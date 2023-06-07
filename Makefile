@@ -31,7 +31,7 @@ setgit:
 	git config --global credential.helper store
 
 lint-fix:
-	julia --project=./dev_project -e 'using JuliaFormatter;  format("./src")' 
+	julia --project=./dev_project -e 'using JuliaFormatter;  format(".")' 
 	
 lint:
-	julia --project=../AirBorne ./test/lint_test.jl
+	julia --project=./dev_project ./dev_project/lint_test.jl

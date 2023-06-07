@@ -12,7 +12,7 @@ uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 version = "3.6.2"
 
 [[AirBorne]]
-deps = ["CSV", "DataFrames", "Dates", "HTTP", "JSON", "Logging", "Parquet2"]
+deps = ["CSV", "DataFrames", "Dates", "DeepDiffs", "HTTP", "JSON", "JuliaFormatter", "Logging", "Parquet2"]
 path = ".."
 uuid = "4a232ea9-7d1f-4dd8-a126-b47d2ae9e134"
 version = "1.0.0-DEV"
@@ -189,6 +189,11 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "e9a8da19f847bbfed4076071f6fef8665a30d9e5"
 uuid = "47200ebd-12ce-5be5-abb7-8e082af23329"
 version = "2.0.3+1"
+
+[[DeepDiffs]]
+git-tree-sha1 = "9824894295b62a6a4ab6adf1c7bf337b3a9ca34c"
+uuid = "ab62b9b5-e342-54a8-a765-a90f495de1a6"
+version = "1.2.0"
 
 [[DefineSingletons]]
 git-tree-sha1 = "0fba8b706d0178b4dc7fd44a96a92382c9065c2c"

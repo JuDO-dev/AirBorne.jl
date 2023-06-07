@@ -1,2 +1,2 @@
 style = "blue"
-ignore = ["*src/prev_files*","*dev_project*","*test/prev_files*"]
+ignore = ["*src/prev_files*","*dev_project/pluto_notebook*","*test/prev_files*"]

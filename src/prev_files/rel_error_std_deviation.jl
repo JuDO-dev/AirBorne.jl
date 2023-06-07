@@ -8,7 +8,7 @@ export std_deviation
 
 #This function predicts prices on a moving window, calculates the errors and then outputs the standard deviation
 
-"""Test data in this case referes to the amount of data used to calculate the standard deviation
+"""Test data in this case refers to the amount of data used to calculate the standard deviation
 Test data is considered to be 1/3 of the sample size
 The amount of data to be used for training is a PARAMETER that would be optimized
     This function can directly be used for plotting"""

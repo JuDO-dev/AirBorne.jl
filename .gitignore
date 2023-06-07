@@ -27,3 +27,5 @@ docs/site/
 .env
 dev_project/pluto_notebook.jl
 test/.test_cache123456789/
+test/temp/
+dev_project/temp/

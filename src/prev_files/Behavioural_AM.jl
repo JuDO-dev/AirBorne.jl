@@ -121,7 +121,7 @@ function behavioural_prediction_new(data::Array, optimization_set::Array, valida
     #This extra prediction is disregarded later
     empty_array = Array{Float64}(undef, size(validation_set,2)+1, step_ahead_preds)
 
-    #To be able to solve mising data estimation problem, some data is used for the 
+    #To be able to solve missing data estimation problem, some data is used for the 
     #least squares estimate of the parameters, and such amount of data is dependent on the depth of the 
     #Hankel matrix. The depth is also one of the parameters to be optimized. w_given is the data used for 
     #least squares estimation

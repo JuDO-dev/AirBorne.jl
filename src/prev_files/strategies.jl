@@ -2,7 +2,7 @@
 
 using Noise
 
-function basic_strategy(adj_close_test_new, clean_new, threshhold)
+function basic_strategy(adj_close_test_new, clean_new, threshold)
 """This function represents the long-sell basic strategy, the idea of the strategy is to buy when
 the next predicted price is above the threshold, sells if the predicted price is less than the current
 price, and hold otherwise.
@@ -10,7 +10,7 @@ price, and hold otherwise.
 Parameters: 
     adj_close_test_new: The actual prices for the chosen data set.
     clean_new: The predicted prices corresponding the the actual prices.
-    threshhold: The precentage that represents the minimum increase amount for the strategy to buy.
+    threshold: The percentage that represents the minimum increase amount for the strategy to buy.
     
 Returns:
     nlv: Net Liquid Value.
@@ -29,7 +29,7 @@ Returns:
     # Initial stock
     global stock_in_possession = 0.0
     global current_price = adj_close_test_new[1]
-    global threshhold_g = threshhold
+    global threshold_g = threshold
     global return_percent_vec = Vector{Float64}()
     global market_return_vec = Vector{Float64}()
     global commission = 0.002
@@ -42,7 +42,7 @@ Returns:
         global next_predicted_price = clean_new[i+1]
         @objective(decision, Max, d * (next_predicted_price - current_price))
         expected_return_percentage = (next_predicted_price - current_price) / current_price
-        if (expected_return_percentage > 0 && expected_return_percentage < threshhold_g)
+        if (expected_return_percentage > 0 && expected_return_percentage < threshold_g)
             @constraint(decision, c1, d == 0)
         end
         set_optimizer_attribute(decision, "output_flag", false)

@@ -5,7 +5,16 @@ version = "1.0.0-DEV"
 
 [deps]
 AirBorne = "4a232ea9-7d1f-4dd8-a126-b47d2ae9e134"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DeepDiffs = "ab62b9b5-e342-54a8-a765-a90f495de1a6"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
 LiveServer = "16fef848-5104-11e9-1b77-fb7a48bbb589"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+Parquet2 = "98572fba-bba0-415d-956f-fa77e587d26d"
 Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
 
 [compat]

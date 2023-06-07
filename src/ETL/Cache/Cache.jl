@@ -4,9 +4,9 @@
     - Definition of data storage formats
 """
 module Cache
-import DataFrames
-import Parquet2
-import Dates
+using DataFrames: DataFrames
+using Parquet2: Parquet2
+using Dates: Dates
 
 export hello_cache
 export get_cache_path
@@ -33,8 +33,8 @@ end
     Generates an id based on the current UTC timestamp with format "yyyy_mm_dd_H_M_S_s"
 """
 function gen_id()
-    return Dates.format(Dates.now(Dates.UTC),"yyyy_mm_dd_H_M_S_s") 
- end
+    return Dates.format(Dates.now(Dates.UTC), "yyyy_mm_dd_H_M_S_s")
+end
 
 """
      get_cache_path()
@@ -46,12 +46,12 @@ function gen_id()
     ```
 """
 function get_cache_path()
-    cache_path=get(ENV,"AIRBORNE_ROOT",nothing)
+    cache_path = get(ENV, "AIRBORNE_ROOT", nothing)
     if !(isnothing(cache_path))
         return cache_path
-    elseif (Sys.islinux()) ||  (Sys.isapple()) 
+    elseif (Sys.islinux()) || (Sys.isapple())
         return "/root/tmp/.AirBorne/.cache"
-    elseif Sys.iswindows() 
+    elseif Sys.iswindows()
         return "$(ENV["HOME"])/.AirBorne/.cache"
     end
 end
@@ -63,40 +63,50 @@ end
 
     **Is very important that none of the columns are of type "Any"** as the storage for this column type is not defined.
 """
-function store_bundle(data::DataFrames.DataFrame; bundle_id::Union{Nothing, String}=nothing, archive::Bool=true, meta::Dict=Dict(), c_meta::Dict=Dict())
+function store_bundle(
+    data::DataFrames.DataFrame;
+    bundle_id::Union{Nothing,String}=nothing,
+    archive::Bool=true,
+    meta::Dict=Dict(),
+    c_meta::Dict=Dict(),
+)
     # Define directories
-    cache_dir=get_cache_path()
-    bundle_id= !(isnothing(bundle_id)) ? bundle_id : gen_id()
-    bundle_dir= joinpath(cache_dir,bundle_id)
-    archive_dir= joinpath(bundle_dir,"archive")
-    
-    
+    cache_dir = get_cache_path()
+    bundle_id = !(isnothing(bundle_id)) ? bundle_id : gen_id()
+    bundle_dir = joinpath(cache_dir, bundle_id)
+    archive_dir = joinpath(bundle_dir, "archive")
+
     # Ensure directories exist
     if !(isdir(archive_dir))
-       mkpath(archive_dir) 
+        mkpath(archive_dir)
     end
 
     if !(isdir(bundle_dir))
-       mkpath(bundle_dir) 
+        mkpath(bundle_dir)
     end
 
     # Move current contents to archive
-    contents=readdir(bundle_dir)
-    files_to_archive = [c for c in contents if c!="archive"]
-    for files_to_archive=files_to_archive
+    contents = readdir(bundle_dir)
+    files_to_archive = [c for c in contents if c != "archive"]
+    for files_to_archive in files_to_archive
         if archive
-        mv(joinpath( bundle_dir,files_to_archive),joinpath(archive_dir,files_to_archive))
+            mv(
+                joinpath(bundle_dir, files_to_archive),
+                joinpath(archive_dir, files_to_archive),
+            )
         else
-        @info("Removing $(joinpath( bundle_dir,files_to_archive))")
-        rm(joinpath( bundle_dir,files_to_archive))
+            @info("Removing $(joinpath( bundle_dir,files_to_archive))")
+            rm(joinpath(bundle_dir, files_to_archive))
         end
     end
 
     # Write file
-    file_path = joinpath( bundle_dir, gen_id() * ".parq.snappy")
-    
+    file_path = joinpath(bundle_dir, gen_id() * ".parq.snappy")
+
     @info("Storing $file_path")
-    Parquet2.writefile(file_path, data;compression_codec=:snappy, metadata=meta, column_metadata=c_meta)
+    return Parquet2.writefile(
+        file_path, data; compression_codec=:snappy, metadata=meta, column_metadata=c_meta
+    )
 end
 
 """
@@ -108,22 +118,21 @@ end
     DataFrames.DataFrame
 """
 function load_bundle(bundle_id::String)
-    cache_dir=get_cache_path()
-    bundle_dir= joinpath(cache_dir,bundle_id)
+    cache_dir = get_cache_path()
+    bundle_dir = joinpath(cache_dir, bundle_id)
     if !(isdir(bundle_dir))
-      throw(error("Bundle does not exist.")) 
+        throw(error("Bundle does not exist."))
     end
-    contents=readdir(bundle_dir)
-    contents_to_read = [c for c in contents if c!="archive"]
-    if size(contents_to_read)[1]!=1
-        throw(error("$(size(contents_to_read)[1]) files found in bundle directory.")) 
+    contents = readdir(bundle_dir)
+    contents_to_read = [c for c in contents if c != "archive"]
+    if size(contents_to_read)[1] != 1
+        throw(error("$(size(contents_to_read)[1]) files found in bundle directory."))
     end
-    file_path = joinpath(bundle_dir,contents_to_read[1])
+    file_path = joinpath(bundle_dir, contents_to_read[1])
     ds = Parquet2.Dataset(file_path) # Create a dataset
     df = DataFrames.DataFrame(ds; copycols=false) # Load from dataframed
     return df
 end
-
 
 """
     list_bundles()
@@ -134,7 +143,7 @@ end
     format of data in bundle among relevant metadata.
 """
 function list_bundles()
-    return readdir(get_cache_path(), sort=false)
+    return readdir(get_cache_path(); sort=false)
 end
 
 """
@@ -144,15 +153,14 @@ end
 """
 function remove_bundle(bundle_id::String; just_archive::Bool=false)
     # Define directories
-    cache_dir=get_cache_path()
-    bundle_dir= joinpath(cache_dir,bundle_id)
-    archive_dir= joinpath(bundle_dir,"archive")
-    if (just_archive) && (isdir(archive_dir)) 
+    cache_dir = get_cache_path()
+    bundle_dir = joinpath(cache_dir, bundle_id)
+    archive_dir = joinpath(bundle_dir, "archive")
+    if (just_archive) && (isdir(archive_dir))
         rm(archive_dir; recursive=true)
     elseif !(just_archive) && (isdir(bundle_dir))
         rm(bundle_dir; recursive=true)
     end
 end
-
 
 end

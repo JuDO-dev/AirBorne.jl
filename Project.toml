@@ -13,9 +13,10 @@ Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 Parquet2 = "98572fba-bba0-415d-956f-fa77e587d26d"
 
 [compat]
+CSV = "0.10"
+DataFrames = "1"
 HTTP = "1"
 JSON = "0.21"
-DataFrames = "1"
 julia = "1"
 
 [extras]

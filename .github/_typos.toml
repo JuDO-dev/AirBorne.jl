@@ -1,2 +1,2 @@
 [files]
-extend-exclude = ["*Manifest.toml","*Project.toml","Makefile"]
+extend-exclude = ["*Manifest.toml","*Project.toml","*Makefile"]

@@ -18,10 +18,10 @@ function MADS_basic_strategy_profit(params)
     data_size = convert(Int64, params[3])
     sample_frequency = convert(Int64, params[4])
     ahead_predictions = convert(Int64, params[5])
-    threshhold = params[6]
+    threshold = params[6]
     decision_interval = convert(Int64, params[7])
 
-    println("L: $L, frequency: $sample_frequency, step ahead = $ahead_predictions, gamma = $gamma, data_size = $data_size, threshhold = $threshhold")
+    println("L: $L, frequency: $sample_frequency, step ahead = $ahead_predictions, gamma = $gamma, data_size = $data_size, threshold = $threshold")
 
     stocks = "PYPL"
     start_date = "2002-01-01"
@@ -35,7 +35,7 @@ function MADS_basic_strategy_profit(params)
 
     println(size(predictions))
     println(size(validation_set))
-    profit, return_percent_vec, positive_return_probability = basic_strategy(validation_set[:, 1:end-1], predictions[1:end-1, :], threshhold)
+    profit, return_percent_vec, positive_return_probability = basic_strategy(validation_set[:, 1:end-1], predictions[1:end-1, :], threshold)
 
     return -1 * positive_return_probability
 end

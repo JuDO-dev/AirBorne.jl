@@ -52,9 +52,9 @@ AddExtremeConstraint(p, cons_ahead_preds)
 cons_ahead_preds2(x) = x[5] < x[1]
 AddExtremeConstraint(p, cons_ahead_preds2)
 
-#constraints on threshhold
-cons_threshhold(x) = x[6] >= 0
-AddExtremeConstraint(p, cons_threshhold)
+#constraints on threshold
+cons_threshold(x) = x[6] >= 0
+AddExtremeConstraint(p, cons_threshold)
 
 #constraints on decision taking interval
 cons_decision_interval(x) = x[7] == 1

@@ -1,7 +1,7 @@
 
 # Backtesting and Event Driven Simulation
 
-In this section the main principles guiding the Event Driven Simulation engine used for backtesting is layed out.
+In this section the main principles guiding the Event Driven Simulation engine used for backtesting is laid out.
 
 ### Guiding Principles
 The driving principles for backtesting are the following:
@@ -14,7 +14,7 @@ The driving principles for backtesting are the following:
 The objective of event driven simulation is to do calculations only when necessary and making them as small as possible whilst at the same time having as many simulation points as needed to achieve realism.
 
 1. Simulation starts by defining the **event_queue** which is a list of events, each event carries with them a timestamp and some minimal metadata that determines the workflow of the simulation.
-1. At the beggining of the routine a special event called **initialization_event** is defined and added to the queue starting the simulation.
+1. At the beginning of the routine a special event called **initialization_event** is defined and added to the queue starting the simulation.
 1. At the **initialization_event** the **initialize** method of the agent is called.
     2. During this stage the agent should decide how often the market(s) sends him data by either specifying a frequency or scheduling a future **release_data_event** event for a particular market(s).
     2. During this stage a Dictionary **context** will be created, this variable will be propagated throughout the simulation./

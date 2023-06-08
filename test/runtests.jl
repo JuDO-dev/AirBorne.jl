@@ -3,17 +3,29 @@ using Test
 
 @testset "AirBorne.jl" begin
     # Sanity check
-    @test AirBorne.hello_world() == "Hello World!"
-    @test AirBorne.ETL.YFinance.hello_yfinance() == "Hello YFinance!"
-    @test AirBorne.ETL.Cache.hello_cache() == "Hello Cache!"
-    @test AirBorne.Backtest.DEDS.hello_deds() == "Hello D.E.D.S.!"
+    @testset "Hello Worlds" begin
+        @test AirBorne.hello_world() == "Hello World!"
+        @test AirBorne.ETL.YFinance.hello_yfinance() == "Hello YFinance!"
+        @test AirBorne.ETL.Cache.hello_cache() == "Hello Cache!"
+        @test AirBorne.Backtest.DEDS.hello_deds() == "Hello D.E.D.S.!"
+    end
 
-    using Parquet2: Parquet2
-    using DataFrames: DataFrames
-    asset_dir = joinpath(@__DIR__, "assets")
+    @testset "AirBorne.ETL.YFinance" begin
+        using Dates: Dates
+        from = Dates.DateTime("2022-01-01")
+        to = Dates.DateTime("2022-02-01")
+        u_from = string(round(Int, Dates.datetime2unix(from)))
+        u_to = string(round(Int, Dates.datetime2unix(to)))
+        r = AirBorne.ETL.YFinance.get_interday_data(["AAPL"], u_from, u_to)
+        @test size(r) == (20, 11)
+    end
+
     @testset "AirBorne.ETL.Cache" begin
         # Sanity check
 
+        using Parquet2: Parquet2
+        using DataFrames: DataFrames
+        asset_dir = joinpath(@__DIR__, "assets")
         # Test caching capabilities
         # 1. Load data
         temp_mem = deepcopy(get(ENV, "AIRBORNE_ROOT", nothing)) # Make a copy

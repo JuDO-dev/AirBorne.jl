@@ -81,10 +81,6 @@ function store_bundle(
         mkpath(archive_dir)
     end
 
-    if !(isdir(bundle_dir))
-        mkpath(bundle_dir)
-    end
-
     # Move current contents to archive
     contents = readdir(bundle_dir)
     files_to_archive = [c for c in contents if c != "archive"]
@@ -121,12 +117,14 @@ function load_bundle(bundle_id::String)
     cache_dir = get_cache_path()
     bundle_dir = joinpath(cache_dir, bundle_id)
     if !(isdir(bundle_dir))
-        throw(error("Bundle does not exist."))
+        throw(ErrorException("Bundle does not exist."))
     end
     contents = readdir(bundle_dir)
     contents_to_read = [c for c in contents if c != "archive"]
     if size(contents_to_read)[1] != 1
-        throw(error("$(size(contents_to_read)[1]) files found in bundle directory."))
+        throw(
+            ErrorException("$(size(contents_to_read)[1]) files found in bundle directory.")
+        )
     end
     file_path = joinpath(bundle_dir, contents_to_read[1])
     ds = Parquet2.Dataset(file_path) # Create a dataset

@@ -27,6 +27,7 @@ makedocs(;
             "Event Driven Simulation" => "./pages/backtesting/eventDrivenSimulation.md",
         ],
         "Autodocs" => "./pages/autodocs.md",
+        "Contribution Guidelines" => "./pages/contributionGuidelines.md",
     ],
 )
 

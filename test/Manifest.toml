@@ -2,7 +2,7 @@
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "2a45852ec4dd092cd9170cc6100b7ca0af454349"
+project_hash = "559bee0ebcf11d728a828043393193704e16bcce"
 
 [[deps.AbstractTrees]]
 git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
@@ -14,6 +14,12 @@ deps = ["LinearAlgebra", "Requires"]
 git-tree-sha1 = "76289dc51920fdc6e0013c872ba9551d54961c24"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 version = "3.6.2"
+
+[[deps.AirBorne]]
+deps = ["CSV", "DataFrames", "Dates", "DotMaps", "HTTP", "JSON", "Logging", "Parquet2"]
+path = ".."
+uuid = "4a232ea9-7d1f-4dd8-a126-b47d2ae9e134"
+version = "1.0.0-DEV"
 
 [[deps.ArgCheck]]
 git-tree-sha1 = "a3a402a35a2f7e0b87828ccabbd5ebfbebe356b4"
@@ -169,6 +175,11 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "e9a8da19f847bbfed4076071f6fef8665a30d9e5"
 uuid = "47200ebd-12ce-5be5-abb7-8e082af23329"
 version = "2.0.3+1"
+
+[[deps.DeepDiffs]]
+git-tree-sha1 = "9824894295b62a6a4ab6adf1c7bf337b3a9ca34c"
+uuid = "ab62b9b5-e342-54a8-a765-a90f495de1a6"
+version = "1.2.0"
 
 [[deps.DefineSingletons]]
 git-tree-sha1 = "0fba8b706d0178b4dc7fd44a96a92382c9065c2c"
@@ -620,6 +631,12 @@ version = "1.10.1"
 [[deps.Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[[deps.TestSetExtensions]]
+deps = ["DeepDiffs", "Distributed", "Test"]
+git-tree-sha1 = "3a2919a78b04c29a1a57b05e1618e473162b15d0"
+uuid = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
+version = "2.0.0"
 
 [[deps.Thrift2]]
 deps = ["MacroTools", "OrderedCollections", "PrecompileTools"]

@@ -13,12 +13,13 @@ export hello_yfinance
 
 using Logging: Logging
 
+# TODO: Find Rate Limits for Yahoo Finance
 rate_limits = """"""
 
 """
     hello_yfinance()
 
-Returns a string saying "Hello YFinance!".
+    s a string saying "Hello YFinance!".
 """
 function hello_yfinance()
     return "Hello YFinance!"
@@ -29,25 +30,25 @@ urlencode(x) = HTTP.URIs.escapeuri(x)
 """
     get_chart_data(symbol, period1, period2, freq)
 
-This function calls the Yahoo chart API to get the OHCLV data.
-The documentation for this function is based on [CryptoCoinTracker's guide](https://cryptocointracker.com/yahoo-finance/yahoo-finance-api#34a6032b7b9949a1876f4568e4961afd).
+    This function calls the Yahoo chart API to get the OHCLV data.
+    The documentation for this function is based on [CryptoCoinTracker's guide](https://cryptocointracker.com/yahoo-finance/yahoo-finance-api#34a6032b7b9949a1876f4568e4961afd).
 
-# Arguments
+    # Arguments
 
-- `symbol::String`:  Ticker Symbol
-- `period1::String`:  UNIX Timestamp indicating the start of the data requested
-- `period2::String`:  UNIX Timestamp indicating the end time of the data requested 
-- `freq::String`: The time interval between two data points. Can be 1m 2m 5m 15m 30m 60m 90m 1h 1d 5d 1wk 1mo 3mo.
+    - `symbol::String`:  Ticker Symbol
+    - `period1::String`:  UNIX Timestamp indicating the start of the data requested
+    - `period2::String`:  UNIX Timestamp indicating the end time of the data requested 
+    - `freq::String`: The time interval between two data points. Can be 1m 2m 5m 15m 30m 60m 90m 1h 1d 5d 1wk 1mo 3mo.
 
-# Returns
-- r::HTTP.Messages.Response
+    # Returns
+    - r::HTTP.Messages.Response
 
-# Examples
-```julia
-# This example is untestable as it requires internet connection.
-julia> import AirBorne
-julia> r = AirBorne.ETL.YFinance.get_chart_data("AAPL","1577836800","1580515200","1d")
-```
+    # Examples
+    ```julia
+    # This example is untestable as it requires internet connection.
+    julia> import AirBorne
+    julia> r = AirBorne.ETL.YFinance.get_chart_data("AAPL","1577836800","1580515200","1d")
+    ```
 """
 function get_chart_data(symbol, period1, period2, freq)
     YAHOO_CHART_V8_URL = "https://query1.finance.yahoo.com/v8/finance/chart/$symbol?"
@@ -79,30 +80,30 @@ function parse_intraday_raw_data(r)
     df[:, :"timezone"] .= resp_json["chart"]["result"][1]["meta"]["exchangeTimezoneName"]
     df[:, :"currency"] .= resp_json["chart"]["result"][1]["meta"]["currency"]
     df[:, :"symbol"] .= resp_json["chart"]["result"][1]["meta"]["symbol"]
-    df[:,:close]=float.(df[!,:close])
-    df[:,:high]=float.(df[!,:high])
-    df[:,:low]=float.(df[!,:low])
-    df[:,:open]=float.(df[!,:open])
-    df[:,:unix]=Int.(df[!,:unix])
-    df[:,:volume]=Int.(df[!,:volume])
+    df[:, :close] = float.(df[!, :close])
+    df[:, :high] = float.(df[!, :high])
+    df[:, :low] = float.(df[!, :low])
+    df[:, :open] = float.(df[!, :open])
+    df[:, :unix] = Int.(df[!, :unix])
+    df[:, :volume] = Int.(df[!, :volume])
     return df
 end
 
 """
     function get_interday_data(symbols, period1, period2)
 
-Use this function to get interday data for different tickers from Yahoo charts API.
+    Use this function to get interday data for different tickers from Yahoo charts API.
 
-# Arguments
-- `symbols::String`:  Ticker Symbol
-- `period1::String`:  UNIX Timestamp indicating the start of the data requested
-- `period2::String`:  UNIX Timestamp indicating the end time of the data requested 
+    # Arguments
+    - `symbols::String`:  Ticker Symbol
+    - `period1::String`:  UNIX Timestamp indicating the start of the data requested
+    - `period2::String`:  UNIX Timestamp indicating the end time of the data requested 
 
-# Example
-```julia
-import AirBorne
-data = AirBorne.ETL.YFinance.get_interday_data(["AAPL","GOOG"],"1577836800","1580515200")
-```
+    # Example
+    ```julia
+    import AirBorne
+    data = AirBorne.ETL.YFinance.get_interday_data(["AAPL","GOOG"],"1577836800","1580515200")
+    ```
 """
 function get_interday_data(symbols, period1, period2)
     freq = "1d"

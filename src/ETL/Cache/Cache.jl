@@ -113,8 +113,8 @@ end
     # Returns
     DataFrames.DataFrame
 """
-function load_bundle(bundle_id::String)
-    cache_dir = get_cache_path()
+function load_bundle(bundle_id::String; cache_dir::Union{String,Nothing}=nothing)
+    cache_dir = isnothing(cache_dir) ? get_cache_path() : cache_dir
     bundle_dir = joinpath(cache_dir, bundle_id)
     if !(isdir(bundle_dir))
         throw(ErrorException("Bundle does not exist."))

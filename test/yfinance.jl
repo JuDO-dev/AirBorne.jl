@@ -9,4 +9,3 @@ using Test
     r = AirBorne.ETL.YFinance.get_interday_data(["AAPL"], u_from, u_to)
     @test size(r) == (20, 11)
 end
-

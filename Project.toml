@@ -12,6 +12,7 @@ HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 Parquet2 = "98572fba-bba0-415d-956f-fa77e587d26d"
+Pipe = "b98c9c47-44ae-5843-9183-064241ee97a0"
 
 [compat]
 CSV = "0.10"
@@ -20,4 +21,3 @@ HTTP = "1"
 JSON = "0.21"
 Parquet2 = "0.2"
 julia = "1"
-

@@ -27,8 +27,33 @@ develop "../AirBorne"
 ```
 
 ##### How to test connection to GitHub
+For some operations connection to GitHub may be required, to test your SSH connection in the console use the command below: 
 ```bash
 ssh -T git@github.com
 ```
+##### How to perform unit tests efficiently
+Unit testing when executed for the first time takes long, most of the time is taken in compilation. This formula will let you compile once and then execute tests rapidly.
+
+First open a console in the testing environment.
+```bash
+make testJ
+```
+
+Then execute the following three commands in the newly open Julia console:
+```julia
+using Revise
+# dev "../AirBorne" # In Pkg REPL
+include("test/runtests.jl")
+
+# To execute a single test just use the command below and replace 
+# test_file by the name of the file containing the test you want to run.
+# include("test/test_file.jl")
+# include("test/backtest_A.jl")
+```
+1. `using Revise`
+2. Open the Pkg REPL using `]` and type: `dev "../AirBorne"`
+3. Go back using backspace and use `include("test/runtests.jl")`
+
+Now anytime you want to test your code again type `include("test/runtests.jl")` (or just use the up arrow to select the last command that ran).
 
 

@@ -1,9 +1,13 @@
 using AirBorne
+using AirBorne.Utils
+using AirBorne.Structures
 using AirBorne.ETL
 using AirBorne.ETL.YFinance
 using AirBorne.ETL.Cache
-using AirBorne.Backtest
-using AirBorne.Backtest.DEDS
+using AirBorne.Engines
+using AirBorne.Engines.DEDS
+using AirBorne.Markets
+using AirBorne.Markets.StaticMarket
 using Documenter
 
 DocMeta.setdocmeta!(AirBorne, :DocTestSetup, :(using AirBorne); recursive=true)

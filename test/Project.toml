@@ -1,5 +1,7 @@
 [deps]
 AirBorne = "4a232ea9-7d1f-4dd8-a126-b47d2ae9e134"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DotMaps = "98454f44-f182-4945-8d34-ddde53e72162"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"

@@ -1,6 +1,11 @@
 
 """
     This modules provides an interface between AirBorne and Yahoo Finance API. 
+
+    For ForEx to obtain 5m definition the requested range must be within the last 60 days.
+
+    To requrest ForEx data replace the ticker by `codeA*codeB*"=X"` i.e. to obtain the ForEx of USD and GBP the 
+    ticker must be "USDGBP=X".
 """
 module YFinance
 using HTTP: HTTP
@@ -93,7 +98,6 @@ end
     function get_interday_data(symbols, period1, period2)
 
     Use this function to get interday data for different tickers from Yahoo charts API.
-
     # Arguments
     - `symbols::String`:  Ticker Symbol
     - `period1::String`:  UNIX Timestamp indicating the start of the data requested

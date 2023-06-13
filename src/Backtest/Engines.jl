@@ -1,8 +1,8 @@
 """
     This modules centralizes all features for strategy backtesting including different simulation archetypes.
 """
-module Backtest
+module Engines
 
-include("./DEDS/DEDS.jl")
+include("./engines/DEDS.jl")
 
 end

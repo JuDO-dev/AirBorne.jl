@@ -1,8 +1,10 @@
 module AirBorne
-
-export hello_world
-
+# Order of includes is important. Submodules that have dependencies 
+# should be included first.
 include("./utils/utils.jl")
+
+include("./Backtest/Structures.jl")
+include("./Backtest/Engines.jl")
+include("./Backtest/Markets.jl")
 include("./ETL/ETL.jl")
-include("./Backtest/Backtest.jl")
 end

@@ -1,11 +1,17 @@
 run:
-	julia --project=../AirBorne -e 'using Pkg;  Pkg.activate("../AirBorne"); Pkg.test()'
+	julia --project=./test --color=yes test/runtests.jl
+
+local:
+	julia --project=./dev_project ./dev_project/local.jl
 
 dev:
 	julia --project=./dev_project 
 
 J:
 	julia --project=../AirBorne
+
+testJ:
+	julia --project=./test
  
 docJ:
 	julia --project=./docs

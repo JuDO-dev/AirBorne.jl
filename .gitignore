@@ -29,3 +29,5 @@ dev_project/pluto_notebook.jl
 test/.test_cache123456789/
 test/temp/
 dev_project/temp/
+dev_project/local.jl
+.cache/

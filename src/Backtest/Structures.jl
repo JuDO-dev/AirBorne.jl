@@ -9,7 +9,7 @@ struct TimeEvent
     type::String
 end
 
-function lenght(::TimeEvent)
+function length(::TimeEvent)
     return 1
 end
 

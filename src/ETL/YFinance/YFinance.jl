@@ -4,7 +4,7 @@
 
     For ForEx to obtain 5m definition the requested range must be within the last 60 days.
 
-    To requrest ForEx data replace the ticker by `codeA*codeB*"=X"` i.e. to obtain the ForEx of USD and GBP the 
+    To request ForEx data replace the ticker by `codeA*codeB*"=X"` i.e. to obtain the ForEx of USD and GBP the 
     ticker must be "USDGBP=X".
 """
 module YFinance

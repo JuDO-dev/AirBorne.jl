@@ -26,4 +26,11 @@ The objective of event driven simulation is to do calculations only when necessa
 
 This framework allows to have variable timewindows for the agent controlled dynamically by the agent himself.
 
+## Engines
 
+### DEDS
+Deterministic Event Driven Simulation (DEDS) is an engine that executes a series of events where a **Market** and a **User** interact with each other. The simulation iterates over a series of events allowing the user to retrieve data from the market and place orders, then the market executes the orders in between consecutive events.
+
+Below one can appreciate the logic behind the [`AirBorne.Engines.DEDS.run`](@ref) function, which is the run method for the DEDS engine.
+
+![DEDS_run](./figures/DEDS_run.svg)

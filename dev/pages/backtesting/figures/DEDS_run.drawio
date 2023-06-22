@@ -1,0 +1,151 @@
+<mxfile host="app.diagrams.net" modified="2023-06-22T11:47:09.254Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" etag="L5YJFDKKjHi_cpSaOYKf" version="21.5.0" type="device">
+  <diagram id="6a731a19-8d31-9384-78a2-239565b7b9f0" name="Page-1">
+    <mxGraphModel dx="485" dy="671" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-72" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="110" y="40" width="870" height="950" as="geometry" />
+        </mxCell>
+        <mxCell id="2" value="start" style="shape=mxgraph.flowchart.terminator;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" parent="1" vertex="1">
+          <mxGeometry x="260" y="60" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="Prepare data,&lt;br&gt;define context" style="shape=mxgraph.flowchart.data;strokeWidth=2;gradientDirection=north;fontStyle=0;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="240.5" y="130" width="159" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="Market:&lt;br&gt;prepareData&lt;br&gt;(context,data)&amp;nbsp;" style="shape=mxgraph.flowchart.data;strokeWidth=2;gradientDirection=north;fontStyle=0;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="240.5" y="615" width="159" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="User:&lt;br&gt;initialize(context)" style="shape=mxgraph.flowchart.data;strokeWidth=2;gradientDirection=north;fontStyle=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="240.5" y="250" width="159" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="Events left?" style="shape=mxgraph.flowchart.decision;strokeWidth=2;gradientDirection=north;fontStyle=0;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="271" y="390" width="98" height="57" as="geometry" />
+        </mxCell>
+        <mxCell id="7" style="fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;" parent="1" source="2" target="3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8" style="fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;" parent="1" source="3" target="5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9" style="entryX=0.5;entryY=0;entryPerimeter=0;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;" parent="1" source="5" target="6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;fontColor=#001933;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;" parent="1" source="6" target="-qiSnqaA5TJWx9IdR3Zr-64" edge="1">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint y="100" as="sourcePoint" />
+            <mxPoint x="100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-62" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="13" target="-qiSnqaA5TJWx9IdR3Zr-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="Market:&lt;br&gt;ExecuteOrders&lt;br&gt;(context,data)" style="shape=mxgraph.flowchart.data;strokeWidth=2;gradientDirection=north;fontStyle=0;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="240.5" y="745" width="159" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="yes" style="text;fontStyle=0;html=1;strokeColor=none;gradientColor=none;fillColor=none;strokeWidth=2;align=center;" parent="1" vertex="1">
+          <mxGeometry x="320" y="447" width="40" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;" parent="1" source="4" target="13" edge="1">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint y="205" as="sourcePoint" />
+            <mxPoint x="100" y="105" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="18" value="Updates to Portfolio&lt;br&gt;Live Metrics" style="shape=mxgraph.flowchart.predefined_process;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" parent="1" vertex="1">
+          <mxGeometry x="480" y="740" width="190" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;exitX=0.905;exitY=0.5;exitPerimeter=0;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;dashed=1;dashPattern=12 12;" parent="1" source="13" target="18" edge="1">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint y="205" as="sourcePoint" />
+            <mxPoint x="100" y="105" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="26" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;entryX=0;entryY=0.5;entryPerimeter=0;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;exitX=0.095;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;" parent="1" source="-qiSnqaA5TJWx9IdR3Zr-60" target="6" edge="1">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint x="310" y="992" as="sourcePoint" />
+            <mxPoint x="271" y="446.9999999999999" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="160" y="878.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="40" value="end" style="shape=mxgraph.flowchart.terminator;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" parent="1" vertex="1">
+          <mxGeometry x="700" y="403.5" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="43" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;exitX=1;exitY=0.5;exitPerimeter=0;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;exitDx=0;exitDy=0;" parent="1" source="-qiSnqaA5TJWx9IdR3Zr-55" edge="1">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint x="870" y="500" as="sourcePoint" />
+            <mxPoint x="700" y="419" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="730" y="419" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="45" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0.905;entryY=0.5;entryPerimeter=0;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;" parent="1" target="34" edge="1">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint x="380.5" y="1119.25" as="sourcePoint" />
+            <mxPoint x="100" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="950" y="1320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-55" value="Post Processing" style="shape=mxgraph.flowchart.document;strokeWidth=2;gradientDirection=north;fontStyle=0;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="465" y="383.5" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-56" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" target="-qiSnqaA5TJWx9IdR3Zr-55" source="6">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint x="420" y="460" as="sourcePoint" />
+            <mxPoint x="85" y="-131.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-57" value="no" style="text;fontStyle=0;html=1;strokeColor=none;gradientColor=none;fillColor=none;strokeWidth=2;align=center;" vertex="1" parent="1">
+          <mxGeometry x="385" y="388" width="40" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-58" value="This data will be visible &lt;br&gt;to User &quot;exportedData&quot;" style="shape=mxgraph.flowchart.predefined_process;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="610" width="190" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-59" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;exitX=0.905;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;dashed=1;dashPattern=12 12;" edge="1" parent="1" target="-qiSnqaA5TJWx9IdR3Zr-58" source="4">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint x="410" y="685" as="sourcePoint" />
+            <mxPoint x="100" y="-25" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-60" value="User:&lt;br&gt;placeOrders(context,&lt;br&gt;exportedData)" style="shape=mxgraph.flowchart.data;strokeWidth=2;gradientDirection=north;fontStyle=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="240.5" y="880" width="159" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-67" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-qiSnqaA5TJWx9IdR3Zr-64" target="4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-64" value="Replace:&lt;br&gt;&amp;nbsp;currentEvent,&lt;br&gt;pastEvent" style="shape=mxgraph.flowchart.data;strokeWidth=2;gradientDirection=north;fontStyle=0;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="240.5" y="495" width="159" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-65" value="This data will be visible &lt;br&gt;to User &quot;exportedData&quot;" style="shape=mxgraph.flowchart.predefined_process;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="490" width="190" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-66" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;exitX=0.905;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;dashed=1;dashPattern=12 12;" edge="1" parent="1" source="-qiSnqaA5TJWx9IdR3Zr-64" target="-qiSnqaA5TJWx9IdR3Zr-65">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint x="410" y="565" as="sourcePoint" />
+            <mxPoint x="100" y="-145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-69" value="Add events to Context,&lt;br&gt;Place orders" style="shape=mxgraph.flowchart.predefined_process;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" vertex="1" parent="1">
+          <mxGeometry x="476" y="875" width="190" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-70" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;exitX=0.905;exitY=0.5;exitPerimeter=0;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;dashed=1;dashPattern=12 12;" edge="1" parent="1" target="-qiSnqaA5TJWx9IdR3Zr-69">
+          <mxGeometry width="100" height="100" as="geometry">
+            <mxPoint x="380" y="920" as="sourcePoint" />
+            <mxPoint x="96" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-71" value="&lt;ul&gt;&lt;li style=&quot;text-align: left;&quot;&gt;Yellow - Defined by Engine&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;Green - Defined by Market&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;Blue - Defined by User&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="580" y="150" width="250" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="-qiSnqaA5TJWx9IdR3Zr-73" value="&lt;div style=&quot;&quot;&gt;DEDS: run(data, initialize, trading_logic, execute_orders, expose_data; audit, max_iter)&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="80" width="510" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

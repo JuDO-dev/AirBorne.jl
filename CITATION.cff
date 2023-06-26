@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Kerrigan
+    given-names: Eric
+  - family-names: Nita
+    given-names: Lucian
+  - family-names: Castro
+    given-names: Bruno
+title: "AirBorne: A Julia Algorithmic Trading Framework"
+repository: "https://github.com/JuDO-dev/AirBorne.jl/"
+url: "https://github.com/JuDO-dev/AirBorne.jl/"
+version: 0.0.1
+date-released: 2023-09-14
+contact:
+  - affiliation: "Imperial College London"
+    family-names: Castro
+    given-names: Bruno
+  - affiliation: "Imperial College London"
+    family-names: Kerrigan
+    given-names: Eric

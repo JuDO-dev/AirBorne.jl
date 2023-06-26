@@ -11,6 +11,25 @@ This guide of best practices are to help developers understand the code written,
 1. **Respect unit tests**: Unit tests are put for a reason, make sure all pass before merging into a shared development branch. The reason for the unit test should be indicated somewhere in the code.
 1. **Respect style**: Havin a consistent writing style help the developers read the code and brings homogeneity to the contributions. To do this we adhere to te [Blue style](https://github.com/invenia/BlueStyle). 
 
+
+## Branch Management
+
+### Archiving
+Sometimes we want to keep a branch with some data, but at the same time we don't want to pollute the list of branches in the repository. A way to achieve this is through the usage of tags. The archived branches can be accessed later on by looking at the tags of the repository, following [GitHub instructions](https://docs.github.com/en/repositories/releasing-projects-on-github/viewing-your-repositorys-releases-and-tags).
+
+```bash
+# For example we may want to archive or restore the add-quandl branch when picking up the connection to the datasource Quandl. 
+export BRANCH=add-quandl
+# Tag branch (this will add it to the archive)
+git tag archive/$BRANCH $BRANCH
+# Push the tag to remote
+git push origin archive/$BRANCH
+# Deleate head of branch (this will remove it from the list)
+git push origin --delete $BRANCH
+# This will restore the branch
+git checkout -b $BRANCH archive/$BRANCH
+```
+
 ## Citation and credits
 
 It is important to identify and credit the contributors of this project, in particular the ones that will act as a point of contact for external enquiries. To do this we put in place a **CITATION.cff** file that should follow the schema of [Github's citation guidelines](https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md). 

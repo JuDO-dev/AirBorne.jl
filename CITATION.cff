@@ -14,11 +14,8 @@ version: 0.0.1
 date-released: 2023-09-14
 contact:
   - affiliation: "Imperial College London"
-    family-names: Bruno
-    given-names: Castro
+    family-names: Castro
+    given-names: Bruno
   - affiliation: "Imperial College London"
     family-names: Kerrigan
     given-names: Eric
-preferred-citation:
-  month: 9
-  type: generic

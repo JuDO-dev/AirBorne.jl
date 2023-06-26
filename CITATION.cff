@@ -7,7 +7,7 @@ authors:
     given-names: Lucian
   - family-names: Castro
     given-names: Bruno
-title: "AirBorne: A Julia Algorthmic Trading Framework"
+title: "AirBorne: A Julia Algorithmic Trading Framework"
 repository: "https://github.com/JuDO-dev/AirBorne.jl/"
 url: "https://github.com/JuDO-dev/AirBorne.jl/"
 version: 0.0.1

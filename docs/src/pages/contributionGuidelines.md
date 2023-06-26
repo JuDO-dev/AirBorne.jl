@@ -11,6 +11,9 @@ This guide of best practices are to help developers understand the code written,
 1. **Respect unit tests**: Unit tests are put for a reason, make sure all pass before merging into a shared development branch. The reason for the unit test should be indicated somewhere in the code.
 1. **Respect style**: Havin a consistent writing style help the developers read the code and brings homogeneity to the contributions. To do this we adhere to te [Blue style](https://github.com/invenia/BlueStyle). 
 
+## Citation and credits
+
+It is important to identify and credit the contributors of this project, in particular the ones that will act as a point of contact for external enquiries. To do this we put in place a **CITATION.cff** file that should follow the schema of [Github's citation guidelines](https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md). 
 
 ## Local environment for development
 This section is meant for new joiners or people new to software development. If you already know about local environments and have your own style to generate functional code, feel free to skip this section.

@@ -58,11 +58,23 @@ Unit testing when executed for the first time takes long, most of the time is ta
 
 First open a console in the testing environment.
 ```bash
-make testJ
+make J
 ```
 
 Then execute the following three commands in the newly open Julia console:
 ```julia
+# Activate Test Dependencies
+
+# In Pkg REPL 
+activate ../AirBorne
+
+using TestEnv
+TestEnv.activate()
+
+# In Pkg REPL 
+dev ../AirBorne
+
+# Test using Revise
 using Revise
 # dev "../AirBorne" # In Pkg REPL
 include("test/runtests.jl")

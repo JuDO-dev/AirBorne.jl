@@ -5,6 +5,7 @@ version = "1.0.0-DEV"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+Currencies = "0fd90b74-7c1f-579e-9252-02cd883047b9"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DotMaps = "98454f44-f182-4945-8d34-ddde53e72162"
@@ -13,6 +14,8 @@ JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 Parquet2 = "98572fba-bba0-415d-956f-fa77e587d26d"
 Pipe = "b98c9c47-44ae-5843-9183-064241ee97a0"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+TestEnv = "1e6cf692-eddd-4d53-88a5-2d735e33781b"
 
 [compat]
 CSV = "0.10"
@@ -25,9 +28,10 @@ Pipe = "1"
 julia = "1"
 
 [extras]
+Currencies = "0fd90b74-7c1f-579e-9252-02cd883047b9"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
 
 [targets]
-test=["Revise","Test","TestSetExtensions"]
+test = ["Currencies", "Revise", "Test", "TestSetExtensions"]

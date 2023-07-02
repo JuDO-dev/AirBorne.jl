@@ -1,4 +1,4 @@
-using AirBorne: AirBorne, Money, Wallet
+using AirBorne: AirBorne, Money, Wallet, Security, Portfolio
 using Test
 @testset "AirBorne.FM" begin
     using Currencies: Currencies
@@ -64,4 +64,9 @@ using Test
     # Operations with keys
     @test haskey(w5, :USD)
     @test collect(keys(w5)) == [:UYU, :USD]
+
+    # Securities and Portfolios
+    @test Security == Money
+    @test Portfolio == Wallet
+
 end

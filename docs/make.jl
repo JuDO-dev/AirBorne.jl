@@ -28,6 +28,7 @@ makedocs(;
         "High Level Design" => [
             "Glossary" => "./pages/highLevelDesign.md",
             "Data Pipeline" => "./pages/etl/etl.md",
+            "Financial Modelling" => "./pages/financialModelling.md",
             "Event Driven Simulation" => "./pages/backtesting/eventDrivenSimulation.md",
         ],
         "Autodocs" => "./pages/autodocs.md",

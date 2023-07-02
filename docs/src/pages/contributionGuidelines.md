@@ -65,14 +65,12 @@ Then execute the following three commands in the newly open Julia console:
 ```julia
 # Activate Test Dependencies
 
-# In Pkg REPL 
-activate ../AirBorne
 
 using TestEnv
 TestEnv.activate()
 
 # In Pkg REPL 
-dev ../AirBorne
+dev "../AirBorne"
 
 # Test using Revise
 using Revise
@@ -83,6 +81,7 @@ include("test/runtests.jl")
 # test_file by the name of the file containing the test you want to run.
 # include("test/test_file.jl")
 # include("test/backtest_A.jl")
+# include("test/FM.jl")
 ```
 1. `using Revise`
 2. Open the Pkg REPL using `]` and type: `dev "../AirBorne"`

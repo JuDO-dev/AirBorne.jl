@@ -54,7 +54,7 @@ using Test
     @test 20USD + 50UYU == w4
     @test w5[:USD] == 10
 
-    # Opeations with keys
+    # Operations with keys
     @test haskey(w5, :USD)
     @test collect(keys(w5)) == [:UYU, :USD]
 end

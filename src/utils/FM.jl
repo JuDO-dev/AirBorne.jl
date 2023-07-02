@@ -17,8 +17,8 @@ struct Money{S}
     value::Float64
 end
 # Constructors
-Base.:*(a::Float64, ::Type{Currency{S}}) where {S} = Money{S}(a) # allow 3.0USD as a valid expresion
-Base.:*(a::Real, ::Type{Currency{S}}) where {S} = Money{S}(Float64(a)) # allow 3USD as a valid expresion
+Base.:*(a::Float64, ::Type{Currency{S}}) where {S} = Money{S}(a) # allow 3.0USD as a valid expression
+Base.:*(a::Real, ::Type{Currency{S}}) where {S} = Money{S}(Float64(a)) # allow 3USD as a valid expression
 
 get_symbol(::Type{Money{S}}) where {S} = S # Symbol from Type
 get_symbol(::Money{S}) where {S} = S # Symbol from Instance 
@@ -34,8 +34,8 @@ sameCurrency(::Money{S}, ::Money{D}) where {S,D} = S == D
 
 # Arithmetic operations
 Base.:+(a::Money{A}, b::Money{A}) where {A} = Money{A}(a.value + b.value) # Same 
-Base.:*(::Type{Currency{S}}, a::Float64) where {S} = Money{S}(a) # allow USD*3.0 as a valid expresion
-Base.:*(::Type{Currency{S}}, a::Real) where {S} = Money{S}(Float64(a)) # allow USD*3 as a valid expresion
+Base.:*(::Type{Currency{S}}, a::Float64) where {S} = Money{S}(a) # allow USD*3.0 as a valid expression
+Base.:*(::Type{Currency{S}}, a::Real) where {S} = Money{S}(Float64(a)) # allow USD*3 as a valid expression
 Base.:*(a::Real, b::Money{B}) where {B} = Money{B}(a * b.value) # allow to multiply money by a value
 Base.:*(b::Money{B}, a::Real) where {B} = Money{B}(a * b.value) # Commutability of product
 

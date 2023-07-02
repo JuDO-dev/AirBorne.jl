@@ -1,4 +1,4 @@
-using AirBorne: AirBorne
+using AirBorne: AirBorne, Money, Wallet
 using Test
 @testset "AirBorne.FM" begin
     using Currencies: Currencies
@@ -9,8 +9,8 @@ using Test
     # Money Instantiation
     a = 10USD
     b = 10.0USD
-    c1 = AirBorne.Money{:GBP}(5.0)
-    c2 = AirBorne.Money{:GBP}(5)
+    c1 = Money{:GBP}(5.0)
+    c2 = Money{:GBP}(5)
 
     # Money Arithmetic Operations
     @test 2.0 * a == (b + b)
@@ -33,26 +33,33 @@ using Test
     @test AirBorne.exchange(10USD, :UYU, exchangeRateI) == 500UYU # Known Exchange
     @test AirBorne.exchange(500UYU, :USD, exchangeRateI) == 10USD # Known Inverse
 
+    # KeyError because no UYU GBP relation is made
+    @test_throws KeyError AirBorne.exchange(500UYU, :GBP, exchangeRateI)
+
     # Wallet tests
-    w0 = AirBorne.Wallet(USD) # Test Later
-    w1 = AirBorne.Wallet(:USD)
+    w0 = Wallet(USD)
+    w1 = Wallet(:USD)
     @test w0 == w1
     @test w1[:USD] == 0
     @test w1[:GBP] == 0
     @test length(w1) == 1
 
-    w2 = AirBorne.Wallet(20USD)
-    w3 = AirBorne.Wallet(50UYU)
-    w4 = AirBorne.Wallet(Dict(:USD => 20, :UYU => 50))
+    w2 = Wallet(20USD)
+    w3 = Wallet(50UYU)
+    w4 = Wallet(Dict(:USD => 20, :UYU => 50))
     w5 = deepcopy(w3)
+    w6 = Wallet(Dict(:USD => 20, :UYU => 60))
     w5[:USD] = 10.0
 
     # Arithmetic operations between wallets and money
     @test w2 + 50UYU == w4
     @test 20USD + w3 == w4
     @test w2 + w3 == w4
+    @test w2 + w4 == Wallet(Dict(:USD => 40, :UYU => 50))
     @test 20USD + 50UYU == w4
     @test w5[:USD] == 10
+    @test (w4 == w2) == false
+    @test (w4 == w6) == false
 
     # Operations with keys
     @test haskey(w5, :USD)

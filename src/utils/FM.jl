@@ -5,6 +5,12 @@
 #     - Money (a numeric data type with an associated currency)
 #     - Wallet (a collection with money elements or elements that can be associated to money types)
 
+export Money
+export Wallet
+export get_symbol
+export sameCurrency
+export exchange
+
 using Printf: @sprintf
 using Base: Base
 using Currencies: Currency
@@ -20,6 +26,7 @@ end
 Base.:*(a::Float64, ::Type{Currency{S}}) where {S} = Money{S}(a) # allow 3.0USD as a valid expression
 Base.:*(a::Real, ::Type{Currency{S}}) where {S} = Money{S}(Float64(a)) # allow 3USD as a valid expression
 
+"Retrieves the symbol (the currency) of the money"
 get_symbol(::Type{Money{S}}) where {S} = S # Symbol from Type
 get_symbol(::Money{S}) where {S} = S # Symbol from Instance 
 
@@ -30,6 +37,7 @@ end
 Base.show(io::IO, v::Money{S}) where {S} = show(io, MIME("text/plain"), v)
 # COV_EXCL_STOP
 
+"Indicates if 2 Money instances have the same currency"
 sameCurrency(::Money{S}, ::Money{D}) where {S,D} = S == D
 
 # Arithmetic operations

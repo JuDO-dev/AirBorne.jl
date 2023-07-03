@@ -1,4 +1,18 @@
+codecov:
+  require_ci_to_pass: yes
+
 coverage:
   precision: 2
   round: down
   range: "70...90"
+  status:
+    # I want at least 95% coverage on the whole project (At most 1 in 20 lines)
+    project:
+      default:
+        target: 95%
+    # Individual MRs can have lower coverage as long as they do not affect the overall coverage too much.
+    # This allows for small merges to be able to have 1 or 2 lines uncovered. (1 in 5 lines)
+    patch:
+      default:
+        target: 80%
+  

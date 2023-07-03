@@ -1,3 +1,10 @@
+"""
+    Structures
+    
+    This module provides data structures defined and used in the Backtest process.
+
+    Facilitating contract enforcement between Engines, Markets and Strategies. 
+"""
 module Structures
 using Dates: DateTime
 using DotMaps: DotMap

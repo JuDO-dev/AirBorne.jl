@@ -10,6 +10,8 @@ export Wallet
 export get_symbol
 export sameCurrency
 export exchange
+export Security
+export Portfolio
 
 using Printf: @sprintf
 using Base: Base
@@ -126,3 +128,18 @@ end
 Base.:+(a::Money{A}, b::Money{B}) where {A,B} = Wallet(Dict(A => a.value, B => b.value)) #Different
 Base.:+(a::Wallet, b::Money) = a + Wallet(b) # Add money to the wallet just by summing
 Base.:+(b::Money, a::Wallet) = a + Wallet(b) # Commutability of operator
+
+############################
+###  Security & Portfolios ###
+############################
+
+# For now securities and portfolios seem to have the same characteristics as Money and Wallets
+
+# A Security is a given amount of an asset, i.e. a certain amount shares in a company.
+# Negative amounts may indicate short positions (when we have a negative balance of shares 
+# in a company, better said a commitment to repay certain lent securities by a third party)
+
+# And a Portfolio can be modelled as a collection of securities. 
+
+const Security = Money{S} where {S}
+const Portfolio = Wallet

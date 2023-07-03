@@ -1,7 +1,6 @@
 # Contribution Guidelines
-This notes are meant for developers wanting to contribute to this project.
 
-## Local environment for development
+>This notes are meant for developers wanting to contribute to this project. We follow the [ColPrac guide for collaborative practices](https://github.com/SciML/ColPrac). New contributors should make sure to read that guide as well as the best practices immediately below.
 
 ##### Best practices for merging
 This guide of best practices are to help developers understand the code written, to ensure good documentation is available for end users and guarantee robustness of the code.

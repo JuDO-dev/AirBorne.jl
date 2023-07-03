@@ -141,5 +141,5 @@ Base.:+(b::Money, a::Wallet) = a + Wallet(b) # Commutability of operator
 
 # And a Portfolio can be modelled as a collection of securities. 
 
-const Security = Money{S} where S
+const Security = Money{S} where {S}
 const Portfolio = Wallet

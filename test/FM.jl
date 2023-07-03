@@ -68,5 +68,4 @@ using Test
     # Securities and Portfolios
     @test Security == Money
     @test Portfolio == Wallet
-
 end

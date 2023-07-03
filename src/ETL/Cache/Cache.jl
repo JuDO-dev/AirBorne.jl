@@ -5,8 +5,10 @@
 """
 module Cache
 using DataFrames: DataFrames
-using Parquet2: Parquet2
-using Dates: Dates
+using Parquet2: Dataset, writefile, metadata
+using Dates: Dates, DateTime
+using Tables: schema
+using ..Transform: getSchema
 
 export hello_cache
 export get_cache_path
@@ -75,7 +77,7 @@ function store_bundle(
     bundle_id = !(isnothing(bundle_id)) ? bundle_id : gen_id()
     bundle_dir = joinpath(cache_dir, bundle_id)
     archive_dir = joinpath(bundle_dir, "archive")
-
+    meta["schema"] = getSchema(schema(data)) # Add Schema to Metadata
     # Ensure directories exist
     if !(isdir(archive_dir))
         mkpath(archive_dir)
@@ -100,7 +102,7 @@ function store_bundle(
     file_path = joinpath(bundle_dir, gen_id() * ".parq.snappy")
 
     @info("Storing $file_path")
-    return Parquet2.writefile(
+    return writefile(
         file_path, data; compression_codec=:snappy, metadata=meta, column_metadata=c_meta
     )
 end
@@ -127,7 +129,7 @@ function load_bundle(bundle_id::String; cache_dir::Union{String,Nothing}=nothing
         )
     end
     file_path = joinpath(bundle_dir, contents_to_read[1])
-    ds = Parquet2.Dataset(file_path) # Create a dataset
+    ds = Dataset(file_path) # Create a dataset
     df = DataFrames.DataFrame(ds; copycols=false) # Load from dataframed
     return df
 end
@@ -142,6 +144,63 @@ end
 """
 function list_bundles()
     return readdir(get_cache_path(); sort=false)
+end
+
+"""
+    describe_bundles(;archive=false)
+
+    Returns the list of dictionaries describing the files for each bundle. 
+    It allows to retrieve information about the archived files like:
+        - Status of the files (missing, corrupted, etc.)
+        - Schema
+        - Timestamp of storage
+        - File name 
+"""
+function describe_bundles(; archive=false)
+    cp = get_cache_path()
+    bundles = readdir(cp; sort=false)
+    l = []
+    for b in bundles
+        contents = readdir(joinpath(cp, b); sort=false)
+        f = [c for c in contents if c != "archive"]
+        filename = f[1]
+        status = "OK"
+        ds = Dataset(joinpath(cp, b, filename))
+        m = metadata(ds)
+        entry = Dict(
+            "bundle" => b,
+            "file" => filename,
+            "schema" => get(m, "schema", "MISSING"),
+            "storedDate" => DateTime(filename[1:21], "yyyy_mm_dd_H_M_S_s"),
+            "is_archived" => false,
+            "status" => status,
+        )
+        push!(l, entry)
+        if archive
+            archive_files = readdir(joinpath(cp, b, "archive"); sort=false)
+            for filename in archive_files
+                try
+                    status = "OK"
+                    ds = Dataset(joinpath(cp, b, "archive", filename))
+                    m = metadata(ds)
+                catch e
+                    status = e.msg
+                    m = Dict()
+                end
+                entry = Dict(
+                    "bundle" => b,
+                    "file" => filename,
+                    "schema" => get(m, "schema", "MISSING"),
+                    "storedDate" => DateTime(filename[1:21], "yyyy_mm_dd_H_M_S_s"),
+                    "is_archived" => true,
+                    "status" => status,
+                )
+                push!(l, entry)
+            end
+        end
+    end
+
+    return l
 end
 
 """

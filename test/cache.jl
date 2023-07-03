@@ -1,8 +1,8 @@
 using Test
 using AirBorne: AirBorne
 using AirBorne.ETL.Transform: addSchema, getSchema
-using AirBorne.ETL.Cache: get_cache_path, store_bundle, describe_bundles, list_bundles, remove_bundle, load_bundle
-
+using AirBorne.ETL.Cache:
+    get_cache_path, store_bundle, describe_bundles, list_bundles, remove_bundle, load_bundle
 
 @testset "AirBorne.ETL Cache & Transform" begin
     # Sanity check
@@ -10,28 +10,28 @@ using AirBorne.ETL.Cache: get_cache_path, store_bundle, describe_bundles, list_b
     using Parquet2: Dataset
     using DataFrames: DataFrames
     using Dates: Dates
-    
+
     # Try adding a new format to the schemas
     specs2 = [
-        :exchangeName;  String;;
-        :timezone;      String;;
-        :currency;      String;;
-        :symbol;        String;;
-        :close;         Float64;;
-        :high;          Float64;;
-        :low;           Float64;;
-        :open;          Float64;;
-        :volume;        Int64;;
-        :date;          Dates.DateTime;;
-        :unix;          Int64;;
-        ]
-    sch2 = Schema(specs2[1,:],specs2[2,:])
+        :exchangeName; String;;
+        :timezone; String;;
+        :currency; String;;
+        :symbol; String;;
+        :close; Float64;;
+        :high; Float64;;
+        :low; Float64;;
+        :open; Float64;;
+        :volume; Int64;;
+        :date; Dates.DateTime;;
+        :unix; Int64
+    ]
+    sch2 = Schema(specs2[1, :], specs2[2, :])
     if getSchema("OHLCV_V2") != nothing
-        delete!(schemas,"OHLCV_V2")
+        delete!(schemas, "OHLCV_V2")
     end
-    addSchema("OHLCV_V2",sch2)
+    addSchema("OHLCV_V2", sch2)
     @test getSchema("OHLCV_V2") == sch2
-    @test getSchema(sch2) == "OHLCV_V2" 
+    @test getSchema(sch2) == "OHLCV_V2"
 
     asset_dir = joinpath(@__DIR__, "assets")
     # Test caching capabilities
@@ -52,8 +52,8 @@ using AirBorne.ETL.Cache: get_cache_path, store_bundle, describe_bundles, list_b
         store_bundle(df; bundle_id=bundle_id, archive=true) # Store (and increase the archive)
         sleep(0.002) # Wait 2 milliseconds
         store_bundle(df; bundle_id=bundle_id, archive=false) # Store (replace live file)
-        
-        @test length(describe_bundles(archive=true))>1
+
+        @test length(describe_bundles(; archive=true)) > 1
         @test size(list_bundles())[1] == 1 # Test that the bundle can be found in the cache directory
         @test isequal(df, load_bundle(bundle_id)) # Test that loading the data does not affect the underlying data
         remove_bundle(bundle_id; just_archive=true) # Delete Archive

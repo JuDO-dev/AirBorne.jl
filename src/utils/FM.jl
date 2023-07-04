@@ -24,7 +24,13 @@ using Currencies: Currency
 struct Money{S}
     value::Float64
 end
+
 # Constructors
+Money(S::Symbol) = Money{S}(1.00) # Creates one unit of Money of currency S
+Money(a::Real, S::Symbol) = Money{S}(Float64(a))
+Money(a::Real, ::Currency{S}) where {S} = Money{S}(Float64(a))
+Money(a::Real, ::Type{Currency{S}}) where {S} = Money{S}(Float64(a))
+
 Base.:*(a::Float64, ::Type{Currency{S}}) where {S} = Money{S}(a) # allow 3.0USD as a valid expression
 Base.:*(a::Real, ::Type{Currency{S}}) where {S} = Money{S}(Float64(a)) # allow 3USD as a valid expression
 

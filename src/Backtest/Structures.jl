@@ -36,9 +36,7 @@ mutable struct ContextTypeA
     extra::DM
 end
 # Constructors
-ContextTypeA(event::TimeEvent) = ContextTypeA(
-    [], [], event, Dict(), DM(), [], DM(), DM()
-)
+ContextTypeA(event::TimeEvent) = ContextTypeA([], [], event, Dict(), DM(), [], DM(), DM())
 
 """
     This context allows for arithmetic operations of portfolio and accounts, such as adding 
@@ -65,7 +63,7 @@ mutable struct ContextTypeB
 end
 
 # Constructors
-ContextTypeB(event::TimeEvent) = ContextTypeB(
-    [], [], event, Portfolio(), Wallet(), [], DM(), DM()
-)
+function ContextTypeB(event::TimeEvent)
+    return ContextTypeB([], [], event, Portfolio(), Wallet(), [], DM(), DM())
+end
 end

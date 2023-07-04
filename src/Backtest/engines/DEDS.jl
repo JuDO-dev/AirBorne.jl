@@ -47,10 +47,9 @@ function run(
     expose_data::Function;
     audit::Bool=true,
     max_iter::Int=10^6,
-    contextType::Type=ContextTypeA
+    contextType::Type=ContextTypeA,
 )
-    
-    initial_event=TimeEvent(findmin(data.date)[1], "start")
+    initial_event = TimeEvent(findmin(data.date)[1], "start")
     context = contextType(initial_event)
 
     HiddenContext = DotMap(Dict())

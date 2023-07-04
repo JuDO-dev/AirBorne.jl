@@ -45,27 +45,26 @@ function expose_data(context, data)
     return available_data(context, data)
 end
 
-
 """Defines the unique identifier to an equity asset given a journal entry of the ledger"""
-function keyJE(journalEntry::Union{DotMap,Dict})
-    return get(journalEntry, "exchangeName", "MISSING") *
+function keyJE(journal_entry::Union{DotMap,Dict})
+    return get(journal_entry, "exchangeName", "MISSING") *
            "/" *
-           get(journalEntry, "ticker", "MISSING")
+           get(journal_entry, "ticker", "MISSING")
 end
 
 """
-    addSecurityToPortfolio!(portfolio::Union{DotMap,Dict},security::Union{DotMap,Dict})
+    addSecurityToPortfolio!(portfolio::Union{DotMap,Dict},journal_entry::Union{DotMap,Dict})
 
     StaticMarket method to add  securities to portfolios .
 """
 function addSecurityToPortfolio!(
-    portfolio::Union{DotMap,Dict}, journalEntry::Union{DotMap,Dict}
+    portfolio::Union{DotMap,Dict}, journal_entry::Union{DotMap,Dict}
 )
-    key = get(journal_entry, "assetID", keyJE(journalEntry))
+    key = get(journal_entry, "assetID", keyJE(journal_entry))
     if !(haskey(portfolio, key)) # A try catch approach may be more performant
         portfolio[key] = 0
     end
-    portfolio[key] += get(journalEntry, "shares", nothing)
+    portfolio[key] += get(journal_entry, "shares", nothing)
     return nothing
 end
 
@@ -77,28 +76,28 @@ function securityFromJournalEntry(x)
         "price" => x["price"],
     )
 end
-function addSecurityToPortfolio!(portfolio::Vector{Any}, journalEntry::Union{DotMap,Dict}) # Multiple-dispatch of method in case of portfolio being a vector.
-    push!(portfolio, securityFromJournalEntry(journalEntry))
+function addSecurityToPortfolio!(portfolio::Vector{Any}, journal_entry::Union{DotMap,Dict}) # Multiple-dispatch of method in case of portfolio being a vector.
+    push!(portfolio, securityFromJournalEntry(journal_entry))
     return nothing
 end
 
-function addSecurityToPortfolio!(portfolio::Portfolio, security::Security) # Multiple-dispatch of method in case of portfolio being a vector.
+function addSecurityToPortfolio!(portfolio::Portfolio, journal_entry::Union{DotMap,Dict}) # Multiple-dispatch of method in case of portfolio being a vector.
     asset_symbol = get(
         journal_entry,
         "assetSymbol",
-        Symbol(get(journal_entry, "assetID", keyJE(journalEntry))),
+        Symbol(get(journal_entry, "assetID", keyJE(journal_entry))),
     )
     portfolio += Security{asset_symbol}(journal_entry["shares"])
     return nothing
 end
 
 """
-    addJournalEntryToLedger(ledger::Vector{Any},journalEntry::Union{DotMap,Dict})
+    addJournalEntryToLedger(ledger::Vector{Any},journal_entry::Union{DotMap,Dict})
 
     StaticMarket method to add journal entries to ledger.
 """
-function addJournalEntryToLedger(ledger::Vector{Any}, journalEntry::Union{DotMap,Dict})
-    return push!(ledger, journalEntry)
+function addJournalEntryToLedger(ledger::Vector{Any}, journal_entry::Union{DotMap,Dict})
+    return push!(ledger, journal_entry)
 end
 
 """
@@ -135,22 +134,21 @@ function execute_orders!(from, to, context::Contexts, data::DataFrame)
                 continue
             end
 
-            # TODO: Modify Accpimt
+            # TODO: Modify Account
             order.specs.account.balance -= transaction_amount
 
-            # Form Security # This depends on portfolio formulation which is defined in the context! 
-            # TODO: Modularize From here! 
+            # Journal entries have all the information about the transaction, including, shares
+            # quantities and prices. It should hold the most complete information about flow of assets.
             journal_entry = Dict(
                 "exchangeName" => order.market,
                 "ticker" => order.specs.ticker,
                 "shares" => shares,
                 "price" => price,
             )
-            journal_entry = deepcopy(security)
             journal_entry["price"] = price
             journal_entry["amount"] = transaction_amount
             journal_entry["date"] = deepcopy(to) # Improve the logic of determining when a transaction takes place
-            journal_entry["assetID"] = keyJE(journalEntry)
+            journal_entry["assetID"] = keyJE(journal_entry)
             # I.e. one could define an open and close times for a market and use that instead.
             addJournalEntryToLedger(context.ledger, journal_entry)
 

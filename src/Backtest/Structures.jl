@@ -8,6 +8,8 @@
 module Structures
 using Dates: DateTime
 using DotMaps: DotMap
+# Financial model Types
+using ...AirBorne: Wallet, Portfolio
 
 export TimeEvent
 
@@ -33,4 +35,21 @@ mutable struct ContextTypeA
     audit::DotMap
     extra::DotMap
 end
+
+"""
+    This context allows for arithmetic operations of portfolio and accounts, such as adding 
+    securities by doing portfolio+=security, and or removing Money from an account by doing
+    account+=money.
+"""
+mutable struct ContextTypeB
+    eventList::Vector{TimeEvent} # List of events defined by the user
+    activeOrders::Vector{Any} # List of orders (keep as Any for agnosticity)
+    current_event::TimeEvent
+    portfolio::Portfolio # The market determines the portfolio
+    accounts::Wallet # The market determines the account
+    ledger::Vector{Any} # List of transactions
+    audit::DotMap
+    extra::DotMap
+end
+
 end

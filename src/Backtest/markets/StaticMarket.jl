@@ -10,7 +10,7 @@ export execute_orders!, expose_data, Order, parse_portfolioHistory, parse_accoun
 using DataFrames: DataFrame, Not, select!
 using DotMaps: DotMap
 using ...Structures: ContextTypeA, ContextTypeB
-using ....AirBorne: Portfolio, Security
+using ....AirBorne: Portfolio, Security, Wallet
 using ...Utils: get_latest
 
 Context = ContextTypeA

@@ -84,8 +84,8 @@ end
 function addSecurityToPortfolio!(portfolio::Portfolio, journal_entry::Union{DotMap,Dict}) # Multiple-dispatch of method in case of portfolio being a vector.
     asset_symbol = get(
         journal_entry,
-        "assetSymbol",
-        Symbol(get(journal_entry, "assetID", keyJE(journal_entry))),
+        "assetID",
+        Symbol(keyJE(journal_entry)),
     )
     portfolio += Security{asset_symbol}(journal_entry["shares"])
     return nothing
@@ -101,7 +101,13 @@ function addJournalEntryToLedger!(ledger::Vector{Any}, journal_entry::Union{DotM
 end
 
 function addMoneyToAccount!(account::DotMap, journal_entry)
+    # journal_entry["amount"] is Real
     return account.balance -= journal_entry["amount"]
+end
+
+function addMoneyToAccount!(account::Wallet, journal_entry)
+    # journal_entry["amount"] is Money
+    return account += journal_entry["amount"]*-1
 end
 
 """
@@ -141,7 +147,7 @@ function executeOrder_CA(
         )
         journal_entry["assetID"] = keyJE(journal_entry)
     elseif order.specs.type == "LimitOrder"
-        @info "LimitOrder has not yet been implemented, please use MarketOrder"
+        throw("LimitOrder has not yet been implemented, please use MarketOrder")
     end
     return journal_entry, success
 end

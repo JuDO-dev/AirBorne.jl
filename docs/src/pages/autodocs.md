@@ -24,3 +24,6 @@ Modules = [AirBorne.Markets,AirBorne.Markets.StaticMarket]
 ```@autodocs
 Modules = [AirBorne.Engines,AirBorne.Engines.DEDS]
 ```
+```@autodocs
+Modules = [AirBorne.Strategies,AirBorne.Strategies.SMA]
+```

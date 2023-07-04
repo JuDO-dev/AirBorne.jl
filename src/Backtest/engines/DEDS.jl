@@ -69,7 +69,7 @@ function run(
     while ((size(context.eventList)[1] > 0)) && (counter < max_iter)
         counter += 1
 
-        past_event_date = context.current_event.date
+        context.extra.past_event_date = context.current_event.date
         #############################
         ####   Pick next event   ####
         #############################
@@ -80,7 +80,7 @@ function run(
         #############################################
         ####   Execute orders since last event   ####
         #############################################
-        execute_orders!(past_event_date, context.current_event.date, context, data)
+        execute_orders!(context, data)
         if audit
             deepPush!(HiddenContext.portfolioHistory, context.portfolio)
             deepPush!(HiddenContext.accountHistory, context.accounts)

@@ -92,12 +92,58 @@ function addSecurityToPortfolio!(portfolio::Portfolio, journal_entry::Union{DotM
 end
 
 """
-    addJournalEntryToLedger(ledger::Vector{Any},journal_entry::Union{DotMap,Dict})
+    addJournalEntryToLedger!(ledger::Vector{Any},journal_entry::Union{DotMap,Dict})
 
     StaticMarket method to add journal entries to ledger.
 """
-function addJournalEntryToLedger(ledger::Vector{Any}, journal_entry::Union{DotMap,Dict})
+function addJournalEntryToLedger!(ledger::Vector{Any}, journal_entry::Union{DotMap,Dict})
     return push!(ledger, journal_entry)
+end
+
+function addMoneyToAccount!(account::DotMap, journal_entry)
+    return account.balance -= journal_entry["amount"]
+end
+
+"""
+    Assuming a dataframe with one row per ticker where the ticker symbol is in the column symbol
+    The price is assumed to be at the column "col"
+"""
+function refPrice(cur_data::DataFrame, ticker::Union{String,Symbol}; col::Symbol=:open)
+    return cur_data[cur_data.symbol .== ticker, col][1]
+end
+
+""" executeOrder_CA(
+    context::ContextTypeA, order::Order, cur_data::DataFrame; priceModel::Function=refPrice
+)
+    Default order execution method when using ContextTypeA in the simulation.
+"""
+function executeOrder_CA(
+    context::ContextTypeA, order::Order, cur_data::DataFrame; priceModel::Function=refPrice
+)
+    success = true
+    if order.specs.type == "MarketOrder"
+        price = priceModel(cur_data, order.specs.ticker)
+        shares = order.specs.shares # Determine number of shares (Real number)
+        transaction_amount = price * order.specs.shares #  Total transaction amount
+        if (transaction_amount >= order.specs.account.balance) && (shares > 0) # If not enough money to buy execute partially
+            success = false
+            transaction_amount = order.specs.account.balance
+            shares = transaction_amount / price
+            # Enhancement TODO: Here there should be some logic to allow/forbid fractional transactions
+        end
+        journal_entry = Dict(
+            "exchangeName" => order.market,
+            "ticker" => order.specs.ticker,
+            "shares" => shares,
+            "price" => price,
+            "amount" => transaction_amount,
+            "date" => context.current_event.date,
+        )
+        journal_entry["assetID"] = keyJE(journal_entry)
+    elseif order.specs.type == "LimitOrder"
+        @info "LimitOrder has not yet been implemented, please use MarketOrder"
+    end
+    return journal_entry, success
 end
 
 """
@@ -105,65 +151,26 @@ end
 
     This function updates the portfolio of the user that is stored in the variable context.
     
-    TODO: Add more documentation.
+    The static Market assumes that orders do not modify market attributes. Therefore orders can be executed
+    sequentially without consideration on how the order on one asset may affect the price on another.
 """
-function execute_orders!(from, to, context::Contexts, data::DataFrame)
+function execute_orders!(
+    context::Contexts, data::DataFrame; executeOrder::Function=executeOrder_CA
+)
     # Retrieve data
     cur_data = get_latest(available_data(context, data), [:exchangeName, :symbol], :date)
     incomplete_orders = Vector{Any}([])
     # Iterate over orders
     while length(context.activeOrders) > 0
         order = pop!(context.activeOrders)
-        success = true
-        if order.specs.type == "MarketOrder"
-
-            # Transaction data
-            price = cur_data[cur_data.symbol .== order.specs.ticker, :open][1] # Retrieve price
-            shares = order.specs.shares # Determine number of shares
-            transaction_amount = price * order.specs.shares #  Total transaction amount
-
-            # Partial order corrections
-            if (transaction_amount >= order.specs.account.balance) && (shares > 0) # If not enough money to buy execute partially
-                success = false
-                transaction_amount = order.specs.account.balance
-                shares = transaction_amount / price
-                # Enhancement TODO: Here there should be some logic to allow/forbid fractional transactions
-            end
-
-            if shares == 0 # Skip steps below if there are no shares to trade
-                continue
-            end
-
-            # TODO: Modify Account
-            order.specs.account.balance -= transaction_amount
-
-            # Journal entries have all the information about the transaction, including, shares
-            # quantities and prices. It should hold the most complete information about flow of assets.
-            journal_entry = Dict(
-                "exchangeName" => order.market,
-                "ticker" => order.specs.ticker,
-                "shares" => shares,
-                "price" => price,
-            )
-            journal_entry["price"] = price
-            journal_entry["amount"] = transaction_amount
-            journal_entry["date"] = deepcopy(to) # Improve the logic of determining when a transaction takes place
-            journal_entry["assetID"] = keyJE(journal_entry)
-            # I.e. one could define an open and close times for a market and use that instead.
-            addJournalEntryToLedger(context.ledger, journal_entry)
-
-            addSecurityToPortfolio!(context.portfolio, journal_entry)
-            # Finalize Modularization from here
-
-        elseif order.specs.type == "LimitOrder"
-            @info "LimitOrder has not yet been implemented, please use MarketOrder"
-        end
-
-        # Incomplete orders are to be put back
-        if !(success)
-            order.specs.shares -= shares # Reduce the amount of shares
+        journal_entry, success = executeOrder(context, order, cur_data)
+        if !(success) # Incomplete orders are to be put back
+            order.specs.shares -= journal_entry["shares"] # Reduce the amount of shares
             push!(incomplete_orders, order)
         end
+        addJournalEntryToLedger!(context.ledger, journal_entry) # Audit Transaction in Ledger 
+        addSecurityToPortfolio!(context.portfolio, journal_entry) # Implement change to Portfolio
+        addMoneyToAccount!(order.specs.account, journal_entry) # Implement change in Account
     end
     return append!(context.activeOrders, incomplete_orders)
 end

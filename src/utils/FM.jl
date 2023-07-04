@@ -73,6 +73,7 @@ struct Wallet
     content::Dict{Symbol,Float64}
 end
 # Constructors
+Wallet() = Wallet(Dict())
 Wallet(::Type{Currency{S}}) where {S} = Wallet(Dict(S => 0.0))
 Wallet(S::Symbol) = Wallet(Dict(S => 0.0))
 Wallet(b::Money{B}) where {B} = Wallet(Dict(B => b.value))

@@ -10,9 +10,9 @@ export hello_deds
 using DataFrames: DataFrame
 using DotMaps: DotMap
 using ...Utils: deepPush!, sortStruct!
-using ...Structures: TimeEvent, ContextTypeA
+using ...Structures: TimeEvent, ContextTypeA, ContextTypeB
 
-Context = ContextTypeA
+# Context = ContextTypeA
 """
     DEDS module hello world
 """
@@ -20,6 +20,7 @@ function hello_deds()
     return "Hello D.E.D.S.!"
 end
 
+# TODO: As it returns context run is not Type-stable. Make the output type-stable.
 """
     run(data::DataFrame, initialize!::Function, trading_logic!::Function, execute_orders!::Function,expose_data::Function;audit=true)
 
@@ -46,11 +47,11 @@ function run(
     expose_data::Function;
     audit::Bool=true,
     max_iter::Int=10^6,
+    contextType::Type=ContextTypeA
 )
-    DM() = DotMap(Dict()) # Shorthand
-    context = Context(
-        [], [], TimeEvent(findmin(data.date)[1], "start"), Dict(), DM(), [], DM(), DM()
-    )
+    
+    initial_event=TimeEvent(findmin(data.date)[1], "start")
+    context = contextType(initial_event)
 
     HiddenContext = DotMap(Dict())
     HiddenContext.portfolioHistory = []

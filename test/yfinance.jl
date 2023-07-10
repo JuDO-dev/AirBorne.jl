@@ -7,5 +7,5 @@ using Test
     u_from = string(round(Int, Dates.datetime2unix(from)))
     u_to = string(round(Int, Dates.datetime2unix(to)))
     r = AirBorne.ETL.YFinance.get_interday_data(["AAPL"], u_from, u_to)
-    @test size(r) == (20, 11)
+    @test size(r) == (20, 12)
 end

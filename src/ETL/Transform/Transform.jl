@@ -24,7 +24,8 @@ OHLCV_V1_specs = [
     :exchangeName; String;;
     :timezone; String;;
     :currency; String;;
-    :symbol; String
+    :symbol; String;;
+    :assetId; String
 ]
 
 # Better implementation can be achieved by using Schemata.jl (left for ETL V2)

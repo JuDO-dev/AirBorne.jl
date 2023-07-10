@@ -71,9 +71,10 @@ function store_bundle(
     archive::Bool=true,
     meta::Dict=Dict(),
     c_meta::Dict=Dict(),
+    cache_dir::Union{String,Nothing}=nothing,
 )
     # Define directories
-    cache_dir = get_cache_path()
+    cache_dir = cache_dir === nothing ? get_cache_path() : cache_dir
     bundle_id = !(isnothing(bundle_id)) ? bundle_id : gen_id()
     bundle_dir = joinpath(cache_dir, bundle_id)
     archive_dir = joinpath(bundle_dir, "archive")
@@ -142,8 +143,9 @@ end
     In the future this function can be expanded to return information as timestamp, 
     format of data in bundle among relevant metadata.
 """
-function list_bundles()
-    return readdir(get_cache_path(); sort=false)
+function list_bundles(;cache_dir::Union{String,Nothing}=nothing)
+    cache_dir = cache_dir === nothing ? get_cache_path() : cache_dir
+    return readdir(cache_dir; sort=false)
 end
 
 """
@@ -156,8 +158,8 @@ end
         - Timestamp of storage
         - File name 
 """
-function describe_bundles(; archive=false)
-    cp = get_cache_path()
+function describe_bundles(; archive=false, cache_dir::Union{String,Nothing}=nothing)
+    cp = cache_dir === nothing ? get_cache_path() : cache_dir
     bundles = readdir(cp; sort=false)
     l = []
     for b in bundles
@@ -208,9 +210,9 @@ end
 
     Removes bundle from cache. This is an irreversible operation. If just_archive is true it only flushes the archive folder.
 """
-function remove_bundle(bundle_id::String; just_archive::Bool=false)
+function remove_bundle(bundle_id::String; just_archive::Bool=false, cache_dir::Union{String,Nothing}=nothing)
     # Define directories
-    cache_dir = get_cache_path()
+    cache_dir = cache_dir === nothing ? get_cache_path() : cache_dir
     bundle_dir = joinpath(cache_dir, bundle_id)
     archive_dir = joinpath(bundle_dir, "archive")
     if (just_archive) && (isdir(archive_dir))

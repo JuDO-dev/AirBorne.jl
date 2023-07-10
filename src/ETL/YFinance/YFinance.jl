@@ -79,18 +79,20 @@ function parse_intraday_raw_data(r)
         Dates.unix2datetime(x + gmt_offset) for
         x in resp_json["chart"]["result"][1]["timestamp"]
     ]
-    df[:, :"date"] = date_vector
-    df[:, :"unix"] = unix_timestamps_vector
-    df[:, :"exchangeName"] .= resp_json["chart"]["result"][1]["meta"]["exchangeName"]
-    df[:, :"timezone"] .= resp_json["chart"]["result"][1]["meta"]["exchangeTimezoneName"]
-    df[:, :"currency"] .= resp_json["chart"]["result"][1]["meta"]["currency"]
-    df[:, :"symbol"] .= resp_json["chart"]["result"][1]["meta"]["symbol"]
-    df[:, :close] = float.(df[!, :close])
-    df[:, :high] = float.(df[!, :high])
-    df[:, :low] = float.(df[!, :low])
-    df[:, :open] = float.(df[!, :open])
-    df[:, :unix] = Int.(df[!, :unix])
-    df[:, :volume] = Int.(df[!, :volume])
+    df[!, :"date"] = date_vector
+    df[!, :"unix"] = unix_timestamps_vector
+    df[!, :"exchangeName"] .= resp_json["chart"]["result"][1]["meta"]["exchangeName"]
+    df[!, :"timezone"] .= resp_json["chart"]["result"][1]["meta"]["exchangeTimezoneName"]
+    df[!, :"currency"] .= resp_json["chart"]["result"][1]["meta"]["currency"]
+    df[!, :"symbol"] .= resp_json["chart"]["result"][1]["meta"]["symbol"]
+    df[!, :close] = float.(df[!, :close])
+    df[!, :high] = float.(df[!, :high])
+    df[!, :low] = float.(df[!, :low])
+    df[!, :open] = float.(df[!, :open])
+    df[!, :unix] = Int.(df[!, :unix])
+    df[!, :volume] = Int.(df[!, :volume])
+    df[!, "assetID"] = df.exchangeName .* "/" .* df.symbol
+
     return df
 end
 

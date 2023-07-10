@@ -50,6 +50,7 @@ function run(
     max_iter::Int=10^6,
     max_date::Union{DateTime,Nothing}=nothing,
     verbose::Bool=false,
+    contextType::Type=ContextTypeA,
 )
     initial_event = TimeEvent(findmin(data.date)[1], "start")
     context = contextType(initial_event)
@@ -72,6 +73,7 @@ function run(
         if (max_date!==nothing) && (context.current_event.date>max_date)
             break
         end
+
         if verbose
             flush(stdout) # Remove whatever was before
             print(context.current_event.date) # Print date

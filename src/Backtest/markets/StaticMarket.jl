@@ -161,7 +161,7 @@ end
     sequentially without consideration on how the order on one asset may affect the price on another.
 """
 function execute_orders!(
-    context::Contexts, data::DataFrame; executeOrder::Function=executeOrder_CA
+    context::Union{ContextTypeA,ContextTypeB}, data::DataFrame; executeOrder::Function=executeOrder_CA
 )
     # Retrieve data
     cur_data = get_latest(available_data(context, data), [:exchangeName, :symbol], :date)

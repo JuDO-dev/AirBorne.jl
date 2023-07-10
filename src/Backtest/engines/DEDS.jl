@@ -9,6 +9,7 @@ export hello_deds
 
 using DataFrames: DataFrame
 using DotMaps: DotMap
+using Dates: DateTime
 using ...Utils: deepPush!, sortStruct!
 using ...Structures: TimeEvent, ContextTypeA, ContextTypeB
 
@@ -37,7 +38,7 @@ end
     - `audit::Bool=true`: If true context will its audit entry populated for each event in the simulation. 
     - `max_iter::Int=10^6`: Limit the number of events processed on the simulation.
     # Returns
-    - `context::Context`
+    - `verbose::Bool=false`: If true prints the date
 """
 function run(
     data::DataFrame,
@@ -47,7 +48,8 @@ function run(
     expose_data::Function;
     audit::Bool=true,
     max_iter::Int=10^6,
-    contextType::Type=ContextTypeA,
+    max_date::Union{DateTime,Nothing}=nothing,
+    verbose::Bool=false,
 )
     initial_event = TimeEvent(findmin(data.date)[1], "start")
     context = contextType(initial_event)
@@ -67,6 +69,14 @@ function run(
     end
     counter = 0
     while ((size(context.eventList)[1] > 0)) && (counter < max_iter)
+        if (max_date!==nothing) && (context.current_event.date>max_date)
+            break
+        end
+        if verbose
+            flush(stdout) # Remove whatever was before
+            print(context.current_event.date) # Print date
+            print("\r") # Reset cursor
+        end
         counter += 1
 
         context.extra.past_event_date = context.current_event.date

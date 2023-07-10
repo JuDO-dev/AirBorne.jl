@@ -1,4 +1,3 @@
 [deps]
 AirBorne = "4a232ea9-7d1f-4dd8-a126-b47d2ae9e134"
-DirectSearch = "9d7617aa-e122-4445-bdd0-98866dcb605d"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"

@@ -22,8 +22,7 @@ using ...Utils: sortedStructInsert!
 using ...Structures: ContextTypeA, TimeEvent
 using ...Markets.StaticMarket: Order, place_order!
 using Dates: Day
-using DataFrames: DataFrame
-using Tables: schema # Used to validate the data against the schemas in the system
+using DataFrames: DataFrame, groupby, combine, mean
 
 """
     initialize!
@@ -38,26 +37,31 @@ using Tables: schema # Used to validate the data against the schemas in the syst
     my_initialize!(context,data) = SMA.trading_logic!(context)
     ```
 """
-function initialize!(context::ContextTypeA; longHorizon::Real=100, shortHorizon::Real=10)
+function interday_initialize!(context::ContextTypeA; longHorizon::Real=100, shortHorizon::Real=10, initialCapital::Real=10^5)
     context.extra.long_horizon = longHorizon
-    context.extra.shortHorizon = shortHorizon
-    return nothing
-end
-
-function default_next_event(context::ContextTypeA)
-    next_event_date = context.current_event.date + Day(1)
+    context.extra.short_horizon = shortHorizon
+    
+    ###################################
+    ####  Specify Account Balance  ####
+    ###################################
+    context.accounts.usd = DotMap(Dict())
+    context.accounts.usd.balance = initialCapital
+    context.accounts.usd.currency = "USD"
+    
+    #########################################
+    ####  Define first simulation event  ####
+    #########################################
+    # Define First Event (Assumming the first event starts from the data
+    # The first even should be at least as long as the long horizon)
+    next_event_date = context.current_event.date + Day(longHorizon)
     new_event = TimeEvent(next_event_date, "data_transfer")
     sortedStructInsert!(context.eventList, new_event, :date)
     return nothing
 end
 
-function default_order_generation(context::ContextTypeA, data::DataFrame)
-    orders = []
-    return orders
-end
 
 """
-    trading_logic!
+    interday_trading_logic!(context::ContextTypeA, data::DataFrame)
 
     Template for the trading logic algorithm, before being passed onto an engine like DEDS a preloaded
     function must be defined so that the trading logic function meets the engine requirements.
@@ -69,25 +73,45 @@ end
     my_trading_logic!(context,data) = SMA.trading_logic!(context,data)
     ```
 """
-function trading_logic!(
-    context::ContextTypeA,
-    data::DataFrame;
-    tune_parameters::Dict=Dict(),
-    next_event_setter::Function=default_next_event,
-    order_generator::Function=default_order_generator,
-)
-
+function interday_trading_logic!(context::ContextTypeA, data::DataFrame)
+    
     # 1. Specify next event (precalculations can be specified here) 
-    next_event_setter(context)
-
-    # 2. Generate orders
-    orders = order_generator(context, data)
-
-    # 3. Place orders
-    for order in orders
-        place_order!(context, order)
+    next_event_date = context.current_event.date + Day(1)
+    new_event = TimeEvent(next_event_date, "data_transfer")
+    sortedStructInsert!(context.eventList, new_event, :date)
+    
+    # 2. Generate orders and  place orders
+    if size(data,1)<context.extra.long_horizon # Skip if not enough data
+        return nothing
+    end
+    
+    # SMA Calculations: This assumes the data of the subdataframe comes pre-sorted with newest results last.
+    shortSMA(sdf_col) = mean(last(sdf_col, context.extra.short_horizon))
+    longSMA(sdf_col) = mean(last(sdf_col, context.extra.long_horizon))
+    sma_df=combine(groupby(data, ["symbol","exchangeName"]), :close=>shortSMA=>:SMA_S, :close=>longSMA=>:SMA_L )
+    sma_df[!,:position]= ((sma_df.SMA_S .>= sma_df.SMA_L) .-0.5) .*2
+   
+    # Order Generation
+    for r= eachrow(sma_df)
+        assetID= r.exchangeName *"/"*  r.symbol
+        if r.position>0 # Set Portfolio to 100 Shares on ticker under a bullish signal
+            amount = 100 - get(context.portfolio,assetID,0)  
+        elseif r.position<10
+            amount = get(context.portfolio,assetID,0)*-1
+        end
+        if amount === 0
+            continue
+        end
+        order_specs = DotMap(Dict())
+        order_specs.ticker = r.symbol
+        order_specs.shares = amount # Can be replaced by r.amount
+        order_specs.type = "MarketOrder"
+        order_specs.account = context.accounts.usd
+        order = Order(r.exchangeName, order_specs)
+        place_order!(context,order) 
     end
     return nothing
 end
+
 
 end

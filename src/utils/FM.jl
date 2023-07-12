@@ -56,6 +56,7 @@ Base.:*(a::Real, b::Money{B}) where {B} = Money{B}(a * b.value) # allow to multi
 Base.:*(b::Money{B}, a::Real) where {B} = Money{B}(a * b.value) # Commutability of product
 
 Base.:/(b::Money{B}, a::Real) where {B} = Money{B}(b.value / a)
+Base.:/(a::Money{A}, b::Money{A}) where {A} = a.value / b.value
 Base.:-(a::Money{A}, b::Money{A}) where {A} = Money{A}(a.value - b.value) # Same 
 
 exchange(a::Money{A}, B::Symbol, rate::Real) where {A} = Money{B}(a.value * rate)

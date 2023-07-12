@@ -1,7 +1,7 @@
 module Utils
 export hello_world
 using Pipe: @pipe
-using DataFrames: groupby, combine, missing
+using DataFrames:DataFrame, groupby, combine, missing
 
 """
     hello_world()

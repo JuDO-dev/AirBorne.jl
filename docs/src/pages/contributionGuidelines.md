@@ -62,22 +62,13 @@ make J
 
 Then execute the following three commands in the newly open Julia console:
 ```julia
-# Activate Test Dependencies
+# Activate Test Environment & Dependencies
+using TestEnv;TestEnv.activate(); using Revise
 
-
-using TestEnv
-TestEnv.activate()
-
-# In Pkg REPL 
-dev "../AirBorne"
-
-# Test using Revise
-using Revise
-# dev "../AirBorne" # In Pkg REPL
+# Run all tests
 include("test/runtests.jl")
 
-# To execute a single test just use the command below and replace 
-# test_file by the name of the file containing the test you want to run.
+# Run individual tests in a file.
 # include("test/test_file.jl")
 # include("test/backtest_A.jl")
 # include("test/FM.jl")

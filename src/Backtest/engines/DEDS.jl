@@ -70,7 +70,7 @@ function run(
     end
     counter = 0
     while ((size(context.eventList)[1] > 0)) && (counter < max_iter)
-        if (max_date!==nothing) && (context.current_event.date>max_date)
+        if (max_date !== nothing) && (context.current_event.date > max_date)
             break
         end
 

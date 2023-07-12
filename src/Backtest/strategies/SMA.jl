@@ -37,17 +37,22 @@ using DataFrames: DataFrame, groupby, combine, mean
     my_initialize!(context,data) = SMA.trading_logic!(context)
     ```
 """
-function interday_initialize!(context::ContextTypeA; longHorizon::Real=100, shortHorizon::Real=10, initialCapital::Real=10^5)
+function interday_initialize!(
+    context::ContextTypeA;
+    longHorizon::Real=100,
+    shortHorizon::Real=10,
+    initialCapital::Real=10^5,
+)
     context.extra.long_horizon = longHorizon
     context.extra.short_horizon = shortHorizon
-    
+
     ###################################
     ####  Specify Account Balance  ####
     ###################################
     context.accounts.usd = DotMap(Dict())
     context.accounts.usd.balance = initialCapital
     context.accounts.usd.currency = "USD"
-    
+
     #########################################
     ####  Define first simulation event  ####
     #########################################
@@ -58,7 +63,6 @@ function interday_initialize!(context::ContextTypeA; longHorizon::Real=100, shor
     sortedStructInsert!(context.eventList, new_event, :date)
     return nothing
 end
-
 
 """
     interday_trading_logic!(context::ContextTypeA, data::DataFrame)
@@ -74,30 +78,34 @@ end
     ```
 """
 function interday_trading_logic!(context::ContextTypeA, data::DataFrame)
-    
+
     # 1. Specify next event (precalculations can be specified here) 
     next_event_date = context.current_event.date + Day(1)
     new_event = TimeEvent(next_event_date, "data_transfer")
     sortedStructInsert!(context.eventList, new_event, :date)
-    
+
     # 2. Generate orders and  place orders
-    if size(data,1)<context.extra.long_horizon # Skip if not enough data
+    if size(data, 1) < context.extra.long_horizon # Skip if not enough data
         return nothing
     end
-    
+
     # SMA Calculations: This assumes the data of the subdataframe comes pre-sorted with newest results last.
     shortSMA(sdf_col) = mean(last(sdf_col, context.extra.short_horizon))
     longSMA(sdf_col) = mean(last(sdf_col, context.extra.long_horizon))
-    sma_df=combine(groupby(data, ["symbol","exchangeName"]), :close=>shortSMA=>:SMA_S, :close=>longSMA=>:SMA_L )
-    sma_df[!,:position]= ((sma_df.SMA_S .>= sma_df.SMA_L) .-0.5) .*2
-   
+    sma_df = combine(
+        groupby(data, ["symbol", "exchangeName"]),
+        :close => shortSMA => :SMA_S,
+        :close => longSMA => :SMA_L,
+    )
+    sma_df[!, :position] = ((sma_df.SMA_S .>= sma_df.SMA_L) .- 0.5) .* 2
+
     # Order Generation
-    for r= eachrow(sma_df)
-        assetID= r.exchangeName *"/"*  r.symbol
-        if r.position>0 # Set Portfolio to 100 Shares on ticker under a bullish signal
-            amount = 100 - get(context.portfolio,assetID,0)  
-        elseif r.position<10
-            amount = get(context.portfolio,assetID,0)*-1
+    for r in eachrow(sma_df)
+        assetID = r.exchangeName * "/" * r.symbol
+        if r.position > 0 # Set Portfolio to 100 Shares on ticker under a bullish signal
+            amount = 100 - get(context.portfolio, assetID, 0)
+        elseif r.position < 10
+            amount = get(context.portfolio, assetID, 0) * -1
         end
         if amount === 0
             continue
@@ -108,10 +116,9 @@ function interday_trading_logic!(context::ContextTypeA, data::DataFrame)
         order_specs.type = "MarketOrder"
         order_specs.account = context.accounts.usd
         order = Order(r.exchangeName, order_specs)
-        place_order!(context,order) 
+        place_order!(context, order)
     end
     return nothing
 end
-
 
 end

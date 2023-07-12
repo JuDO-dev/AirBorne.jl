@@ -143,7 +143,7 @@ end
     In the future this function can be expanded to return information as timestamp, 
     format of data in bundle among relevant metadata.
 """
-function list_bundles(;cache_dir::Union{String,Nothing}=nothing)
+function list_bundles(; cache_dir::Union{String,Nothing}=nothing)
     cache_dir = cache_dir === nothing ? get_cache_path() : cache_dir
     return readdir(cache_dir; sort=false)
 end
@@ -210,7 +210,9 @@ end
 
     Removes bundle from cache. This is an irreversible operation. If just_archive is true it only flushes the archive folder.
 """
-function remove_bundle(bundle_id::String; just_archive::Bool=false, cache_dir::Union{String,Nothing}=nothing)
+function remove_bundle(
+    bundle_id::String; just_archive::Bool=false, cache_dir::Union{String,Nothing}=nothing
+)
     # Define directories
     cache_dir = cache_dir === nothing ? get_cache_path() : cache_dir
     bundle_dir = joinpath(cache_dir, bundle_id)

@@ -82,11 +82,7 @@ function addSecurityToPortfolio!(portfolio::Vector{Any}, journal_entry::Union{Do
 end
 
 function addSecurityToPortfolio!(portfolio::Portfolio, journal_entry::Union{DotMap,Dict}) # Multiple-dispatch of method in case of portfolio being a vector.
-    asset_symbol = get(
-        journal_entry,
-        "assetID",
-        Symbol(keyJE(journal_entry)),
-    )
+    asset_symbol = get(journal_entry, "assetID", Symbol(keyJE(journal_entry)))
     portfolio += Security{asset_symbol}(journal_entry["shares"])
     return nothing
 end
@@ -107,7 +103,7 @@ end
 
 function addMoneyToAccount!(account::Wallet, journal_entry)
     # journal_entry["amount"] is Money
-    return account += journal_entry["amount"]*-1
+    return account += journal_entry["amount"] * -1
 end
 
 """
@@ -161,7 +157,9 @@ end
     sequentially without consideration on how the order on one asset may affect the price on another.
 """
 function execute_orders!(
-    context::Union{ContextTypeA,ContextTypeB}, data::DataFrame; executeOrder::Function=executeOrder_CA
+    context::Union{ContextTypeA,ContextTypeB},
+    data::DataFrame;
+    executeOrder::Function=executeOrder_CA,
 )
     # Retrieve data
     cur_data = get_latest(available_data(context, data), [:exchangeName, :symbol], :date)

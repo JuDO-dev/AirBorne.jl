@@ -1,7 +1,7 @@
 """
     AssetValuation
 
-    This module provides standarized asset valuation techniques compatible with 
+    This module provides standardized asset valuation techniques compatible with 
     datastructures in this module.
 
 """

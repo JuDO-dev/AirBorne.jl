@@ -74,7 +74,7 @@ end
 """
     Given a function (mean, variance, sharpe,...) from an 1-D array to a single element
     It creates an array with same size of original with the function applied from the 
-    beggining of the array to the index of the output. 
+    beginning of the array to the index of the output. 
 
     !!! Tip "Performance"
         This function is not meant to be highly performant. If a function is used function is

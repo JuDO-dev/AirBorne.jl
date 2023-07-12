@@ -51,7 +51,7 @@ function interday_initialize!(context::ContextTypeA; longHorizon::Real=100, shor
     #########################################
     ####  Define first simulation event  ####
     #########################################
-    # Define First Event (Assumming the first event starts from the data
+    # Define First Event (Assuming the first event starts from the data
     # The first even should be at least as long as the long horizon)
     next_event_date = context.current_event.date + Day(longHorizon)
     new_event = TimeEvent(next_event_date, "data_transfer")

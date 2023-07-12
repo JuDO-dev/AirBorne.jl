@@ -79,7 +79,12 @@ function returns(array::Vector)
     return out
 end
 
+"""
+    sharpe(avgReturn::Vector,variance::Vector;riskFreeRate::Real=0.0)
 
+    Calculates the sharpe ratio from 2 vectors of same length containing the mean and variance of the returns respectively.
+
+"""
 function sharpe(avgReturn::Vector,variance::Vector;riskFreeRate::Real=0.0)
     out = Array{Union{Float64,Nothing}}(undef,length(avgReturn)) # Preallocate memory
     for i = 1:length(avgReturn)
@@ -90,6 +95,13 @@ function sharpe(avgReturn::Vector,variance::Vector;riskFreeRate::Real=0.0)
     return out
 end
 
+"""
+    sharpe(returns::Vector;riskFreeRate::Real=0.0,windowSize::Union{Int,Nothing}=nothing, startFrom::Int=1)
+
+    Calculates the sharpe ratio from a single vector, by calculating its mean and variance over sliding 
+    time windows.
+    
+"""
 function sharpe(returns::Vector;riskFreeRate::Real=0.0,windowSize::Union{Int,Nothing}=nothing, startFrom::Int=1)
     avgReturn = movingAverage(returns; windowSize=windowSize, startFrom=startFrom)
     variance = makeRunning(returns,std; windowSize=windowSize, startFrom=startFrom)

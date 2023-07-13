@@ -4,6 +4,7 @@
 """
 module ETL
 include("./Transform/Transform.jl") # Definition of structures and common transformations are here. This module must be included first.
+include("./AssetValuation.jl")
 include("./YFinance/YFinance.jl")
 include("./Cache/Cache.jl")
 end

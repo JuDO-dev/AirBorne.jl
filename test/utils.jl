@@ -1,7 +1,7 @@
 using AirBorne.Utils: lagFill, makeRunning, movingAverage
 
 using Test
-@testset "AirBorne.ETL.YFinance" begin
+@testset "Utils" begin
     using DataFrames: DataFrame, missing
     a1 = [1, 0, missing, 2, 3, nothing, 4, 5]
     df = DataFrame(Dict("columnWithMissing" => a1))

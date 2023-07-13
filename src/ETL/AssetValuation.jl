@@ -6,10 +6,13 @@
 
 """
 module AssetValuation
-
-using DataFrames: DataFrame
+#AirBorne.ETL.AssetValuation
+# ..=ETL
+# ...= AirBorne 
+using ...Utils: movingAverage, makeRunning
+using DataFrames: DataFrame, groupby, unstack, combine, Not, select!
 using Dates: DateTime
-using Statistics: cov
+using Statistics: std, cov, mean
 
 """ 
     assetValue(data::DataFrame;method::Symbol=:last_open)
@@ -33,13 +36,13 @@ end
 function stockValuation(data::DataFrame; col::Symbol=:close, assetCol::Symbol=:assetID)
     # Produce for each date and assetID (assetCol) a 3 column table with date, assetID and Value
     agg = combine(groupby(data, [:date, assetCol]), col => mean => :stockValue)
-    # Generate 1 column per assetID containing its value and 1 row per date. ust stands for "unstacked"
-    ust = unstack(agg, assetCol, :stockValue)
+    # Generate 1 column per assetID containing its value and 1 row per date. 
+    out = unstack(agg, assetCol, :stockValue)
     # Create an additional column summarizing the date values in a dictionary
-    ust[!, "stockValue"] = [
-        Dict([t => x[t] for t in names(x) if t != "date"]) for x in eachrow(ust)
+    out[!, "stockValue"] = [
+        Dict([t => x[t] for t in names(x) if t != "date"]) for x in eachrow(out)
     ]
-    return ust
+    return out
 end
 
 """
@@ -68,9 +71,13 @@ end
 """
 function returns(assetValuesdf::DataFrame)
     out = deepcopy(assetValuesdf)
+    select!(out, Not(:stockValue))
     for x in filter(x -> x ∉ ["date", "stockValue", "stockReturns"], names(assetValuesdf))
         out[!, x] = returns(out[!, x])
     end
+    out[!, "stockReturns"] = [
+        Dict([t => x[t] for t in names(x) if t != "date"]) for x in eachrow(out)
+    ]
     return out
 end
 
@@ -85,9 +92,6 @@ function returns(array::Vector)
     for i in 2:length(array)
         out[i] = (array[i] - array[i - 1]) / array[i - 1]
     end
-    ust[!, "stockReturns"] = [
-        Dict([t => x[t] for t in names(x) if t != "date"]) for x in eachrow(ust)
-    ]
     return out
 end
 

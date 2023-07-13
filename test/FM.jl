@@ -59,7 +59,7 @@ using Test
 
     w7 = Wallet() # Empty Wallet
     w7 = w7 + 0USD # Add by summing
-    W7 = w7 - 0USD # Substract value
+    W7 = w7 - 0USD # Subtract value
     @test w0 == w7
     w8 = 0USD - 0GBP
     @test w8 == (w0 + 0GBP)

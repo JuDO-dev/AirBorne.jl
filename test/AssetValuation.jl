@@ -28,5 +28,5 @@ using Test
     @test round(valuePortfolio(portfolio, sv[1, "stockValue"]); digits=2) == 10765.15
     @test size(rets) == size(sv)
     @test size(sharpe(rets[1:100, "NMS/AAPL"]; windowSize=5)) == (100,)
-    @test size(covariance(rets))==(2,2)
+    @test size(covariance(rets)) == (2, 2)
 end

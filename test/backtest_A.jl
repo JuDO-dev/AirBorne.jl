@@ -27,6 +27,7 @@ using Logging
         expose_data;
         audit=true,
         max_iter=max_iter,
+        verbose=true
     )
     @test length(results.audit.eventHistory) == 51
     @test round(

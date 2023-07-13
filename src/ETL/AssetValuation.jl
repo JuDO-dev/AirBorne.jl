@@ -53,7 +53,7 @@ end
 function covariance(assetValuesdf::DataFrame)
     return cov(
         Matrix(
-            sVdf[
+            assetValuesdf[
                 :,
                 filter(
                     x -> x ∉ ["date", "stockValue", "stockReturns"], names(assetValuesdf)

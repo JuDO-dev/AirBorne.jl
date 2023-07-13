@@ -1,6 +1,5 @@
 module Utils
 export hello_world
-using Pipe: @pipe
 using DataFrames: DataFrame, groupby, combine, missing
 
 """
@@ -55,19 +54,32 @@ function get_latest(df, id_symbols, sort_symbol)
 end
 
 """
-    lagFill(df::DataFrame,col::Symbol; respect_nothing::Bool=false)
+    lagFill(df::DataFrame,col::Symbol; fill::Vector=[missing,nothing]))
 
     Replaces all missing values in a column of a dataframe for the previous 
     non-missing value.
+    ### Arguments
+    -`inV::Vector`: Input Vector
+    -`fill::Vector`: Vector with elements to be filled. I.e., nothing, NaN, missing. By default: [missing,nothing].
 """
-function lagFill(df::DataFrame, col::Symbol; respect_nothing::Bool=false)
-    filledArray = df[!, col]
-    for i in 2:length(filledArray)
-        if (filledArray[i] === missing) || (respect_nothing && filledArray[i] === nothing)
-            filledArray[i] = filledArray[i - 1]
+function lagFill(inV::Vector; fill::Vector=[missing, nothing])
+    out = inV
+    trigger_funs = []
+    if any(ismissing.(fill))
+        deleteat!(fill, findall(x -> ismissing(x), fill))
+        push!(trigger_funs, ismissing)
+    end
+    if any(isnothing.(fill))
+        deleteat!(fill, findall(x -> isnothing(x), fill))
+        push!(trigger_funs, isnothing)
+    end
+
+    for i in 2:length(out)
+        if any([f(out[i]) for f in trigger_funs]) || (out[i] ∈ fill)
+            out[i] = out[i - 1]
         end
     end
-    return filledArray
+    return out
 end
 
 """
@@ -87,9 +99,8 @@ function makeRunning(
     array::Vector, fun::Function; windowSize::Union{Int64,Nothing}=nothing, startFrom::Int=1
 )
     out = Array{Union{Float64,Nothing}}(undef, length(array)) # Preallocate memory
-    start(i) = windowSize === nothing ? startFrom : max(i - windowSize, startFrom)
+    start(i) = windowSize === nothing ? startFrom : max(i - windowSize + 1, startFrom)
     for i in startFrom:length(array)
-        # @info "$(start(i)) - $i :" array[start(i):i] # Uncomment to see input of function.
         out[i] = fun(array[start(i):i])
     end
     return out
@@ -98,18 +109,10 @@ end
 """
     More efficient implementation of a moving average (mean running).
 """
-function movingAverage(
-    array::Vector; windowSize::Union{Int,Nothing}=nothing, startFrom::Int=1
-)
+function movingAverage(array::Vector; windowSize::Int=1, startFrom::Int=1)
     out = Array{Union{Float64,Nothing}}(undef, length(array)) # Preallocate memory
-    start(i) = windowSize === nothing ? 1 : max(i - windowSize, 1)
-    function factor(i)
-        return if windowSize === nothing
-            i + 1 - startFrom
-        else
-            min(windowSize, i + 1 - startFrom)
-        end
-    end
+    start(i) = max(i - windowSize, 1)
+    factor(i) = min(windowSize, i + 1 - startFrom)
     sum_value = 0
     for i in startFrom:length(array)
         sum_value += array[i]

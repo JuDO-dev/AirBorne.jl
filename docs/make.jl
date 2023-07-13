@@ -4,6 +4,8 @@ using AirBorne.Structures
 using AirBorne.ETL
 using AirBorne.ETL.YFinance
 using AirBorne.ETL.Cache
+using AirBorne.Strategies
+using AirBorne.Strategies.SMA
 using AirBorne.Engines
 using AirBorne.Engines.DEDS
 using AirBorne.Markets
@@ -31,6 +33,7 @@ makedocs(;
             "Financial Modelling" => "./pages/financialModelling.md",
             "Event Driven Simulation" => "./pages/backtesting/eventDrivenSimulation.md",
         ],
+        "Examples" => ["Strategy: SMA " => "./pages/examples/SMA.md"],
         "Autodocs" => "./pages/autodocs.md",
         "Contribution Guidelines" => "./pages/contributionGuidelines.md",
     ],

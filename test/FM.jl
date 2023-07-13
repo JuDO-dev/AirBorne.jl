@@ -17,6 +17,12 @@ using Test
     @test 2.0 * a == b * 2
     @test 2 * a == b * 2.0
     @test USD * 2 == USD * 2.0
+    @test (5USD - 2USD) == 3USD
+    @test ((4USD) / (2USD)) == 2
+    @test ((4USD) / (2)) == 2USD
+    @test Money(:USD) == 1USD
+    @test Money(1.0, :USD) == 1USD
+    @test Money(1.0, USD) == 1USD
 
     # Currency checks
     @test AirBorne.get_symbol(c1) == AirBorne.get_symbol(typeof(c2))
@@ -37,6 +43,7 @@ using Test
     @test_throws KeyError AirBorne.exchange(500UYU, :GBP, exchangeRateI)
 
     # Wallet tests
+
     w0 = Wallet(USD)
     w1 = Wallet(:USD)
     @test w0 == w1
@@ -51,6 +58,12 @@ using Test
     w6 = Wallet(Dict(:USD => 20, :UYU => 60))
     w5[:USD] = 10.0
 
+    w7 = Wallet() # Empty Wallet
+    w7 = w7 + 0USD # Add by summing
+    W7 = w7 - 0USD # Subtract value
+    @test w0 == w7
+    w8 = 0USD - 0GBP
+    @test w8 == (w0 + 0GBP)
     # Arithmetic operations between wallets and money
     @test w2 + 50UYU == w4
     @test 20USD + w3 == w4

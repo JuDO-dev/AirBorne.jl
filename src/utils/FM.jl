@@ -24,7 +24,12 @@ using Currencies: Currency
 struct Money{S}
     value::Float64
 end
+
 # Constructors
+Money(S::Symbol) = Money{S}(1.00) # Creates one unit of Money of currency S
+Money(a::Real, S::Symbol) = Money{S}(Float64(a))
+Money(a::Real, ::Type{Currency{S}}) where {S} = Money{S}(Float64(a))
+
 Base.:*(a::Float64, ::Type{Currency{S}}) where {S} = Money{S}(a) # allow 3.0USD as a valid expression
 Base.:*(a::Real, ::Type{Currency{S}}) where {S} = Money{S}(Float64(a)) # allow 3USD as a valid expression
 
@@ -49,6 +54,10 @@ Base.:*(::Type{Currency{S}}, a::Real) where {S} = Money{S}(Float64(a)) # allow U
 Base.:*(a::Real, b::Money{B}) where {B} = Money{B}(a * b.value) # allow to multiply money by a value
 Base.:*(b::Money{B}, a::Real) where {B} = Money{B}(a * b.value) # Commutability of product
 
+Base.:/(b::Money{B}, a::Real) where {B} = Money{B}(b.value / a)
+Base.:/(a::Money{A}, b::Money{A}) where {A} = a.value / b.value
+Base.:-(a::Money{A}, b::Money{A}) where {A} = Money{A}(a.value - b.value) # Same 
+
 exchange(a::Money{A}, B::Symbol, rate::Real) where {A} = Money{B}(a.value * rate)
 function exchange(
     a::Money{A}, B::Symbol, exchangeRate::Dict{Tuple{Symbol,Symbol},Real}
@@ -69,10 +78,11 @@ end
 #################
 
 """Just a wrapper around a dictionary"""
-struct Wallet
+mutable struct Wallet
     content::Dict{Symbol,Float64}
 end
 # Constructors
+Wallet() = Wallet(Dict())
 Wallet(::Type{Currency{S}}) where {S} = Wallet(Dict(S => 0.0))
 Wallet(S::Symbol) = Wallet(Dict(S => 0.0))
 Wallet(b::Money{B}) where {B} = Wallet(Dict(B => b.value))
@@ -126,8 +136,11 @@ function Base.:(==)(a::Wallet, b::Wallet)
     return true
 end
 Base.:+(a::Money{A}, b::Money{B}) where {A,B} = Wallet(Dict(A => a.value, B => b.value)) #Different
+Base.:-(a::Money{A}, b::Money{B}) where {A,B} = Wallet(Dict(A => a.value, B => -b.value)) #Different
 Base.:+(a::Wallet, b::Money) = a + Wallet(b) # Add money to the wallet just by summing
 Base.:+(b::Money, a::Wallet) = a + Wallet(b) # Commutability of operator
+
+Base.:-(a::Wallet, b::Money) = a + Wallet(b * -1)
 
 ############################
 ###  Security & Portfolios ###

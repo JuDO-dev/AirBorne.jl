@@ -6,5 +6,6 @@
 """
 module Strategies
 # include("./instances/Ibra.jl")
-# include("./instances/SMA.jl")
+# include("./strategies/Markowitz.jl")
+include("./strategies/SMA.jl")
 end

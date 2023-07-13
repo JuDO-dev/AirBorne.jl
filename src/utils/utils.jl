@@ -1,7 +1,6 @@
 module Utils
 export hello_world
-using Pipe: @pipe
-using DataFrames: groupby, combine
+using DataFrames: DataFrame, groupby, combine, missing
 
 """
     hello_world()
@@ -54,21 +53,73 @@ function get_latest(df, id_symbols, sort_symbol)
     end
 end
 
-# Important bug in Julia: https://github.com/JuliaLang/julia/issues/32727 prevents this function from compiling sometimes for documentation
-# Is still a good function that we need to put forward at some point
-# TODO: Implement function without "_" as a variable
-# """
-#     get_latest_N(df,id_symbols,sort_symbol,N)
-#     Retrieves last N records from a dataframe, sortying by sort_symbol and grouping by id_symbols.
-#     ```julia
-#     get_latest_N(past_data,[:exchangeName,:symbol],:date,2)
-#     ```
-# """
-# function get_latest_N(df, id_symbols, sort_symbol, N)
-#     return @pipe combine(_) do sdf
-#         sorted = sort(sdf, sort_symbol)
-#         first(sorted, N)
-#     end(groupby(_, id_symbols)(df))
-# end
+"""
+    lagFill(df::DataFrame,col::Symbol; fill::Vector=[missing,nothing]))
+
+    Replaces all missing values in a column of a dataframe for the previous 
+    non-missing value.
+    ### Arguments
+    -`inV::Vector`: Input Vector
+    -`fill::Vector`: Vector with elements to be filled. I.e., nothing, NaN, missing. By default: [missing,nothing].
+"""
+function lagFill(inV::Vector; fill::Vector=[missing, nothing])
+    out = inV
+    trigger_funs = []
+    if any(ismissing.(fill))
+        deleteat!(fill, findall(x -> ismissing(x), fill))
+        push!(trigger_funs, ismissing)
+    end
+    if any(isnothing.(fill))
+        deleteat!(fill, findall(x -> isnothing(x), fill))
+        push!(trigger_funs, isnothing)
+    end
+
+    for i in 2:length(out)
+        if any([f(out[i]) for f in trigger_funs]) || (out[i] ∈ fill)
+            out[i] = out[i - 1]
+        end
+    end
+    return out
+end
+
+"""
+    Given a function (mean, variance, sharpe,...) from an 1-D array to a single element
+    It creates an array with same size of original with the function applied from the 
+    beginning of the array to the index of the output. 
+
+    !!! Tip "Performance"
+        This function is not meant to be highly performant. If a function is used function is
+        advised to have a specialized function to calculate its running counterpart.
+
+    # Optional Arguments
+    - `windowSize::Union{Int,Nothing}`: If its desired to truncate the number of past elements to be considered, this field can be set to the maximum number of past elements to take into account. This can be used for Moving Averages for example. 
+    - `ignoreFirst::Int`: Indicates for how many elements the operation should not be applied. In those elements "nothing" will be placed instead.
+"""
+function makeRunning(
+    array::Vector, fun::Function; windowSize::Union{Int64,Nothing}=nothing, startFrom::Int=1
+)
+    out = Array{Union{Float64,Nothing}}(undef, length(array)) # Preallocate memory
+    start(i) = windowSize === nothing ? startFrom : max(i - windowSize + 1, startFrom)
+    for i in startFrom:length(array)
+        out[i] = fun(array[start(i):i])
+    end
+    return out
+end
+
+"""
+    More efficient implementation of a moving average (mean running).
+"""
+function movingAverage(array::Vector; windowSize::Int=1, startFrom::Int=1)
+    out = Array{Union{Float64,Nothing}}(undef, length(array)) # Preallocate memory
+    start(i) = max(i - windowSize, 1)
+    factor(i) = min(windowSize, i + 1 - startFrom)
+    sum_value = 0
+    for i in startFrom:length(array)
+        sum_value += array[i]
+        sum_value -= i + 1 - startFrom > windowSize ? array[start(i)] : 0
+        out[i] = sum_value / factor(i)
+    end
+    return out
+end
 
 end

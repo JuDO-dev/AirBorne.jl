@@ -8,4 +8,8 @@ using Test
     u_to = string(round(Int, Dates.datetime2unix(to)))
     r = AirBorne.ETL.YFinance.get_interday_data(["AAPL"], u_from, u_to)
     @test size(r) == (20, 12)
+
+    screener_df = AirBorne.ETL.NASDAQ.screener()
+    @test size(screener_df, 1) > 5000
+    @test "symbol" in names(screener_df)
 end

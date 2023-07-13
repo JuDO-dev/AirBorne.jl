@@ -19,6 +19,7 @@ using Test
     @test USD * 2 == USD * 2.0
     @test (5USD - 2USD) == 3USD
     @test ((4USD) / (2USD)) == 2
+    @test ((4USD) / (2)) == 2USD
     @test Money(:USD) == 1USD
     @test Money(1.0, :USD) == 1USD
     @test Money(1.0, USD) == 1USD

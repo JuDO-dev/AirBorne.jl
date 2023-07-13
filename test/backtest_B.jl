@@ -1,6 +1,6 @@
 using AirBorne: AirBorne, Money, Portfolio, Wallet, Security, get_symbol
 using AirBorne.ETL.Cache: load_bundle
-using AirBorne.Structures: ContextTypeB, TimeEvent
+using AirBorne.Structures: ContextTypeB, TimeEvent, summarizePerformance
 using AirBorne.Markets.StaticMarket:
     addMoneyToAccount!, addSecurityToPortfolio!, execute_orders!, expose_data, keyJE
 using AirBorne.Engines.DEDS: run
@@ -64,4 +64,5 @@ using Logging
         max_date=DateTime(2019, 2, 1),
     )
     @test size(context.audit.portfolioHistory) == (741,)
+    @test size(summarizePerformance(data, context; removeWeekend=true), 1) == 531
 end

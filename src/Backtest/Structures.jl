@@ -6,12 +6,15 @@
     Facilitating contract enforcement between Engines, Markets and Strategies. 
 """
 module Structures
-using Dates: DateTime
-import DotMaps.DotMap as DM
-# Financial model Types
-using ...AirBorne: Wallet, Portfolio
+
 using Base: Base
-export TimeEvent
+using DataFrames: DataFrame, leftjoin, innerjoin
+using Dates: DateTime, dayofweek
+import DotMaps.DotMap as DM
+using Statistics: std, mean
+using ...AirBorne: Wallet, Portfolio
+using ..Utils: makeRunning, lagFill
+using ..ETL.AssetValuation: stockValuation, sharpe, valuePortfolio, returns
 
 struct TimeEvent
     date::DateTime
@@ -66,4 +69,69 @@ end
 function ContextTypeB(event::TimeEvent)
     return ContextTypeB([], [], event, Portfolio(), Wallet(), [], DM(), DM())
 end
+
+"""
+    summarizePerformance(data::DataFrame, context::ContextTypeA;
+    valuationFun::Function=stockValuation,
+    removeWeekend::Bool=false,
+    keepDaysWithoutData::Bool=true,
+    windowSize::Int=5,
+    riskFreeRate::Real=0.0
+    )
+
+    Given an audit of the portfolio, account, events and OHLCV data it returns a summary of the performance 
+    of the portfolio over time.
+    
+    # Arguments
+    - `data::DataFrame`: A dataframe with the data OHLCV_V1 data.
+    - `context::ContextTypeA`: Result from running the simulation in DEDS Engine.
+    ### Optional keyword arguments
+    -`valuationFun::Function=stockValuation`: Stock needs to be valued to establish a notion of returns. This allows to pass custom functions for asset valuation.
+    -`removeWeekend::Bool=false`: Many markets close over weekend. If events are kept with lack of activity returns of 0 may be observed.
+    -`keepDaysWithoutData::Bool=true`: Without data the most recent  market provided will be used to estimate the value of assets. If events are kept with lack of activity returns of 0 may be observed.
+    -`windowSize::Int=5`: Many statistical figures are observed over sliding time windows, this allows to select the size of the timewindows by setting the number of consecutive events considered.
+    -`riskFreeRate::Real=0.0`: Sharpe and other metrics rely on a definition of a risk free rate. 
+    
+"""
+function summarizePerformance(
+    OHLCV_data::DataFrame,
+    context::ContextTypeA;
+    valuationFun::Function=stockValuation,
+    removeWeekend::Bool=false,
+    keepDaysWithoutData::Bool=true,
+    windowSize::Int=5,
+    riskFreeRate::Real=0.0,
+)
+    summary = DataFrame(
+        "date" => [e.date for e in context.audit.eventHistory],
+        "type" => [e.type for e in context.audit.eventHistory],
+        "portfolio" => context.audit.portfolioHistory,
+        "account" => context.audit.accountHistory,
+    )
+
+    joinoperation = keepDaysWithoutData ? leftjoin : innerjoin
+    summary = joinoperation(
+        summary, valuationFun(OHLCV_data)[!, ["date", "stockValue"]]; on=:date
+    )
+
+    sort!(summary, :date)
+    if removeWeekend
+        summary = summary[dayofweek.(summary.date) .< 6, :]
+    end
+    summary.stockValue = lagFill(summary.stockValue)
+    summary[!, "dollarValue"] = [
+        valuePortfolio(r.portfolio, r.stockValue) + r.account.usd.balance for
+        r in eachrow(summary)
+    ]
+    summary[!, "return"] = returns(summary.dollarValue)
+    summary[!, "mean_return"] = makeRunning(
+        summary[!, "return"], mean; windowSize=windowSize
+    )
+    summary[!, "std_return"] = makeRunning(summary[!, "return"], std; windowSize=windowSize)
+    summary[!, "sharpe"] = sharpe(
+        summary.mean_return, summary.std_return; riskFreeRate=riskFreeRate
+    )
+    return summary
+end
+
 end

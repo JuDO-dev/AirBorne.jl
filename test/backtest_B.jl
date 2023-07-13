@@ -3,7 +3,8 @@ using AirBorne.ETL.Cache: load_bundle
 using AirBorne.Structures: ContextTypeB, TimeEvent
 using AirBorne.Markets.StaticMarket:
     addMoneyToAccount!, addSecurityToPortfolio!, execute_orders!, expose_data, keyJE
-# using AirBorne.Engines.DEDS: run
+using AirBorne.Engines.DEDS: run
+using AirBorne.Strategies.SMA: interday_initialize!, interday_trading_logic!
 
 function f(acc, mon)
     return acc[get_symbol(a)] += mon.value * -1
@@ -39,22 +40,28 @@ using Logging
     journal_entry["assetID"] = keyJE(journal_entry)
     addMoneyToAccount!(contextB.accounts, journal_entry)
     addSecurityToPortfolio!(contextB.portfolio, journal_entry)
+    vector_portfolio = []
+    addSecurityToPortfolio!(vector_portfolio, journal_entry)
+    @test size(vector_portfolio) == (1,)
     @test contextB.accounts[:USD] == 92150.0
     @test contextB.portfolio[Symbol(journal_entry["assetID"])] == 100.0
 
     ######################
     ###  SMA Strategy  ###
     ######################
-    # cache_dir = joinpath(@__DIR__, "assets", "cache")
-    # data = load_bundle("demo"; cache_dir=cache_dir)
-
-    # # Custom Pricing Mechanism
-    # priceModel(cur_data, ticker) = refPrice(cur_data, ticker; col=:market_price)
-    # # Custom Single Order Execution
-    # eO(ctx, ord, cd) = executeOrder_CB(ctx, ord, cd; priceModel=priceModel)
-
-    # execute_orders!(context, data; executeOrder=eO)
-    # cur_data = get_latest(available_data(context, data), [:exchangeName, :symbol], :date)
-    # journal_entry, status = executeOrder_CB(context, order, cur_data; priceModel=priceModel)
-
+    cache_dir = joinpath(@__DIR__, "assets", "cache")
+    data = load_bundle("demo"; cache_dir=cache_dir)
+    simulate_until = DateTime(2019, 2, 1)
+    sma_initialize!(context) = interday_initialize!(context; longHorizon=20, shortHorizon=5)
+    sma_trading_logic! = interday_trading_logic!
+    context = run(
+        data,
+        sma_initialize!,
+        sma_trading_logic!,
+        execute_orders!,
+        expose_data;
+        audit=true,
+        max_date=DateTime(2019, 2, 1),
+    )
+    @test size(context.audit.portfolioHistory) == (741,)
 end

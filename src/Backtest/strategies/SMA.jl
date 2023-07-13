@@ -15,14 +15,13 @@
 
 """
 module SMA
-export initialize!
-export trading_logic!
 
 using ...Utils: sortedStructInsert!
 using ...Structures: ContextTypeA, TimeEvent
 using ...Markets.StaticMarket: Order, place_order!
 using Dates: Day
 using DataFrames: DataFrame, groupby, combine, mean
+using DotMaps: DotMap
 
 """
     initialize!

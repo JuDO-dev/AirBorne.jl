@@ -51,7 +51,7 @@ function get_cache_path()
     cache_path = get(ENV, "AIRBORNE_ROOT", nothing)
     if !(isnothing(cache_path))
         return cache_path
-    # COV_EXCL_START
+        # COV_EXCL_START
     elseif (Sys.islinux()) || (Sys.isapple())
         return "/root/tmp/.AirBorne/.cache"
     elseif Sys.iswindows()

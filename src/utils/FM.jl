@@ -78,7 +78,7 @@ end
 #################
 
 """Just a wrapper around a dictionary"""
-struct Wallet
+mutable struct Wallet
     content::Dict{Symbol,Float64}
 end
 # Constructors

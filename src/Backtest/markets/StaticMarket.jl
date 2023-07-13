@@ -10,11 +10,9 @@ export execute_orders!, expose_data, Order, parse_portfolioHistory, parse_accoun
 using DataFrames: DataFrame, Not, select!
 using DotMaps: DotMap
 using ...Structures: ContextTypeA, ContextTypeB
-using ....AirBorne: Portfolio, Security, Wallet
+using ....AirBorne: Portfolio, Security, Wallet, get_symbol
 using ...Utils: get_latest
 
-Context = ContextTypeA
-Contexts = Union{ContextTypeA,ContextTypeB}
 """
     Order
 
@@ -27,7 +25,7 @@ struct Order
     specs::DotMap
 end
 
-place_order!(context::Contexts, order) = push!(context.activeOrders, order)
+place_order!(context::ContextTypeA, order) = push!(context.activeOrders, order)
 
 """
     available_data(context,data)
@@ -82,8 +80,11 @@ function addSecurityToPortfolio!(portfolio::Vector{Any}, journal_entry::Union{Do
 end
 
 function addSecurityToPortfolio!(portfolio::Portfolio, journal_entry::Union{DotMap,Dict}) # Multiple-dispatch of method in case of portfolio being a vector.
-    asset_symbol = get(journal_entry, "assetID", Symbol(keyJE(journal_entry)))
-    portfolio += Security{asset_symbol}(journal_entry["shares"])
+    asset_symbol = Symbol(get(journal_entry, "assetID", keyJE(journal_entry)))
+    if !(asset_symbol in keys(portfolio))
+        setindex!(portfolio.content, 0, asset_symbol) # Initialize Asset    
+    end
+    portfolio[asset_symbol] += (journal_entry["shares"])
     return nothing
 end
 
@@ -96,17 +97,29 @@ function addJournalEntryToLedger!(ledger::Vector{Any}, journal_entry::Union{DotM
     return push!(ledger, journal_entry)
 end
 
+"""
+    addMoneyToAccount!(account::DotMap, journal_entry)    
+
+    StaticMarket method to add money to the accounts given an entry to ledger.
+    The convention is that a positive ledger entry correspond to money exiting the account.
+"""
 function addMoneyToAccount!(account::DotMap, journal_entry)
-    # journal_entry["amount"] is Real
-    return account.balance -= journal_entry["amount"]
+    account.balance -= journal_entry["amount"]     # journal_entry["amount"] is Real
+    return nothing
 end
 
 function addMoneyToAccount!(account::Wallet, journal_entry)
-    # journal_entry["amount"] is Money
-    return account += journal_entry["amount"] * -1
+    x = journal_entry["amount"]
+    account[get_symbol(x)] += x.value * -1
+    return nothing
 end
 
 """
+    refPrice(cur_data::DataFrame, ticker::Union{String,Symbol}; col::Symbol=:open)
+    
+    Using the current data in the market establishes the price to be paid per a unit of an asset 
+    (a share for example in equity).
+    
     Assuming a dataframe with one row per ticker where the ticker symbol is in the column symbol
     The price is assumed to be at the column "col"
 """
@@ -157,9 +170,7 @@ end
     sequentially without consideration on how the order on one asset may affect the price on another.
 """
 function execute_orders!(
-    context::Union{ContextTypeA,ContextTypeB},
-    data::DataFrame;
-    executeOrder::Function=executeOrder_CA,
+    context::ContextTypeA, data::DataFrame; executeOrder::Function=executeOrder_CA
 )
     # Retrieve data
     cur_data = get_latest(available_data(context, data), [:exchangeName, :symbol], :date)

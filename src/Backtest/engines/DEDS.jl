@@ -11,7 +11,7 @@ using DataFrames: DataFrame
 using DotMaps: DotMap
 using Dates: DateTime
 using ...Utils: deepPush!, sortStruct!
-using ...Structures: TimeEvent, ContextTypeA, ContextTypeB
+using ...Structures: TimeEvent, ContextTypeA
 
 # Context = ContextTypeA
 """

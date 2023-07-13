@@ -10,7 +10,7 @@ using Dates: DateTime
 import DotMaps.DotMap as DM
 # Financial model Types
 using ...AirBorne: Wallet, Portfolio
-
+using Base: Base
 export TimeEvent
 
 struct TimeEvent
@@ -18,7 +18,7 @@ struct TimeEvent
     type::String
 end
 
-function length(::TimeEvent)
+function Base.length(::TimeEvent)
     return 1
 end
 

@@ -38,9 +38,21 @@ available_data(context, data) = data[data.date .<= context.current_event.date, :
     expose_data(context,data)
 
     This function determine how the data is transformed and filtered before being passed to the user.
+
+    # Arguments
+    -`context::ContextTypeA`: Context of the simulation.
+    - `data::DataFrame`: The dataframe provided to the simulation. 
+    ### Optional keyword arguments
+    -`historical::Bool=true`: If true returns data up to the specified event in the context, otherwise returns just data matching the
+    time of the current event of the context.
 """
-function expose_data(context, data)
-    return available_data(context, data)
+function expose_data(context::ContextTypeA, data::DataFrame; historical::Bool=true)
+    if historical
+        out = available_data(context, data)
+    else
+        out = data[data.date .== context.current_event.date, :]
+    end
+    return out
 end
 
 """Defines the unique identifier to an equity asset given a journal entry of the ledger"""

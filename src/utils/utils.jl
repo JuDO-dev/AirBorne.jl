@@ -58,7 +58,7 @@ end
 
     This function returns a DataFrame with the first N rows of the input dataframe sorted by the column *by* amd the columns specified by *fields*. 
     
-    Using the aditional parameter, *rev* the sort order gets reversed. 
+    Using the additional parameter, *rev* the sort order gets reversed. 
 
     Example: get the 5 largest companies in the NASDAQ screener, per sector.
     ```julia

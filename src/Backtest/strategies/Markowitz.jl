@@ -2,7 +2,7 @@
     Markowits Portfolio Optimization
 
     It assumes the returns of the individual stocks to be a stationary stochastic process, not necessarily 
-    independet. Therefore it has a constant mean and variance matrix for the asset returns.
+    independent. Therefore it has a constant mean and variance matrix for the asset returns.
 
 
     From stock prices it assumes the returns to be 
@@ -57,7 +57,7 @@ function initialize!(
     #########################################
     ####  Define first simulation event  ####
     #########################################
-    # Define First Event (Assumming the first event starts from the data
+    # Define First Event (Assuming the first event starts from the data
     # The first even should be at least as long as the long horizon)
     next_event_date = context.current_event.date
     new_event = TimeEvent(next_event_date, "data_transfer")

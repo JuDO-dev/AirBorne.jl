@@ -11,7 +11,7 @@ using AirBorne.Strategies.Markowitz: Markowitz
 function f(acc, mon)
     return acc[get_symbol(a)] += mon.value * -1
 end;
-using Dates: DateTime
+using Dates: DateTime, Day
 using Test
 using Logging
 # This more sophisticated data structures and 
@@ -83,4 +83,13 @@ using Logging
     )
     @test size(context.audit.portfolioHistory) == (51,)
     @test size(summarizePerformance(data, context; removeWeekend=true), 1) == 37
+
+    c2 = deepcopy(context) # Make a copy of the context to modify and play with
+    c2.extra.returnHistory[!, "NMS/AAPL"] =
+        -collect(1:size(c2.extra.returnHistory, 1)) ./ size(c2.extra.returnHistory, 1)
+    c2.extra.returnHistory[!, "NMS/GOOG"] =
+        -collect(1:size(c2.extra.returnHistory, 1)) ./ size(c2.extra.returnHistory, 1)
+    c2.current_event = TimeEvent(c2.current_event.date + Day(1), "test") # Advance Time 
+    Markowitz.trading_logic!(c2, my_expose_data(c2, data)) # Test what happens if market is going down
+    @test all(c2.extra.idealPortfolioDistribution .== 0)
 end

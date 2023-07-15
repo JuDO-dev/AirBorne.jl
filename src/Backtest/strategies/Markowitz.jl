@@ -11,11 +11,12 @@
 """
 module Markowitz
 
-using AirBorne.Utils: sortedStructInsert!
-using AirBorne.Structures: ContextTypeA, TimeEvent
-using AirBorne.Markets.StaticMarket: Order, place_order!
+using ...Utils: sortedStructInsert!
+using ...Structures: ContextTypeA, TimeEvent
+using ...Markets.StaticMarket: Order, place_order!
+using ...ETL.AssetValuation: stockValuation, returns, covariance
 using Dates: Day, year
-using DataFrames: DataFrame, groupby, combine, mean
+using DataFrames: DataFrame, groupby, combine, mean, Not
 using DotMaps: DotMap
 using DirectSearch:
     DSProblem,

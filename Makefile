@@ -39,5 +39,8 @@ setgit:
 lint-fix:
 	julia --project=./dev_project -e 'using JuliaFormatter;  format(".")' 
 	
+lint-fix-local:
+	julia --project=./dev_project -e 'using JuliaFormatter;  format("/root/AirBorne/src/Backtest/strategies/SMA.jl", BlueStyle())' 
+
 lint:
 	julia --project=./dev_project ./dev_project/lint_test.jl

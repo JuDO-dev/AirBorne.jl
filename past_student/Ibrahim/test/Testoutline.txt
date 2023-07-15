@@ -1,0 +1,27 @@
+Data Parsing
+Test each parsing function (CSV_Parsing, Excel_Parsing, JSON_Parsing, SQLite_Parsing, PostgreSQL_Parsing) with valid input files of various sizes and ensure the output matches the expected result.
+Test each parsing function with empty or invalid files and ensure that it handles these gracefully (e.g., by throwing a meaningful error message).
+Test each parsing function with files containing data of unexpected types or formats and ensure it handles these correctly.
+Test initial_portfolio_details function with different combinations of parsing method and arguments to ensure compatibility.
+Test parse_input with invalid arguments or data structures to check if it throws an appropriate error.
+
+Constraints and Data Filtering
+Test apply_constraints with a dataset and several constraints to ensure it correctly filters the data.
+Test apply_constraints with an empty dataset and ensure it returns an empty result.
+Test apply_constraints with no constraints and ensure it returns the same dataset.
+Test apply_constraints with constraints that match no data items and ensure it returns an empty dataset.
+Test get_feature with various datums and features to ensure it correctly extracts the feature values.
+Test get_feature with invalid datum or non-existing feature and ensure it throws an appropriate error.
+
+Data Fetching and Matching
+Test each get_tradable_securities and get_financial_securities function with valid platform credentials and indexing function and ensure they return correct data.
+Test each function with invalid platform credentials and ensure they handle the error gracefully.
+Test each function with an invalid or non-existing indexing function and ensure they throw an appropriate error.
+Test get_universe_securities_dispatch with valid arguments and ensure it returns correct results.
+Test get_universe_securities_dispatch with mismatched tickers in tradable and financial securities, and check if it correctly identifies the common and unique tickers.
+
+Portfolio Constraints
+Test add_constraint function by adding a constraint to a PortfolioConstraints instance and ensuring the new constraint is added.
+Test check_portfolio with a portfolio that satisfies all constraints and ensure it returns true.
+Test check_portfolio with a portfolio that violates at least one constraint and ensure it returns false.
+Test check_portfolio with an empty portfolio and ensure it handles it correctly (based on your requirements)

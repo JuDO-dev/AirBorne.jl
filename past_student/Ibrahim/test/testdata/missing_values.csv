@@ -1,0 +1,5 @@
+AssetID,Type,Volume,Value
+AAPL,Stock,1000,
+GOOG,Stock,,75000
+MSFT,Stock,1200,110000
+,ETF,600,180000

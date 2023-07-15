@@ -118,14 +118,10 @@ function trading_logic!(
         AddExtremeConstraint(p, lower_cons)
         SetInitialPoint(p, vec([i for i in initial_point]))
         Optimize!(p)
-        context.extra.idealPortfolioDistribution = p.x
+        # If feasible solution not found, sell all
+        context.extra.idealPortfolioDistribution = isnothing(p.x) ? zeros(size(m)) : p.x
     else
         context.extra.idealPortfolioDistribution = zeros(size(m)) # Sell absolutely everytihng. Market is going down.
-    end
-    check = false
-    if isnothing(context.extra.idealPortfolioDistribution) # Feasible solution not found!, sell all
-        context.extra.idealPortfolioDistribution = zeros(size(m))
-        check = true
     end
 
     # 2.4 Calculate shares to buy and sell to achieve optimal portfolio
@@ -138,18 +134,7 @@ function trading_logic!(
     end
     currentPortfolio = reshape(Matrix(DataFrame(context.portfolio)), (length(asset_names)))
     total_capital = context.accounts.usd.balance + (currentPortfolio' * cv)[1] # Total capital to distribute 
-    if check
-        @info "Check:" context.extra.idealPortfolioDistribution total_capital cv
-        @info "Check:" size(context.extra.idealPortfolioDistribution) size(total_capital) size(
-            cv
-        )
 
-        @info context.extra.idealPortfolioDistribution .* total_capital
-        @info [
-            context.extra.idealPortfolioDistribution[i] * total_capital / cv[i] for
-            i in 1:length(cv)
-        ]
-    end
     # nextPortfolio =  reshape(context.extra.idealPortfolioDistribution.*total_capital ./ cv, (length(asset_names))) # Amount of shares to have of each ticker
     nextPortfolio = reshape(
         [

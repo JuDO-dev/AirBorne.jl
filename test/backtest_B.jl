@@ -5,11 +5,13 @@ using AirBorne.Markets.StaticMarket:
     addMoneyToAccount!, addSecurityToPortfolio!, execute_orders!, expose_data, keyJE
 using AirBorne.Engines.DEDS: run
 using AirBorne.Strategies.SMA: interday_initialize!, interday_trading_logic!
+using AirBorne.Strategies.Markowitz: Markowitz
+# initialize!, trading_logic!
 
 function f(acc, mon)
     return acc[get_symbol(a)] += mon.value * -1
 end;
-using Dates: DateTime
+using Dates: DateTime, Day
 using Test
 using Logging
 # This more sophisticated data structures and 
@@ -46,11 +48,11 @@ using Logging
     @test contextB.accounts[:USD] == 92150.0
     @test contextB.portfolio[Symbol(journal_entry["assetID"])] == 100.0
 
+    cache_dir = joinpath(@__DIR__, "assets", "cache")
+    data = load_bundle("demo"; cache_dir=cache_dir)
     ######################
     ###  SMA Strategy  ###
     ######################
-    cache_dir = joinpath(@__DIR__, "assets", "cache")
-    data = load_bundle("demo"; cache_dir=cache_dir)
     simulate_until = DateTime(2019, 2, 1)
     sma_initialize!(context) = interday_initialize!(context; longHorizon=20, shortHorizon=5)
     sma_trading_logic! = interday_trading_logic!
@@ -65,4 +67,29 @@ using Logging
     )
     @test size(context.audit.portfolioHistory) == (741,)
     @test size(summarizePerformance(data, context; removeWeekend=true), 1) == 531
+
+    ############################
+    ###  Markowitz Strategy  ###
+    ############################
+    my_expose_data(context, data) = expose_data(context, data; historical=false)
+    context = run(
+        data,
+        Markowitz.initialize!,
+        Markowitz.trading_logic!,
+        execute_orders!,
+        my_expose_data;
+        audit=true,
+        max_iter=50,
+    )
+    @test size(context.audit.portfolioHistory) == (51,)
+    @test size(summarizePerformance(data, context; removeWeekend=true), 1) == 37
+
+    c2 = deepcopy(context) # Make a copy of the context to modify and play with
+    c2.extra.returnHistory[!, "NMS/AAPL"] =
+        -collect(1:size(c2.extra.returnHistory, 1)) ./ size(c2.extra.returnHistory, 1)
+    c2.extra.returnHistory[!, "NMS/GOOG"] =
+        -collect(1:size(c2.extra.returnHistory, 1)) ./ size(c2.extra.returnHistory, 1)
+    c2.current_event = TimeEvent(c2.current_event.date + Day(1), "test") # Advance Time 
+    Markowitz.trading_logic!(c2, my_expose_data(c2, data)) # Test what happens if market is going down
+    @test all(c2.extra.idealPortfolioDistribution .== 0)
 end

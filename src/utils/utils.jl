@@ -1,6 +1,6 @@
 module Utils
 export hello_world
-using DataFrames: DataFrame, groupby, combine, missing
+using DataFrames: DataFrame, groupby, combine, missing, SubDataFrame
 
 """
     hello_world()
@@ -51,6 +51,52 @@ function get_latest(df, id_symbols, sort_symbol)
     return combine(groupby(df, id_symbols)) do sdf
         sdf[argmax(sdf[!, sort_symbol]), :]
     end
+end
+
+"""
+    get_latest_N(sdf::Union{SubDataFrame,DataFrame},by::Symbol,N::Int64; rev=false,fields::Vector=[])
+
+    This function returns a DataFrame with the first N rows of the input dataframe sorted by the column *by* amd the columns specified by *fields*. 
+    
+    Using the additional parameter, *rev* the sort order gets reversed. 
+
+    Example: get the 5 largest companies in the NASDAQ screener, per sector.
+    ```julia
+        using AirBorne.ETL.NASDAQ: screener
+        tickers_df = screener()
+        filtered_df =tickers_df[[   x!="" ? parse(Int64, x)<2017 : false for x in tickers_df.ipoyear],["symbol","marketCap","sector"]]
+        grouped_df = groupby(filtered_df,"sector")
+        f(sdf)= get_latest_N(sdf,:marketCap,5;rev=true, fields = ["symbol", "marketCap"])
+        result = combine(gdf,f)
+    ```
+    Another example
+    ```
+    a="A";b="B"
+
+    f2(sdf)= get_latest_N(sdf,:val,3)
+    df =DataFrame(Dict(
+            "cat"=>[a,a,a,a,a,b,b,b,b,b],
+            "val"=>[5,3,2,6,1,4,3,8,6,2],
+             "ix"=>[1,2,3,4,5,6,7,8,9,10],
+    ))
+    combine(groupby(df,"cat"),f2)
+    # 6×3 DataFrame
+    # Row	cat	    ix	    val
+    #       String	Int64	Int64
+    # 1     A	    5	    1
+    # 2     A	    3	    2
+    # 3     A	    2	    3
+    # 4     B	    10	    2
+    # 5     B	    7	    3
+    # 6     B	    6	    4
+    ```
+"""
+function get_latest_N(
+    sdf::Union{SubDataFrame,DataFrame}, by::Symbol, N::Int64; rev=false, fields::Vector=[]
+)
+    fields = fields == [] ? names(sdf) : fields
+    sorted = sort(sdf, by; rev=rev)
+    return DataFrame(Dict([x => first(sorted[!, x], N) for x in fields]))
 end
 
 """

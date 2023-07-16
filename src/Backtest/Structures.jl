@@ -47,13 +47,15 @@ ContextTypeA(event::TimeEvent) = ContextTypeA([], [], event, Dict(), DM(), [], D
     account+=money.
     
     A way to initialize this this context type can look like:
-    ```jldoctest 
+
+    ```julia 
     using AirBorne.Structures: ContextTypeB, TimeEvent
     using Dates: now
     start_event = TimeEvent(now(),"hi")
     new_context = ContextTypeB(start_event)
     ```
-"""
+
+    """
 mutable struct ContextTypeB
     eventList::Vector{TimeEvent} # List of events defined by the user
     activeOrders::Vector{Any} # List of orders (keep as Any for agnosticity)

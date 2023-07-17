@@ -2,6 +2,3 @@
 
 [files]
 extend-exclude = ["*Manifest.toml","*Project.toml","*Makefile"]
-
-[default.extend-words]
-suppress="suppress"

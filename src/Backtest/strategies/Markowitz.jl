@@ -117,7 +117,7 @@ function trading_logic!(
         AddExtremeConstraint(p, upper_cons)
         AddExtremeConstraint(p, lower_cons)
         SetInitialPoint(p, vec([i for i in initial_point]))
-        @suppress Optimize!(p) # This function is very noisy. TODO: When possible eliminate supress
+        @suppress Optimize!(p) # This function is very noisy. TODO: When possible eliminate suppress
         # If feasible solution not found, sell all
         context.extra.idealPortfolioDistribution = isnothing(p.x) ? zeros(size(m)) : p.x
     else

@@ -21,7 +21,7 @@ uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 version = "3.6.2"
 
 [[deps.AirBorne]]
-deps = ["Bijections", "CSV", "Currencies", "DataFrames", "Dates", "DirectSearch", "DotMaps", "HTTP", "JSON", "JuMP", "Logging", "Parquet2", "Pipe", "Printf", "Statistics", "Tables", "TestEnv"]
+deps = ["Bijections", "CSV", "Currencies", "DataFrames", "Dates", "DirectSearch", "DotMaps", "HTTP", "JSON", "JuMP", "Logging", "Parquet2", "Pipe", "Printf", "Statistics", "Suppressor", "Tables", "TestEnv"]
 path = ".."
 uuid = "4a232ea9-7d1f-4dd8-a126-b47d2ae9e134"
 version = "1.0.0-DEV"
@@ -752,6 +752,12 @@ deps = ["Dates", "UUIDs"]
 git-tree-sha1 = "ca4bccb03acf9faaf4137a9abc1881ed1841aa70"
 uuid = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
 version = "1.10.0"
+
+[[deps.Suppressor]]
+deps = ["Logging"]
+git-tree-sha1 = "37d1976ca8368f6adbe1d65a4deeeda6ee7faa31"
+uuid = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
+version = "0.2.4"
 
 [[deps.TOML]]
 deps = ["Dates"]

@@ -34,6 +34,7 @@ JSON = ">= 0.21"
 JuMP = ">= 1"
 Parquet2 = ">= 0.2"
 Pipe = ">= 1"
+Suppressor = "0.2"
 Tables = ">= 1"
 julia = ">= 1"
 

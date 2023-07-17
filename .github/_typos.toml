@@ -1,2 +1,4 @@
+# For information about the config format, see https://github.com/crate-ci/typos
+
 [files]
 extend-exclude = ["*Manifest.toml","*Project.toml","*Makefile"]

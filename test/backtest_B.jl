@@ -1,6 +1,6 @@
 using AirBorne: AirBorne, Money, Portfolio, Wallet, Security, get_symbol
 using AirBorne.ETL.Cache: load_bundle
-using AirBorne.Structures: ContextTypeB, TimeEvent, summarizePerformance
+using AirBorne.Structures: ContextTypeB, TimeEvent, summarizePerformance, nextDay!
 using AirBorne.Markets.StaticMarket:
     addMoneyToAccount!, addSecurityToPortfolio!, execute_orders!, expose_data, keyJE
 using AirBorne.Engines.DEDS: run
@@ -50,13 +50,20 @@ using Logging
 
     cache_dir = joinpath(@__DIR__, "assets", "cache")
     data = load_bundle("demo"; cache_dir=cache_dir)
+    evaluationEvents = [
+        TimeEvent(t, "data_transfer") for t in sort(unique(data.date); rev=true)
+    ]
     ######################
     ###  SMA Strategy  ###
     ######################
     simulate_until = DateTime(2019, 2, 1)
-    sma_initialize!(context) = interday_initialize!(context; longHorizon=20, shortHorizon=5)
-    sma_trading_logic! = interday_trading_logic!
-    context = run(
+    function sma_initialize!(context)
+        return interday_initialize!(
+            context; longHorizon=20, shortHorizon=5, nextEventFun=nextDay!
+        )
+    end
+    sma_trading_logic!(ctx, dat) = interday_trading_logic!(ctx, dat; nextEventFun=nextDay!)
+    contextSMA = run(
         data,
         sma_initialize!,
         sma_trading_logic!,
@@ -65,14 +72,14 @@ using Logging
         audit=true,
         max_date=DateTime(2019, 2, 1),
     )
-    @test size(context.audit.portfolioHistory) == (741,)
-    @test size(summarizePerformance(data, context; removeWeekend=true), 1) == 531
+    @test size(contextSMA.audit.portfolioHistory) == (760,)
+    @test size(summarizePerformance(data, contextSMA; removeWeekend=true), 1) == 544
 
     ############################
     ###  Markowitz Strategy  ###
     ############################
     my_expose_data(context, data) = expose_data(context, data; historical=false)
-    context = run(
+    contextMK1 = run(
         data,
         Markowitz.initialize!,
         Markowitz.trading_logic!,
@@ -80,11 +87,12 @@ using Logging
         my_expose_data;
         audit=true,
         max_iter=50,
+        initialEvents=evaluationEvents,
     )
-    @test size(context.audit.portfolioHistory) == (51,)
-    @test size(summarizePerformance(data, context; removeWeekend=true), 1) == 37
+    @test size(contextMK1.audit.portfolioHistory) == (51,)
+    @test size(summarizePerformance(data, contextMK1; removeWeekend=true), 1) == 51
 
-    c2 = deepcopy(context) # Make a copy of the context to modify and play with
+    c2 = deepcopy(contextMK1) # Make a copy of the context to modify and play with
     c2.extra.returnHistory[!, "NMS/AAPL"] =
         -collect(1:size(c2.extra.returnHistory, 1)) ./ size(c2.extra.returnHistory, 1)
     c2.extra.returnHistory[!, "NMS/GOOG"] =
@@ -92,4 +100,17 @@ using Logging
     c2.current_event = TimeEvent(c2.current_event.date + Day(1), "test") # Advance Time 
     Markowitz.trading_logic!(c2, my_expose_data(c2, data)) # Test what happens if market is going down
     @test all(c2.extra.idealPortfolioDistribution .== 0)
+
+    MkI2(ctx) = Markowitz.initialize!(ctx; nextEventFun=nextDay!)
+    MkTL2(ctx, dat) = Markowitz.trading_logic!(ctx, dat; nextEventFun=nextDay!)
+    contextMK2 = run(
+        data, MkI2, MkTL2, execute_orders!, my_expose_data; audit=true, max_iter=50
+    )
+    
+    # Since the data is sensitive to an hour change, there is, purposefuly, a mismatch between the portfolio
+    # And the data, therefore when summarizing the performance if there is not a perfect match between the
+    # time of the data and the evaluation time event, the mismatched events won't be included, 14 in this case.
+
+    @info size(contextMK2.audit.portfolioHistory)  == (51,)
+    @info size(summarizePerformance(data, contextMK2; removeWeekend=true), 1)  == 37
 end

@@ -51,9 +51,14 @@ function run(
     max_date::Union{DateTime,Nothing}=nothing,
     verbose::Bool=false,
     contextType::Type=ContextTypeA,
+    initialEvents::Union{Vector{TimeEvent},Nothing}=nothing,
 )
     initial_event = TimeEvent(findmin(data.date)[1], "start")
     context = contextType(initial_event)
+
+    if !(isnothing(initialEvents))
+        context.eventList = initialEvents
+    end
 
     HiddenContext = DotMap(Dict())
     HiddenContext.portfolioHistory = []

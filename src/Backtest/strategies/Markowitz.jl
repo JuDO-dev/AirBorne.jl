@@ -33,6 +33,7 @@ function initialize!(
     horizon::Real=30,
     initialCapital::Real=10^5,
     min_growth::Real=0.001,
+    nextEventFun::Union{Function,Nothing}=nothing,
 )
     ###################################
     ####  Parameters & Structures  ####
@@ -57,24 +58,26 @@ function initialize!(
     #########################################
     ####  Define first simulation event  ####
     #########################################
-    # Define First Event (Assuming the first event starts from the data
-    # The first even should be at least as long as the long horizon)
-    next_event_date = context.current_event.date
-    new_event = TimeEvent(next_event_date, "data_transfer")
-    sortedStructInsert!(context.eventList, new_event, :date)
+    if !(isnothing(nextEventFun))
+        nextEventFun(context)
+    end
     return nothing
 end
 
 function trading_logic!(
-    context::ContextTypeA, data::DataFrame; tune_parameters::Dict=Dict()
+    context::ContextTypeA, data::DataFrame; nextEventFun::Union{Function,Nothing}=nothing
 )
-    # 1. Specify next event (precalculations can be specified here) 
-    next_event_date = context.current_event.date + Day(1)
-    new_event = TimeEvent(next_event_date, "data_transfer")
-    sortedStructInsert!(context.eventList, new_event, :date)
 
-    # 2. Generate orders and  place orders
-    # 2.1 Update data
+    ########################################
+    ####  Define next simulation event  ####
+    ########################################
+    if !(isnothing(nextEventFun))
+        nextEventFun(context)
+    end
+
+    #######################
+    ####  Update data  ####
+    #######################
     if size(data, 1) == 0 # No New data, nothing to do
         return nothing
     end
@@ -87,17 +90,22 @@ function trading_logic!(
         push!(context.extra.returnHistory, r1[end, :])
     end
 
-    # 2.2 Calculate Statistics
+    # 2.2 
+    ################################
+    ####  Calculate Statistics  ####
+    ################################
     if size(context.extra.returnHistory, 1) < context.extra.horizon
         return nothing # Not enough history data to 
     end
-
     d = context.extra.returnHistory[(end - context.extra.horizon + 1):end, :]
     M = covariance(d) # Covariance Matrix
     m = mean(Matrix(d[!, Not(["date", "stockReturns"])]); dims=1)
     max_return, ix = findmax(m)
+
+    ######################################
+    ####  Solve Optimization problem  ####
+    ######################################
     if max_return > context.extra.min_growth # Feasible problem
-        # 2.3 Solve Optimization problem
         if context.extra.idealPortfolioDistribution == []
             initial_point = zeros(size(m))
             initial_point[ix] = 1.0
@@ -117,14 +125,15 @@ function trading_logic!(
         AddExtremeConstraint(p, upper_cons)
         AddExtremeConstraint(p, lower_cons)
         SetInitialPoint(p, vec([i for i in initial_point]))
-        @suppress Optimize!(p) # This function is very noisy. TODO: When possible eliminate suppress
-        # If feasible solution not found, sell all
+        @suppress Optimize!(p)
         context.extra.idealPortfolioDistribution = isnothing(p.x) ? zeros(size(m)) : p.x
     else
         context.extra.idealPortfolioDistribution = zeros(size(m)) # Sell absolutely everytihng. Market is going down.
     end
 
-    # 2.4 Calculate shares to buy and sell to achieve optimal portfolio
+    #######################################################
+    ####  Calculate Difference with Optimal Portfolio  ####
+    #######################################################
     asset_names = names(context.extra.currentValue)[2:(end - 1)]
     cv = reshape(Matrix(context.extra.currentValue)[2:(end - 1)], (length(asset_names))) # Current value per share for ticker
     if length(context.portfolio) == 0 # Obtain vector with current portfolio
@@ -135,24 +144,26 @@ function trading_logic!(
     currentPortfolio = reshape(Matrix(DataFrame(context.portfolio)), (length(asset_names)))
     total_capital = context.accounts.usd.balance + (currentPortfolio' * cv)[1] # Total capital to distribute 
 
-    # nextPortfolio =  reshape(context.extra.idealPortfolioDistribution.*total_capital ./ cv, (length(asset_names))) # Amount of shares to have of each ticker
+    # Amount of shares to have of each ticker
     nextPortfolio = reshape(
         [
             context.extra.idealPortfolioDistribution[i] * total_capital / cv[i] for
             i in 1:length(cv)
         ],
         (length(asset_names)),
-    ) # Amount of shares to have of each ticker
+    )
+
+    # Amount of shares to buy/sell of each ticker
     portfolioDiff = nextPortfolio - currentPortfolio
 
-    # Summarize
+    ########################################
+    ####  Summaryze and produce orders  ####
+    ########################################
     diffDf = DataFrame(Dict(["symbol" => asset_names, "diff" => portfolioDiff, "cv" => cv]))
     diffDf[!, "total"] = diffDf.diff .* diffDf.cv
     diffDf = diffDf[diffDf.diff .!= 0, :] # Keep only non-zero values
     sort!(diffDf[diffDf.diff .!= 0, :], :total) # Sort such that largest sells happen first, and largest buy's later
-
-    # 2.5 Produce and place orders
-    for r in eachrow(diffDf)
+    for r in eachrow(diffDf) # Produce and place orders
         market, ticker = split(r.symbol, "/")
         order_specs = DotMap(Dict())
         order_specs.ticker = String(ticker)

@@ -17,7 +17,7 @@
 module SMA
 
 using ...Utils: sortedStructInsert!
-using ...Structures: ContextTypeA, TimeEvent
+using ...Structures: ContextTypeA, TimeEvent, nextDay!
 using ...Markets.StaticMarket: Order, place_order!
 using Dates: Day
 using DataFrames: DataFrame, groupby, combine, mean
@@ -41,6 +41,7 @@ function interday_initialize!(
     longHorizon::Real=100,
     shortHorizon::Real=10,
     initialCapital::Real=10^5,
+    nextEventFun::Union{Function,Nothing}=nothing,
 )
     context.extra.long_horizon = longHorizon
     context.extra.short_horizon = shortHorizon
@@ -55,11 +56,9 @@ function interday_initialize!(
     #########################################
     ####  Define first simulation event  ####
     #########################################
-    # Define First Event (Assuming the first event starts from the data
-    # The first even should be at least as long as the long horizon)
-    next_event_date = context.current_event.date + Day(longHorizon)
-    new_event = TimeEvent(next_event_date, "data_transfer")
-    sortedStructInsert!(context.eventList, new_event, :date)
+    if !(isnothing(nextEventFun))
+        nextEventFun(context)
+    end
     return nothing
 end
 
@@ -76,12 +75,14 @@ end
     my_trading_logic!(context,data) = SMA.trading_logic!(context,data)
     ```
 """
-function interday_trading_logic!(context::ContextTypeA, data::DataFrame)
+function interday_trading_logic!(
+    context::ContextTypeA, data::DataFrame; nextEventFun::Union{Function,Nothing}=nothing
+)
 
     # 1. Specify next event (precalculations can be specified here) 
-    next_event_date = context.current_event.date + Day(1)
-    new_event = TimeEvent(next_event_date, "data_transfer")
-    sortedStructInsert!(context.eventList, new_event, :date)
+    if !(isnothing(nextEventFun))
+        nextEventFun(context)
+    end
 
     # 2. Generate orders and  place orders
     if size(data, 1) < context.extra.long_horizon # Skip if not enough data

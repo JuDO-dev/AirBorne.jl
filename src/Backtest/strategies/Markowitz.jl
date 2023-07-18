@@ -90,7 +90,6 @@ function trading_logic!(
         push!(context.extra.returnHistory, r1[end, :])
     end
 
-    # 2.2 
     ################################
     ####  Calculate Statistics  ####
     ################################

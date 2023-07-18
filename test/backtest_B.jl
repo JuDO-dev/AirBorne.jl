@@ -106,11 +106,11 @@ using Logging
     contextMK2 = run(
         data, MkI2, MkTL2, execute_orders!, my_expose_data; audit=true, max_iter=50
     )
-    
-    # Since the data is sensitive to an hour change, there is, purposefuly, a mismatch between the portfolio
+
+    # Since the data is sensitive to an hour change, there is, purposefully, a mismatch between the portfolio
     # And the data, therefore when summarizing the performance if there is not a perfect match between the
     # time of the data and the evaluation time event, the mismatched events won't be included, 14 in this case.
 
-    @info size(contextMK2.audit.portfolioHistory)  == (51,)
-    @info size(summarizePerformance(data, contextMK2; removeWeekend=true), 1)  == 37
+    @test size(contextMK2.audit.portfolioHistory) == (51,)
+    @test size(summarizePerformance(data, contextMK2; removeWeekend=true), 1) == 37
 end

@@ -9,11 +9,11 @@ module Structures
 
 using Base: Base
 using DataFrames: DataFrame, leftjoin, innerjoin
-using Dates: DateTime, dayofweek
+using Dates: DateTime, dayofweek, Day
 import DotMaps.DotMap as DM
 using Statistics: std, mean
 using ...AirBorne: Wallet, Portfolio
-using ..Utils: makeRunning, lagFill
+using ..Utils: makeRunning, lagFill, sortedStructInsert!
 using ..ETL.AssetValuation: stockValuation, sharpe, valuePortfolio, returns
 
 struct TimeEvent
@@ -40,6 +40,15 @@ mutable struct ContextTypeA
 end
 # Constructors
 ContextTypeA(event::TimeEvent) = ContextTypeA([], [], event, Dict(), DM(), [], DM(), DM())
+
+"""
+    nextDay!(context::ContextTypeA;days::Day=Day(1))
+"""
+function nextDay!(context::ContextTypeA; days::Day=Day(1))
+    next_event_date = context.current_event.date + Day(1)
+    new_event = TimeEvent(next_event_date, "data_transfer")
+    return sortedStructInsert!(context.eventList, new_event, :date)
+end
 
 """
     This context allows for arithmetic operations of portfolio and accounts, such as adding 

@@ -11,7 +11,7 @@ using DataFrames: DataFrame, Not, select!
 using DotMaps: DotMap
 using ...Structures: ContextTypeA, ContextTypeB
 using ....AirBorne: Portfolio, Security, Wallet, get_symbol
-using ...Utils: get_latest
+using ...Utils: get_latest, δ
 
 """
     Order
@@ -222,6 +222,119 @@ function parse_portfolioHistory(portfolioHistory) # Probably I will also need th
         baseDf[!, asset] = [get(p, asset, nothing) for p in portfolioHistory]
     end
     return select!(baseDf, Not([:ix]))
+end
+
+"""
+    genOrder(assetId::Union{String,Symbol},amount::Real; account::Any=nothing,orderType::String="MarketOrder")
+    
+    Shortcut to generate market orders, in it the assetId is defined by "ExchangeID/TickerSymol", 
+    amount is a real number with the number of shares to be purchased, account is the account to be used to
+    provide the money for the transaction and order type is the type of the order. 
+"""
+function genOrder(
+    assetId::Union{String,Symbol},
+    amount::Real;
+    account::Any=nothing,
+    orderType::String="MarketOrder",
+)
+    market, ticker = split(String(assetId), "/")
+    order_specs = DotMap(Dict())
+    order_specs.ticker = String(ticker)
+    order_specs.shares = amount # Number of shares to buy/sell
+    order_specs.type = orderType
+    if !(isnothing(account))
+        order_specs.account = account
+    end
+    return Order(String(market), order_specs)
+end
+
+using JuMP: Model, @variable, @objective, @constraint, optimize!, value, set_silent
+using SparseArrays: sparse, I, spdiagm
+using Ipopt: Ipopt
+import MathOptInterface as MOI
+"""
+    ordersForPortfolioRedistribution(
+        sourcePortfolio::Dict{String, Float64}, 
+        targetDistribution::Dict{String, Float64},
+        assetPricing::Dict{String, Float64};
+        curency_symbol::String= "FEX/USD", 
+        account::Any=nothing,
+        costPropFactor::Real=0,
+        costPerTransactionFactor::Real=0,
+        )
+    This function generates the orders to obtain a particular value distribution on a given portfolio and static pricing.
+    It can consider proportional costs by scaling the orders amount by a factor and a fixed cost for each transacted asset.
+    It returns the portfolio with the desired distribution and the maximum amount of value expressed in a particular currency.
+
+    -`sourcePortfolio::Dict{String, Float64}`: Dictionary with assets and how many units of them are present in a portfolio 
+    -`targetDistribution::Dict{String, Float64}`: Desired distribution of the total value of the portfolio accross the whole shares. The values do not need to add to 1, linear scaling will be used.
+    -`assetPricing::Dict{String, Float64}`: Value of each share of an asset, with a corresponding value expressed in terms of a currency.
+    -`curency_symbol::String= "FEX/USD"`: Symbol used to represent the currency in which the transactions are goint to take place. By default dollars, it should have value 1 on the assetPricing dictionary.
+    -`account::Any=nothing`: Argument to be passed to the account field in the orders.
+    -`costPropFactor::Real=0`:  Fee rate applied to the sell or purchase of any asset proportional to the value of the transaction.
+    -`costPerTransactionFactor::Real=0`: Fee per transaction, every time an asset is sold/bought this fill will apply.
+"""
+function ordersForPortfolioRedistribution(
+    sourcePortfolio::Dict{String,Float64},
+    targetDistribution::Dict{String,Float64},
+    assetPricing::Dict{String,Float64};
+    curency_symbol::String="FEX/USD",
+    account::Any=nothing,
+    costPropFactor::Real=0,
+    costPerTransactionFactor::Real=0,
+)
+    # Generate Source Distribution from Portfolio
+    totalValue = sum([sourcePortfolio[x] * assetPricing[x] for x in keys(sourcePortfolio)])
+    sourceDst = Dict([
+        x => sourcePortfolio[x] * assetPricing[x] / totalValue for
+        x in keys(sourcePortfolio)
+    ])
+
+    assetSort = [x for x in keys(sourceDst)]
+    N = length(assetSort)
+    curency_pos = findall(x -> x == curency_symbol, assetSort)[1]
+    ShareVals = [assetPricing[x] for x in assetSort]
+    propShareVal = ShareVals ./ totalValue # Share Price expessed in terms of portfolio units.
+
+    # Problem Vectorization: D1 + P*d - Fees -> D2*k
+    D1 = [get(sourceDst, x, 0) for x in assetSort] # Source
+    D2 = [get(targetDistribution, x, 0) for x in assetSort] # Objective
+    M = zeros(N, N)
+    M[curency_pos, :] = propShareVal .* -1 # Price to pay per share (without fees)
+    P = spdiagm(0 => propShareVal) + M
+    FDollars = SparseVector(N, [curency_pos], [1]) # Dollar Fees Vector
+
+    #####
+    ##### Optimization Problem
+    #####
+    genOrderModel = Model(Ipopt.Optimizer)
+    set_silent(genOrderModel)
+    @variable(genOrderModel, 0 <= k) # Proportionality factor (shrinkage of portfolio)
+    @variable(genOrderModel, d[1:N])  # Amount to buy/sell of each asset
+    @variable(genOrderModel, propFees >= 0) # Proportinal Fees
+    @constraint(
+        genOrderModel,
+        [propFees; (propShareVal .* d) .* costPropFactor] in MOI.NormOneCone(1 + N)
+    ) # Implementation of norm-1 for Fees
+    @variable(genOrderModel, perTransactionFixFees >= 0) # Proportinal Fees
+    @constraint(
+        genOrderModel, perTransactionFixFees == sum(-δ.(d) .+ 1) * costPerTransactionFactor
+    ) # Implementation of norm-1 for Fees
+    @constraint(genOrderModel, d[curency_pos] == 0) # Do not buy or sell dollars (this is the currency).
+    @constraint(
+        genOrderModel,
+        D1 .+ (P * d) .- (FDollars .* (propFees + perTransactionFixFees)) .== D2 .* k
+    ) # Distribution ratio
+    @objective(genOrderModel, Max, k) # With variance minimization
+    optimize!(genOrderModel)
+    d = value.(d)
+
+    #### 
+    #### Parsing & Order Generation
+    ####
+    amount = Dict([assetSort[x] => d[x] for x in 1:N if (x != curency_pos) && (d[x] != 0)])
+    orders = [genOrder(x, amount[x]; account=account) for x in keys(amount)]
+    return orders
 end
 
 end

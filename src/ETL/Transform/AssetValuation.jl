@@ -64,24 +64,6 @@ function covariance(assetValuesdf::DataFrame)
 end
 
 """
-    returns(assetValuesdf::DataFrame) 
-
-    Calculates the returns of each ticker in the Asset Value DataFrame. By default as the relative percent with respect to the previous element,
-    the return of the first element is set to 0 as the starting point.
-"""
-function returns(assetValuesdf::DataFrame)
-    out = deepcopy(assetValuesdf)
-    select!(out, Not(:stockValue))
-    for x in filter(x -> x ∉ ["date", "stockValue", "stockReturns"], names(assetValuesdf))
-        out[!, x] = returns(out[!, x])
-    end
-    out[!, "stockReturns"] = [
-        Dict([t => x[t] for t in names(x) if t != "date"]) for x in eachrow(out)
-    ]
-    return out
-end
-
-"""
     returns(array::Vector)
     
     Calculates the returns as relative percent with respect to the previous element. The return of the first element is set to 0 as the starting point.
@@ -92,6 +74,38 @@ function returns(array::Vector)
     for i in 2:length(array)
         out[i] = (array[i] - array[i - 1]) / array[i - 1]
     end
+    return out
+end
+
+"""
+    logreturns(array::Vector)
+    
+    Calculates the logarithmic returns in base 10 of the ratio with respect to the previous element. The return of the first element is set to 1 as the starting point.
+"""
+function logreturns(array::Vector)
+    out = Array{Union{Float64,Nothing}}(undef, length(array)) # Preallocate memory
+    out[1] = 1.0 # First return is always 0 (starting value)
+    for i in 2:length(array)
+        out[i] = log10(array[i] / array[i - 1])
+    end
+    return out
+end
+
+"""
+    returns(assetValuesdf::DataFrame) 
+
+    Calculates the returns of each ticker in the Asset Value DataFrame. By default as the relative percent with respect to the previous element,
+    the return of the first element is set to 0 as the starting point.
+"""
+function returns(assetValuesdf::DataFrame; returnFun::Function=returns)
+    out = deepcopy(assetValuesdf)
+    select!(out, Not(:stockValue))
+    for x in filter(x -> x ∉ ["date", "stockValue", "stockReturns"], names(assetValuesdf))
+        out[!, x] = returnFun(out[!, x])
+    end
+    out[!, "stockReturns"] = [
+        Dict([t => x[t] for t in names(x) if t != "date"]) for x in eachrow(out)
+    ]
     return out
 end
 

@@ -37,9 +37,12 @@ mutable struct ContextTypeA
     ledger::Vector{Any} # List of transactions
     audit::DM
     extra::DM
+    parameters::DM # Parameters that can be fed into an optimization engine
 end
 # Constructors
-ContextTypeA(event::TimeEvent) = ContextTypeA([], [], event, Dict(), DM(), [], DM(), DM())
+function ContextTypeA(event::TimeEvent)
+    return ContextTypeA([], [], event, Dict(), DM(), [], DM(), DM(), DM())
+end
 
 """
     nextDay!(context::ContextTypeA;days::Day=Day(1))

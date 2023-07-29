@@ -13,6 +13,11 @@ using ...Structures: ContextTypeA, ContextTypeB
 using ....AirBorne: Portfolio, Security, Wallet, get_symbol
 using ...Utils: get_latest, δ
 
+using JuMP: Model, @variable, @objective, @constraint, optimize!, value, set_silent
+using SparseArrays: sparse, I, spdiagm
+using Ipopt: Ipopt
+import MathOptInterface as MOI
+
 """
     Order
 
@@ -248,10 +253,6 @@ function genOrder(
     return Order(String(market), order_specs)
 end
 
-using JuMP: Model, @variable, @objective, @constraint, optimize!, value, set_silent
-using SparseArrays: sparse, I, spdiagm
-using Ipopt: Ipopt
-import MathOptInterface as MOI
 """
     ordersForPortfolioRedistribution(
         sourcePortfolio::Dict{String, Float64}, 

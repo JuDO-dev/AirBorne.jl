@@ -267,7 +267,7 @@ import MathOptInterface as MOI
     It returns the portfolio with the desired distribution and the maximum amount of value expressed in a particular currency.
 
     -`sourcePortfolio::Dict{String, Float64}`: Dictionary with assets and how many units of them are present in a portfolio 
-    -`targetDistribution::Dict{String, Float64}`: Desired distribution of the total value of the portfolio accross the whole shares. The values do not need to add to 1, linear scaling will be used.
+    -`targetDistribution::Dict{String, Float64}`: Desired distribution of the total value of the portfolio across the whole shares. The values do not need to add to 1, linear scaling will be used.
     -`assetPricing::Dict{String, Float64}`: Value of each share of an asset, with a corresponding value expressed in terms of a currency.
     -`curency_symbol::String= "FEX/USD"`: Symbol used to represent the currency in which the transactions are goint to take place. By default dollars, it should have value 1 on the assetPricing dictionary.
     -`account::Any=nothing`: Argument to be passed to the account field in the orders.
@@ -294,7 +294,7 @@ function ordersForPortfolioRedistribution(
     N = length(assetSort)
     curency_pos = findall(x -> x == curency_symbol, assetSort)[1]
     ShareVals = [assetPricing[x] for x in assetSort]
-    propShareVal = ShareVals ./ totalValue # Share Price expessed in terms of portfolio units.
+    propShareVal = ShareVals ./ totalValue # Share Price expressed in terms of portfolio units.
 
     # Problem Vectorization: D1 + P*d - Fees -> D2*k
     D1 = [get(sourceDst, x, 0) for x in assetSort] # Source
@@ -311,12 +311,12 @@ function ordersForPortfolioRedistribution(
     set_silent(genOrderModel)
     @variable(genOrderModel, 0 <= k) # Proportionality factor (shrinkage of portfolio)
     @variable(genOrderModel, d[1:N])  # Amount to buy/sell of each asset
-    @variable(genOrderModel, propFees >= 0) # Proportinal Fees
+    @variable(genOrderModel, propFees >= 0) # Amount Proportional Fees
     @constraint(
         genOrderModel,
         [propFees; (propShareVal .* d) .* costPropFactor] in MOI.NormOneCone(1 + N)
     ) # Implementation of norm-1 for Fees
-    @variable(genOrderModel, perTransactionFixFees >= 0) # Proportinal Fees
+    @variable(genOrderModel, perTransactionFixFees >= 0) # Number of transactions fees
     @constraint(
         genOrderModel, perTransactionFixFees == sum(-δ.(d) .+ 1) * costPerTransactionFactor
     ) # Implementation of norm-1 for Fees

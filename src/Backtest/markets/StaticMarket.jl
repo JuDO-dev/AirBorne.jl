@@ -14,7 +14,7 @@ using ....AirBorne: Portfolio, Security, Wallet, get_symbol
 using ...Utils: get_latest, δ
 
 using JuMP: Model, @variable, @objective, @constraint, optimize!, value, set_silent
-using SparseArrays: sparse, I, spdiagm
+using SparseArrays: sparse, I, spdiagm, SparseVector
 using Ipopt: Ipopt
 import MathOptInterface as MOI
 
@@ -283,6 +283,7 @@ function ordersForPortfolioRedistribution(
     account::Any=nothing,
     costPropFactor::Real=0,
     costPerTransactionFactor::Real=0,
+    min_shares_threshold::Real=10^-5,
 )
     # Generate Source Distribution from Portfolio
     totalValue = sum([sourcePortfolio[x] * assetPricing[x] for x in keys(sourcePortfolio)])
@@ -333,7 +334,7 @@ function ordersForPortfolioRedistribution(
     #### 
     #### Parsing & Order Generation
     ####
-    amount = Dict([assetSort[x] => d[x] for x in 1:N if (x != curency_pos) && (d[x] != 0)])
+    amount = Dict([assetSort[x] => d[x] for x in 1:N if (x != curency_pos) && (abs(d[x])>min_shares_threshold)])
     orders = [genOrder(x, amount[x]; account=account) for x in keys(amount)]
     return orders
 end

@@ -18,19 +18,19 @@ end
     sparse matrices.
 """
 function rvcat(v) # It may not be needed?
-    v2 = length(v)>2 ? rvcat(v[2:end]) : v[2]
-    return vcat(v[1],v2)
+    v2 = length(v) > 2 ? rvcat(v[2:end]) : v[2]
+    return vcat(v[1], v2)
 end
 
 " Recursive block diagonal "
 function rblockdiag(v::Union{Vector{Matrix{Union{Float64}}},Vector{Matrix{Union{Int64}}}})
-    v2 = length(v)>2 ? rblockdiag(v[2:end]) : sparse(v[2])
-    return blockdiag(sparse(v[1]),v2)
+    v2 = length(v) > 2 ? rblockdiag(v[2:end]) : sparse(v[2])
+    return blockdiag(sparse(v[1]), v2)
 end
 
 "Kronecker delta"
-δ(x,y) = (x==y ? 1 : 0)
-δ(x) = (x==0 ? 1 : 0)
+δ(x, y) = (x == y ? 1 : 0)
+δ(x) = (x == 0 ? 1 : 0)
 
 """
     sortedStructInsert!(v::Vector, x,symbol;rev=true) 

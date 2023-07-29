@@ -10,7 +10,7 @@ using Test
     @test size(sv) == (1259, 4)
     portfolio = Dict("NMS/AAPL" => 100, "NMS/GOOG" => 200)
     rets = returns(sv)
-    logrets = logreturns(sv)
+    logrets = returns(sv;returnFun=logreturns) # Logarithmic return on Value DataFrame
     @test round(valuePortfolio(portfolio, sv[1, "stockValue"]); digits=2) == 10765.15
     @test size(rets) == size(sv)
     @test size(logrets) == size(sv)

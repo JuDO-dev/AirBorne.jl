@@ -334,7 +334,10 @@ function ordersForPortfolioRedistribution(
     #### 
     #### Parsing & Order Generation
     ####
-    amount = Dict([assetSort[x] => d[x] for x in 1:N if (x != curency_pos) && (abs(d[x])>min_shares_threshold)])
+    amount = Dict([
+        assetSort[x] => d[x] for
+        x in 1:N if (x != curency_pos) && (abs(d[x]) > min_shares_threshold)
+    ])
     orders = [genOrder(x, amount[x]; account=account) for x in keys(amount)]
     return orders
 end

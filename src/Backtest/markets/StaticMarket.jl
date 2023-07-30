@@ -179,15 +179,23 @@ function executeOrder_CA(
 end
 
 """
-    execute_orders(from, to, context,data)
+    execute_orders(
+        context::ContextTypeA, data::DataFrame; executeOrder::Function=executeOrder_CA; propagateBalanceToPortfolio::Bool=false
+        )
 
     This function updates the portfolio of the user that is stored in the variable context.
     
     The static Market assumes that orders do not modify market attributes. Therefore orders can be executed
     sequentially without consideration on how the order on one asset may affect the price on another.
+
+    -`propagateBalanceToPortfolio::Bool=false`: If the balance of the account needs to also be reflected in the portfolio 
+        set this value to true and the value of *order.specs.account.currency* in the portfolio will be replaced by *order.specs.account.balance*.
 """
 function execute_orders!(
-    context::ContextTypeA, data::DataFrame; executeOrder::Function=executeOrder_CA
+    context::ContextTypeA,
+    data::DataFrame;
+    executeOrder::Function=executeOrder_CA;
+    propagateBalanceToPortfolio::Bool=false,
 )
     # Retrieve data
     cur_data = get_latest(available_data(context, data), [:exchangeName, :symbol], :date)
@@ -202,7 +210,10 @@ function execute_orders!(
         end
         addJournalEntryToLedger!(context.ledger, journal_entry) # Audit Transaction in Ledger 
         addSecurityToPortfolio!(context.portfolio, journal_entry) # Implement change to Portfolio
-        addMoneyToAccount!(order.specs.account, journal_entry) # Implement change in Account
+        addMoneyToAccount!(order.specs.account, journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
+        if propagateBalanceToPortfolio
+            context.portfolio[order.specs.account.currency] = order.specs.account.balance
+        end
     end
     return append!(context.activeOrders, incomplete_orders)
 end

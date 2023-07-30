@@ -194,7 +194,7 @@ end
 function execute_orders!(
     context::ContextTypeA,
     data::DataFrame;
-    executeOrder::Function=executeOrder_CA;
+    executeOrder::Function=executeOrder_CA,
     propagateBalanceToPortfolio::Bool=false,
 )
     # Retrieve data

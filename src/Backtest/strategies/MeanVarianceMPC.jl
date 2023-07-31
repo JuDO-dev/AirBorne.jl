@@ -48,6 +48,8 @@ import MathOptInterface as MOI
 
     To use this forecast in the tradingLogicMPC! strategy
     ```julia
+        forecastFun(context) = predeterminedReturns(context, returnsData) # returnsData must already be defined.
+        custom_trading_logic!(context,data) = tradingLogicMPC!(context,data;forecastFun=forecastFun) 
     ```
 """
 function predeterminedReturns(context::ContextTypeA, returnData::DataFrame)
@@ -69,7 +71,7 @@ function predeterminedReturns(context::ContextTypeA, returnData::DataFrame)
     return [(r_mat[i, :], Σ) for i in 1:horizon] # Mean-Variance Forecast 
 end
 
-function initializeMPC!(
+function initialize!(
     context::ContextTypeA;
     min_data_samples::Int64=200,
     currency_symbol::String="FEX/USD",
@@ -110,7 +112,7 @@ function initializeMPC!(
     return nothing
 end
 
-function tradingLogicMPC!(context, data; forecastFun::Function=linearRegressionForecast)
+function tradingLogic!(context, data; forecastFun::Function=linearRegressionForecast)
 
     #######################
     ####  Update data  ####

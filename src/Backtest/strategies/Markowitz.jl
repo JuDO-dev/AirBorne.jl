@@ -10,11 +10,12 @@
     
 """
 module Markowitz
-
+# Internal Dependencies
 using ...Utils: sortedStructInsert!
 using ...Structures: ContextTypeA, TimeEvent
 using ...Markets.StaticMarket: Order, place_order!
 using ...ETL.AssetValuation: stockValuation, returns, covariance
+# External Dependencies
 using Dates: Day, year
 using DataFrames: DataFrame, groupby, combine, mean, Not
 using DotMaps: DotMap
@@ -28,6 +29,7 @@ using DirectSearch:
     AddExtremeConstraint,
     AddProgressiveConstraint
 using Suppressor: @suppress
+
 function initialize!(
     context::ContextTypeA;
     horizon::Real=30,

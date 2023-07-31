@@ -38,15 +38,16 @@ function initialize!(
     ###################################
     ####  Parameters & Structures  ####
     ###################################
-    context.extra.horizon = horizon
 
     context.extra.valueHistory = DataFrame()
     context.extra.returnHistory = DataFrame()
     context.extra.currentValue = DataFrame()
     context.extra.pastValue = DataFrame()
-
     context.extra.idealPortfolioDistribution = []
-    context.extra.min_growth = min_growth
+
+    # Parameters
+    context.parameters.horizon = horizon  # How long to see into the past to infer current return vector and covariance matrix
+    context.parameters.min_growth = min_growth # Constraint for the minimum growth
 
     ###################################
     ####  Specify Account Balance  ####
@@ -93,10 +94,10 @@ function trading_logic!(
     ################################
     ####  Calculate Statistics  ####
     ################################
-    if size(context.extra.returnHistory, 1) < context.extra.horizon
+    if size(context.extra.returnHistory, 1) < context.parameters.horizon
         return nothing # Not enough history data to 
     end
-    d = context.extra.returnHistory[(end - context.extra.horizon + 1):end, :]
+    d = context.extra.returnHistory[(end - context.parameters.horizon + 1):end, :]
     M = covariance(d) # Covariance Matrix
     m = mean(Matrix(d[!, Not(["date", "stockReturns"])]); dims=1)
     max_return, ix = findmax(m)
@@ -104,7 +105,7 @@ function trading_logic!(
     ######################################
     ####  Solve Optimization problem  ####
     ######################################
-    if max_return > context.extra.min_growth # Feasible problem
+    if max_return > context.parameters.min_growth # Feasible problem
         if context.extra.idealPortfolioDistribution == []
             initial_point = zeros(size(m))
             initial_point[ix] = 1.0
@@ -114,7 +115,7 @@ function trading_logic!(
 
         upper_cons(x) = all(x .<= 1)
         lower_cons(x) = all(x .>= 0)
-        min_return(x) = context.extra.min_growth - (m * x)[1] # I want at least a 0.1% return in 1 day 
+        min_return(x) = context.parameters.min_growth - (m * x)[1] # I want at least a 0.1% return in 1 day 
         obj(x) = x' * M * x
 
         p = DSProblem(length(m))

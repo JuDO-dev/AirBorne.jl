@@ -14,9 +14,8 @@ end;
 using Dates: DateTime, Day
 using Test
 using Logging
-# This more sophisticated data structures and 
-# Strategy templates 
-@testset "Backtest B" begin
+# Test more sophisticated data structures and strategy templates 
+@testset "Backtest: Advanced" begin
 
     ######################
     ###  ContextTypeB  ###

@@ -2,7 +2,7 @@ using AirBorne: AirBorne
 
 using Test
 using Logging
-@testset "Backtest A" begin
+@testset "Backtest: Basic" begin
     using AirBorne.ETL.Cache: load_bundle
     using AirBorne.Engines.DEDS: run
     using AirBorne.Markets.StaticMarket:

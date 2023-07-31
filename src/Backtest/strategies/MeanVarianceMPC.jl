@@ -4,7 +4,7 @@
     This module provides a template strategy we call Mean Variance Model Predictive Control or Mean-Variance MPC for short.
 
     This strategy provides seeks the set of optimal portfolio distributions over time considering the cost of changing positions and 
-    a forecast on the expected returns and as well covariance matrix of returs.
+    a forecast on the expected returns and as well covariance matrix of returns.
 
 """
 module MeanVarianceMPC
@@ -38,7 +38,7 @@ import MathOptInterface as MOI
     Returns a sequence of tuples with (returnVector,CovarianceMatrix). Since the values of the predeterminedReturns is assumed to be known constants
     the variance and convariance between assets is set to 0.
 
-    -`returnData::DataFrame`: Dataframe that has one row per time and a column per assetID at least containg the elements of *context.extra.symbolOrder*. Each 
+    -`returnData::DataFrame`: Dataframe that has one row per time and a column per assetID at least containing the elements of *context.extra.symbolOrder*. Each 
     entry on the dataframe corresponds to the return of 1 unit of the assetId of the corresponding column between the time of the previous row and its corresponding row .
     
     To use this function context needs to have defined the following attributes:

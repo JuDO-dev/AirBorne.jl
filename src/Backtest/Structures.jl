@@ -37,9 +37,12 @@ mutable struct ContextTypeA
     ledger::Vector{Any} # List of transactions
     audit::DM
     extra::DM
+    parameters::DM # Parameters that can be fed into an optimization engine
 end
 # Constructors
-ContextTypeA(event::TimeEvent) = ContextTypeA([], [], event, Dict(), DM(), [], DM(), DM())
+function ContextTypeA(event::TimeEvent)
+    return ContextTypeA([], [], event, Dict(), DM(), [], DM(), DM(), DM())
+end
 
 """
     nextDay!(context::ContextTypeA;days::Day=Day(1))
@@ -102,6 +105,7 @@ end
     -`keepDaysWithoutData::Bool=true`: Without data the most recent  market provided will be used to estimate the value of assets. If events are kept with lack of activity returns of 0 may be observed.
     -`windowSize::Int=5`: Many statistical figures are observed over sliding time windows, this allows to select the size of the timewindows by setting the number of consecutive events considered.
     -`riskFreeRate::Real=0.0`: Sharpe and other metrics rely on a definition of a risk free rate. 
+    -`includeAccounts::Bool=true`: By default we assume that the account is not reflected in the portfolio, if accounts are included in the portfolio set *includeAccounts* to false to avoid double counting the value of money in the account.
     
 """
 function summarizePerformance(
@@ -112,6 +116,7 @@ function summarizePerformance(
     keepDaysWithoutData::Bool=true,
     windowSize::Int=5,
     riskFreeRate::Real=0.0,
+    includeAccounts::Bool=true,
 )
     summary = DataFrame(
         "date" => [e.date for e in context.audit.eventHistory],
@@ -131,8 +136,8 @@ function summarizePerformance(
     end
     summary.stockValue = lagFill(summary.stockValue)
     summary[!, "dollarValue"] = [
-        valuePortfolio(r.portfolio, r.stockValue) + r.account.usd.balance for
-        r in eachrow(summary)
+        valuePortfolio(r.portfolio, r.stockValue) +
+        (includeAccounts ? r.account.usd.balance : 0) for r in eachrow(summary)
     ]
     summary[!, "return"] = returns(summary.dollarValue)
     summary[!, "mean_return"] = makeRunning(

@@ -1,5 +1,5 @@
 using AirBorne.ETL.AssetValuation:
-    valuePortfolio, stockValuation, covariance, returns, sharpe
+    valuePortfolio, stockValuation, covariance, returns, sharpe, logreturns
 using AirBorne.ETL.Cache: load_bundle
 
 using Test
@@ -10,8 +10,10 @@ using Test
     @test size(sv) == (1259, 4)
     portfolio = Dict("NMS/AAPL" => 100, "NMS/GOOG" => 200)
     rets = returns(sv)
+    logrets = returns(sv; returnFun=logreturns) # Logarithmic return on Value DataFrame
     @test round(valuePortfolio(portfolio, sv[1, "stockValue"]); digits=2) == 10765.15
     @test size(rets) == size(sv)
+    @test size(logrets) == size(sv)
     @test size(sharpe(rets[1:100, "NMS/AAPL"]; windowSize=5)) == (100,)
     @test size(covariance(rets)) == (2, 2)
 end

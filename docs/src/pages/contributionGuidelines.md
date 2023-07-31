@@ -13,6 +13,20 @@ This guide of best practices are to help developers understand the code written,
 
 ## Branch Management
 
+### Versioning
+When this package is released it will have a version. Versioning is a standard practice in software development, but different approaches are available to define the versions of a package. Usually a package will have the version defined by 3 number which are *Major*,*Minor*, *Patch*. AirBorne 0.1.3 has Major version 0, Minor version 1 and Patch version 3. 
+
+- **Patch**: The patch is incremented if a bug has been fix, but no additional feature has been added.
+- **Minor**: The minor is incremented if a new feature, such as new function or submodule or even additional functionalities for existing functions are added. The new minor version needs to be compatible with all previous minor version of the same major version. Therefore if a unit test passes for a minor version it also needs to pass for any further minor version released, and is the responsibility of the newer minor version to comply with this, the sole exception is for undetected bugs, which needs to be corrected immediately in the minor version in which was detected.
+- **Major**: A major version is incremented if the change in the software is so large that backwards compatibility is impossible. This is a worst case scenario and must be avoided at all costs, existing users of AirBorne will have their code crash, several issues are expected after a major release, it must be done strategically and for very well justified reasons.
+
+#### Unit Test result
+Each minor version of AirBorne will have at least 2 associated branches *"dev-Major.Minor.Patch"* and *"master-Major.Minor.Patch"*, merge requests on either of these branches need to pass, local development branches are to be merged *"dev-Major.Minor.Patch"* were limited localized unit-test may be carried out and once the patch is ready for release that branch is merged into *"master-Major.Minor.Patch"* any merge request into the master branch needs to pass a through run of unit tests.
+
+#### Support
+Each minor version needs to be adequately supported as it is to be considered a finished product available for the wider public to use.
+
+
 ### Archiving
 Sometimes we want to keep a branch with some data, but at the same time we don't want to pollute the list of branches in the repository. A way to achieve this is through the usage of tags. The archived branches can be accessed later on by looking at the tags of the repository, following [GitHub instructions](https://docs.github.com/en/repositories/releasing-projects-on-github/viewing-your-repositorys-releases-and-tags).
 

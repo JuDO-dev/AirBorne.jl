@@ -1,4 +1,4 @@
-using AirBorne.Utils: lagFill, makeRunning, movingAverage, get_latest_N
+using AirBorne.Utils: lagFill, makeRunning, movingAverage, get_latest_N, δ
 
 using Test
 @testset "Utils" begin
@@ -29,4 +29,6 @@ using Test
         ),
     )
     @test combine(groupby(df, "cat"), f2).ix == [5, 3, 2, 10, 7, 6]
+    @test δ(0) == 1
+    @test δ(1, 0) == 0
 end

@@ -9,9 +9,9 @@
 """
 module MeanVarianceMPC
 # Internal Dependencies
-using ...Utils: sortedStructInsert!
+using ...Utils: sortedStructInsert!, rvcat, rblockdiag
 using ...Structures: ContextTypeA
-using ...Markets.StaticMarket: Order, place_order!
+using ...Markets.StaticMarket: Order, place_order!, ordersForPortfolioRedistribution
 using ...ETL.AssetValuation: stockValuation, returns, covariance
 
 # External Dependencies

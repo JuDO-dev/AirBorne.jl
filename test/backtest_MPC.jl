@@ -1,11 +1,13 @@
 
 using AirBorne.ETL.AssetValuation: stockValuation, returns
 using AirBorne.ETL.Cache: load_bundle
-# using AirBorne.Engines.DEDS: run
+using AirBorne.Engines.DEDS: run
 using AirBorne.Markets.StaticMarket:
     execute_orders!, expose_data, keyJE
 using AirBorne.Strategies.MeanVarianceMPC: predeterminedReturns
-using AirBorne.Structures: ContextTypeA, TimeEvent
+import AirBorne.Strategies.MeanVarianceMPC as mpc
+
+using AirBorne.Structures: ContextTypeA, TimeEvent, summarizePerformance
 
 using Dates: DateTime, Day
 using Test
@@ -38,5 +40,50 @@ using Logging
     ######################
     ###  MPC Strategy  ###
     ######################
+    account_currency= "FEX/USD"
+    forecastFun(context) = predeterminedReturns(context,sr)
     
+    evaluationEvents = [
+        TimeEvent(t, "data_transfer") for t in sort(unique(data.date); rev=true)
+    ]
+
+    parameters=Dict("horizon"=>7)
+    otherExtras=Dict(
+    "symbolOrder"=>collect(unique(data.assetID))
+    )
+
+    # Simulation functions definition
+    initialize!(context) = mpc.initialize!(context;
+    currency_symbol=account_currency,
+        min_data_samples=5, 
+        otherExtras=otherExtras,
+         parameters=parameters)
+    
+    trading_logic!(context,data) = mpc.tradingLogic!(context,data;forecastFun=forecastFun)
+    
+    my_expose_data(context,data) = expose_data(context,data; historical=false)
+    my_execute_orders!(context,data) = execute_orders!(context,data;propagateBalanceToPortfolio=true)
+    
+    mpc_context = run(
+        data,
+        initialize!,
+        trading_logic!,
+        my_execute_orders!,
+        my_expose_data;
+        audit=true,
+        max_iter=7,
+        initialEvents=evaluationEvents,
+    )
+
+    # Produce valuation data for currency and add it to the data fed to summarizePerformance 
+    usdData=deepcopy(data[data.assetID.==mpc_context.extra.symbolOrder[1],:])
+    usdData[!,"assetID"].=account_currency
+    usdData[!,"exchangeName"].="FEX"
+    usdData[!,"symbol"].="USD"
+    usdData[!,[:close,:high,:low,:open]].=1.0
+    usdData[!,[:volume]].=0
+
+    OHLCV_data = vcat(data,usdData)
+    performance = summarizePerformance(OHLCV_data,mpc_context;includeAccounts=false)
+    @test size(performance,1) == 8
 end

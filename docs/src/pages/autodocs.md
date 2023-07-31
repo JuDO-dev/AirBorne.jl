@@ -31,5 +31,5 @@ Modules = [AirBorne.Markets,AirBorne.Markets.StaticMarket]
 Modules = [AirBorne.Engines,AirBorne.Engines.DEDS]
 ```
 ```@autodocs
-Modules = [AirBorne.Strategies,AirBorne.Strategies.SMA,AirBorne.Strategies.Markowitz]
+Modules = [AirBorne.Strategies,AirBorne.Strategies.SMA,AirBorne.Strategies.Markowitz,AirBorne.Strategies.MeanVarianceMPC]
 ```

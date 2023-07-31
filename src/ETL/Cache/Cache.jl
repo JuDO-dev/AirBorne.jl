@@ -17,8 +17,8 @@ export load_bundle
 export list_bundles
 
 # TODO: 
-# - Add method to list archive (Best practice will be to enabled an optional keyword on list_bundle)
-# - Add method to load archive (Best practice will be to enabled an optional keyword on load_bundle) 
+# - Add method to list archive (Best practice will be to enable an optional keyword on list_bundle)
+# - Add method to load archive (Best practice will be to enable an optional keyword on load_bundle) 
 
 """
     hello_cache()

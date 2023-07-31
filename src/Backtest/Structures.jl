@@ -136,8 +136,8 @@ function summarizePerformance(
     end
     summary.stockValue = lagFill(summary.stockValue)
     summary[!, "dollarValue"] = [
-        valuePortfolio(r.portfolio, r.stockValue) + (includeAccounts ? r.account.usd.balance : 0) for
-        r in eachrow(summary)
+        valuePortfolio(r.portfolio, r.stockValue) +
+        (includeAccounts ? r.account.usd.balance : 0) for r in eachrow(summary)
     ]
     summary[!, "return"] = returns(summary.dollarValue)
     summary[!, "mean_return"] = makeRunning(

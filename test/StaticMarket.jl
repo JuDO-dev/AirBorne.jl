@@ -3,7 +3,7 @@ using Test
 
 @testset "Static Market" begin
     using AirBorne.Markets.StaticMarket:
-        produceFeeLedgerEntry, Order, executeOrder_CA, available_data
+        produceFeeLedgerEntry, Order, executeOrder_CA!, available_data
     using AirBorne.Structures: ContextTypeA, TimeEvent
     using AirBorne.ETL.Cache: load_bundle
     using AirBorne.Utils: get_latest
@@ -19,28 +19,21 @@ using Test
     context.accounts.usd = DotMap(Dict())
     context.accounts.usd.balance = 10^5
     context.accounts.usd.currency = "FEX/USD"
-
-
-    priceModel(a, b) = 10.0 # Share Price is always 10
+    context1 = deepcopy(context);
 
     order_specs = DotMap(Dict())
     order_specs.ticker = "AAPL"
     order_specs.shares = 100 # Number of shares to buy/sell
     order_specs.type = "MarketOrder"
-    order_specs.account = context.accounts.usd
-
+    order_specs.account = context1.accounts.usd
     order = Order("NMS", order_specs)
+    
     # Retrieve data
-
     cache_dir = joinpath(@__DIR__, "assets", "cache")
     data = load_bundle("demo"; cache_dir=cache_dir)
     cur_data = get_latest(available_data(context, data), [:exchangeName, :symbol], :date)
-    # @info order
-    # @info context
-    # @info cur_data
-    
-    context1 = deepcopy(context);executeOrder_CA(context1, order, cur_data) # Basic Test
-    @info DataFrame(context1.ledger)
+    executeOrder_CA!(context1, order, cur_data) # Basic Tes
+    @test size(DataFrame(context1.ledger),1)==1
 
     feeStructA = Dict(
         "FeeName"=>"Broker_A_Commission",
@@ -63,15 +56,21 @@ using Test
         return commission*basicAmount
     end
 
+    context2 = deepcopy(context);
     order_specs_2= deepcopy(order_specs)
     order_specs_2.feeStructures = [feeStructA]
+    order_specs_2.account = context2.accounts.usd
     order2 = Order("NMS", order_specs_2)
+    priceModel(a, b) = 10.0 # Share Price is always 10
+    executeOrder_CA!(context2, order2, cur_data; priceModel=priceModel)
 
-    context2 = deepcopy(context);executeOrder_CA(context2, order2, cur_data; priceModel=priceModel)
-
+    # Test resulting balances
+    @test round(context1.accounts.usd.balance;digits=2)==96036.75
+    @test context2.accounts.usd.balance == 98979.0
+    
+    # Retrieving ledger with fees
     ledger2 = DataFrame()
     [push!(ledger2, row, cols=:union) for row in context2.ledger]
-    @info ledger2
-
+    @test size(ledger2,1)==2
     
 end

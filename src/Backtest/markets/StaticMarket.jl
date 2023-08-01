@@ -190,7 +190,7 @@ function produceFeeLedgerEntry(
     return ledgerEntry
 end
 
-""" executeOrder_CA(
+""" executeOrder_CA!(
     context::ContextTypeA, 
     order::Order, 
     cur_data::DataFrame; 
@@ -200,7 +200,7 @@ end
 
     - ``:
 """
-function executeOrder_CA(
+function executeOrder_CA!(
     context::ContextTypeA,
     order::Order,
     cur_data::DataFrame;
@@ -256,9 +256,9 @@ function executeOrder_CA(
             addMoneyToAccount!(order.specs.account, transaction_journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
             addJournalEntryToLedger!(context.ledger, transaction_journal_entry) # Audit Transaction in Ledger 
             # Execute fees transactions
-            for transaction_journal_entry in feeJournalEntries
-                addMoneyToAccount!(order.specs.account, transaction_journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
-                addJournalEntryToLedger!(context.ledger, transaction_journal_entry) # Audit Transaction in Ledger 
+            for journal_entry in feeJournalEntries
+                addMoneyToAccount!(order.specs.account, journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
+                addJournalEntryToLedger!(context.ledger, journal_entry) # Audit Transaction in Ledger 
             end
         elseif partialExecutionAllowed && !(notEnoughMoney)
             # Not enough money to buy: Execute partially
@@ -294,7 +294,7 @@ end
 
 """
     execute_orders(
-        context::ContextTypeA, data::DataFrame; executeOrder::Function=executeOrder_CA; propagateBalanceToPortfolio::Bool=false
+        context::ContextTypeA, data::DataFrame; executeOrder::Function=executeOrder_CA!; propagateBalanceToPortfolio::Bool=false
         )
 
     This function updates the portfolio of the user that is stored in the variable context.
@@ -308,7 +308,7 @@ end
 function execute_orders!(
     context::ContextTypeA,
     data::DataFrame;
-    executeOrder::Function=executeOrder_CA,
+    executeOrder::Function=executeOrder_CA!,
     propagateBalanceToPortfolio::Bool=false,
     defaultFeeStructure::Union{Dict}=Dict(),
 )

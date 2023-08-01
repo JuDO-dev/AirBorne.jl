@@ -7,16 +7,20 @@
 """
 module StaticMarket
 export execute_orders!, expose_data, Order, parse_portfolioHistory, parse_accountHistory
-using DataFrames: DataFrame, Not, select!
+# Internal Dependencies
 using DotMaps: DotMap
 using ...Structures: ContextTypeA, ContextTypeB
 using ....AirBorne: Portfolio, Security, Wallet, get_symbol
 using ...Utils: get_latest, δ
 
+# External Dependencies
 using JuMP: Model, @variable, @objective, @constraint, optimize!, value, set_silent
 using SparseArrays: sparse, I, spdiagm, SparseVector
 using Ipopt: Ipopt
 import MathOptInterface as MOI
+using DataFrames: DataFrame, Not, select!
+using Dates: DateTime, now
+using UUIDs: uuid4
 
 """
     Order
@@ -144,38 +148,148 @@ function refPrice(cur_data::DataFrame, ticker::Union{String,Symbol}; col::Symbol
     return cur_data[cur_data.symbol .== ticker, col][1]
 end
 
+"""
+    Given an single order and a fee structure it returns a journal entry to be passed to the ledger. 
+
+    ### Arguments
+    - `order::Order`: The order that the fee is to be calculated for
+    - `feeStruct::Dict`: The fee structure containing the information for the fee calculation
+
+    ### Optional Arguments
+    - `transactionId::Union{String,Nothing}=nothing`:Id of the original tranaction
+    - `date::Union{DateTime,Nothing}=nothing`: Date of the transaction (or fee payment)
+    - `sharePrice::Union{Real,Nothing}=nothing`: Price to be paid for a single share
+"""
+function produceFeeLedgerEntry(
+    order::Order,
+    feeStruct::Dict;
+    transactionId::Union{String,Nothing}=nothing,
+    date::Union{DateTime,Nothing}=nothing,
+    sharePrice::Union{Real,Nothing}=nothing,
+)
+    ledgerEntry = Dict()
+    ledgerEntry["transactionType"] = "FEE"
+    ledgerEntry["transactionSubType"] = get(feeStruct, "FeeName", "UNKNOWN_FEE")
+    ledgerEntry["currency"] = order.specs.account.currency
+
+    isnothing(date) ? nothing : setindex!(ledgerEntry, date, "date")
+    isnothing(transactionId) ? nothing : setindex!(ledgerEntry, transactionId, "parentTransactionId") 
+    isnothing(sharePrice) ? nothing : setindex!(ledgerEntry, sharePrice, "sharePrice") 
+
+    if "customFun" in keys(feeStruct) # Calculate Fees
+        ledgerEntry["amount"] = float(feeStruct["customFun"](order, ledgerEntry))
+    else
+        ledgerEntry["amount"] =
+            get(feeStruct, "fixedPrice", 0.0) + (
+                get(feeStruct, "variableRate", 0.0) *
+                order.specs.shares *
+                (isnothing(sharePrice) ? 0.0 : sharePrice)
+            )
+    end
+
+    return ledgerEntry
+end
+
 """ executeOrder_CA(
-    context::ContextTypeA, order::Order, cur_data::DataFrame; priceModel::Function=refPrice
+    context::ContextTypeA, 
+    order::Order, 
+    cur_data::DataFrame; 
+    priceModel::Function=refPrice
 )
     Default order execution method when using ContextTypeA in the simulation.
+
+    - ``:
 """
 function executeOrder_CA(
-    context::ContextTypeA, order::Order, cur_data::DataFrame; priceModel::Function=refPrice
+    context::ContextTypeA,
+    order::Order,
+    cur_data::DataFrame;
+    priceModel::Function=refPrice,
+    defaultFeeStructures::Vector{Dict}=Vector{Dict}(),
+    partialExecutionAllowed::Bool=false,
 )
-    success = true
+    # TODO: Add Logic to allow/forbid fractional transactions 
+    waterfall_orders = []
+    feeStructures = get(order.specs, "feeStructures", defaultFeeStructures)
     if order.specs.type == "MarketOrder"
-        price = priceModel(cur_data, order.specs.ticker)
+        transactionID = string(uuid4())
+        sharePrice = priceModel(cur_data, order.specs.ticker)
         shares = order.specs.shares # Determine number of shares (Real number)
-        transaction_amount = price * order.specs.shares #  Total transaction amount
-        if (transaction_amount >= order.specs.account.balance) && (shares > 0) # If not enough money to buy execute partially
-            success = false
-            transaction_amount = order.specs.account.balance
-            shares = transaction_amount / price
-            # Enhancement TODO: Here there should be some logic to allow/forbid fractional transactions
-        end
-        journal_entry = Dict(
+        transaction_amount = sharePrice * order.specs.shares #  Total transaction amount
+
+        transaction_journal_entry = Dict(
+            "transactionID" => transactionID,
+            "transactionType" => "EXCHANGE",
+            "currency" => order.specs.account.currency,
             "exchangeName" => order.market,
             "ticker" => order.specs.ticker,
             "shares" => shares,
-            "price" => price,
+            "sharePrice" => sharePrice,
             "amount" => transaction_amount,
             "date" => context.current_event.date,
         )
-        journal_entry["assetID"] = keyJE(journal_entry)
+        transaction_journal_entry["assetID"] = keyJE(transaction_journal_entry)
+
+        feeJournalEntries = [
+            produceFeeLedgerEntry(
+                order,
+                feeStruct;
+                transactionId=transactionID,
+                date=context.current_event.date,
+                sharePrice=sharePrice,
+            ) for feeStruct in feeStructures
+        ]
+
+        # total_amount(order) = sharePrice * shares + fee_amount
+        feeAmount = if length(feeJournalEntries) == 0
+            0.0
+        else
+            sum([fee["amount"] for fee in feeJournalEntries])
+        end
+        enoughMoney = !(
+            (feeAmount + transaction_amount >= order.specs.account.balance) && (shares > 0)
+        )
+
+        if enoughMoney
+            # Execute equity transaction
+            addSecurityToPortfolio!(context.portfolio, transaction_journal_entry) # Implement change to Portfolio
+            addMoneyToAccount!(order.specs.account, transaction_journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
+            addJournalEntryToLedger!(context.ledger, transaction_journal_entry) # Audit Transaction in Ledger 
+            # Execute fees transactions
+            for transaction_journal_entry in feeJournalEntries
+                addMoneyToAccount!(order.specs.account, transaction_journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
+                addJournalEntryToLedger!(context.ledger, transaction_journal_entry) # Audit Transaction in Ledger 
+            end
+        elseif partialExecutionAllowed && !(notEnoughMoney)
+            # Not enough money to buy: Execute partially
+            if (length(fees) == 0) # TODO: Enable partial execution with fees
+                throw(
+                    ErrorException(
+                        "Partial execution with fees has not yet been implemented, sorry."
+                    ),
+                )
+            end
+
+            # Update transacted amounts
+            transaction_amount = order.specs.account.balance
+            shares = transaction_amount / sharePrice
+            journal_entry["assetID"] =
+                journal_entry["assetID"] =
+                addSecurityToPortfolio!(
+                    context.portfolio, journal_entry
+                ) # Implement change to Portfolio
+            addMoneyToAccount!(order.specs.account, journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
+            addJournalEntryToLedger!(context.ledger, journal_entry) # Audit Transaction in Ledger 
+
+            order.specs.shares -= journal_entry["shares"] # Reduce the amount of shares
+            push!(waterfall_orders, order)
+        end
+
     elseif order.specs.type == "LimitOrder"
         throw("LimitOrder has not yet been implemented, please use MarketOrder")
     end
-    return journal_entry, success
+
+    return waterfall_orders
 end
 
 """
@@ -196,26 +310,22 @@ function execute_orders!(
     data::DataFrame;
     executeOrder::Function=executeOrder_CA,
     propagateBalanceToPortfolio::Bool=false,
+    defaultFeeStructure::Union{Dict}=Dict(),
 )
-    # Retrieve data
     cur_data = get_latest(available_data(context, data), [:exchangeName, :symbol], :date)
     incomplete_orders = Vector{Any}([])
-    # Iterate over orders
-    while length(context.activeOrders) > 0
+    while length(context.activeOrders) > 0 # Iterate over orders
         order = pop!(context.activeOrders)
-        journal_entry, success = executeOrder(context, order, cur_data)
-        if !(success) # Incomplete orders are to be put back
-            order.specs.shares -= journal_entry["shares"] # Reduce the amount of shares
-            push!(incomplete_orders, order)
-        end
-        addJournalEntryToLedger!(context.ledger, journal_entry) # Audit Transaction in Ledger 
-        addSecurityToPortfolio!(context.portfolio, journal_entry) # Implement change to Portfolio
-        addMoneyToAccount!(order.specs.account, journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
+        append!(
+            incomplete_orders,
+            executeOrder(context, order, cur_data; defaultFeeStructure=defaultFeeStructure),
+        )
         if propagateBalanceToPortfolio
             context.portfolio[order.specs.account.currency] = order.specs.account.balance
         end
     end
-    return append!(context.activeOrders, incomplete_orders)
+    append!(context.activeOrders, incomplete_orders)
+    return nothing
 end
 
 function parse_accountHistory(accountHistory) # Probably I will also need the value of the stock at the audit point in time.

@@ -173,8 +173,12 @@ function produceFeeLedgerEntry(
     ledgerEntry["currency"] = order.specs.account.currency
 
     isnothing(date) ? nothing : setindex!(ledgerEntry, date, "date")
-    isnothing(transactionId) ? nothing : setindex!(ledgerEntry, transactionId, "parentTransactionId") 
-    isnothing(sharePrice) ? nothing : setindex!(ledgerEntry, sharePrice, "sharePrice") 
+    if isnothing(transactionId)
+        nothing
+    else
+        setindex!(ledgerEntry, transactionId, "parentTransactionId")
+    end
+    isnothing(sharePrice) ? nothing : setindex!(ledgerEntry, sharePrice, "sharePrice")
 
     if "customFun" in keys(feeStruct) # Calculate Fees
         ledgerEntry["amount"] = float(feeStruct["customFun"](order, ledgerEntry))
@@ -274,8 +278,7 @@ function executeOrder_CA!(
             transaction_amount = order.specs.account.balance
             shares = transaction_amount / sharePrice
             journal_entry["assetID"] =
-                journal_entry["assetID"] =
-                addSecurityToPortfolio!(
+                journal_entry["assetID"] = addSecurityToPortfolio!(
                     context.portfolio, journal_entry
                 ) # Implement change to Portfolio
             addMoneyToAccount!(order.specs.account, journal_entry) # Implement change in Account (or exchanged asset of Portfolio)

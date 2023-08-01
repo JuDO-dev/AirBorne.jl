@@ -156,7 +156,7 @@ end
     - `feeStruct::Dict`: The fee structure containing the information for the fee calculation
 
     ### Optional Arguments
-    - `transactionId::Union{String,Nothing}=nothing`:Id of the original tranaction
+    - `transactionId::Union{String,Nothing}=nothing`:Id of the original transaction
     - `date::Union{DateTime,Nothing}=nothing`: Date of the transaction (or fee payment)
     - `sharePrice::Union{Real,Nothing}=nothing`: Price to be paid for a single share
 """

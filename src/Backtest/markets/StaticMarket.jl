@@ -173,9 +173,7 @@ function produceFeeLedgerEntry(
     ledgerEntry["currency"] = order.specs.account.currency
 
     isnothing(date) ? nothing : setindex!(ledgerEntry, date, "date")
-    if isnothing(transactionId)
-        nothing
-    else
+    if !(isnothing(transactionId))
         setindex!(ledgerEntry, transactionId, "parentTransactionId")
     end
     isnothing(sharePrice) ? nothing : setindex!(ledgerEntry, sharePrice, "sharePrice")

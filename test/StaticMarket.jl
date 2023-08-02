@@ -79,4 +79,19 @@ using Test
     ledger2 = DataFrame()
     [push!(ledger2, row; cols=:union) for row in context2.ledger]
     @test size(ledger2, 1) == 2
+
+    feeStructB = Dict("FeeName" => "Broker_B_Commission1", "customFun" => feeStepped)
+    feeStructC = Dict("FeeName" => "Broker_B_Commission2", "customFun" => feeLog)
+
+    context3 = deepcopy(context)
+    order_specs_3 = deepcopy(order_specs)
+    order_specs_3.feeStructures = [feeStructB,feeStructC]
+    order_specs_3.account = context3.accounts.usd
+    order_specs_3.shares = 10^3
+    order3 = Order("NMS", order_specs_3)
+    executeOrder_CA!(context3, order3, cur_data; priceModel=priceModel)
+
+    ledger3 = DataFrame()
+    [push!(ledger3, row; cols=:union) for row in context3.ledger]
+    @test size(ledger3, 1) == 3
 end

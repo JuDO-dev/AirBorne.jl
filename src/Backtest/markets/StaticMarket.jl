@@ -313,16 +313,12 @@ function execute_orders!(
     data::DataFrame;
     executeOrder::Function=executeOrder_CA!,
     propagateBalanceToPortfolio::Bool=false,
-    defaultFeeStructure::Union{Dict}=Dict(),
 )
     cur_data = get_latest(available_data(context, data), [:exchangeName, :symbol], :date)
     incomplete_orders = Vector{Any}([])
     while length(context.activeOrders) > 0 # Iterate over orders
         order = pop!(context.activeOrders)
-        append!(
-            incomplete_orders,
-            executeOrder(context, order, cur_data; defaultFeeStructure=defaultFeeStructure),
-        )
+        append!(incomplete_orders, executeOrder(context, order, cur_data))
         if propagateBalanceToPortfolio
             context.portfolio[order.specs.account.currency] = order.specs.account.balance
         end

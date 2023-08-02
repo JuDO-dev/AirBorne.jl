@@ -279,9 +279,7 @@ function executeOrder_CA!(
             shares = transaction_amount / sharePrice
             transaction_journal_entry["shares"] = shares
             transaction_journal_entry["amount"] = transaction_amount
-            addSecurityToPortfolio!(
-                context.portfolio, transaction_journal_entry
-            ) # Implement change to Portfolio
+            addSecurityToPortfolio!(context.portfolio, transaction_journal_entry) # Implement change to Portfolio
             addMoneyToAccount!(order.specs.account, transaction_journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
             addJournalEntryToLedger!(context.ledger, transaction_journal_entry) # Audit Transaction in Ledger 
 

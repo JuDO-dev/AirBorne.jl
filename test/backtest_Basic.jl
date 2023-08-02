@@ -31,7 +31,7 @@ using Logging
     ) == 3303.55
     ledger = DataFrame()
     [push!(ledger, row; cols=:union) for row in results.ledger]
-    @test size(ledger,1)==49 # Check number of transactions in Ledger
+    @test size(ledger, 1) == 49 # Check number of transactions in Ledger
     @test round(
         parse_accountHistory(results.audit.accountHistory)[end, :"usd"]; digits=2
     ) == 0.0

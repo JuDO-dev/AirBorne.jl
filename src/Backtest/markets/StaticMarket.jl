@@ -210,7 +210,7 @@ function executeOrder_CA!(
     cur_data::DataFrame;
     priceModel::Function=refPrice,
     defaultFeeStructures::Vector{Dict}=Vector{Dict}(),
-    partialExecutionAllowed::Bool=false,
+    partialExecutionAllowed::Bool=true,
 )
     # TODO: Add Logic to allow/forbid fractional transactions 
     waterfall_orders = []
@@ -264,9 +264,9 @@ function executeOrder_CA!(
                 addMoneyToAccount!(order.specs.account, journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
                 addJournalEntryToLedger!(context.ledger, journal_entry) # Audit Transaction in Ledger 
             end
-        elseif partialExecutionAllowed && !(notEnoughMoney)
+        elseif partialExecutionAllowed && !(enoughMoney)
             # Not enough money to buy: Execute partially
-            if (length(fees) == 0) # TODO: Enable partial execution with fees
+            if (length(feeStructures) > 0) # TODO: Enable partial execution with fees
                 throw(
                     ErrorException(
                         "Partial execution with fees has not yet been implemented, sorry."
@@ -277,14 +277,15 @@ function executeOrder_CA!(
             # Update transacted amounts
             transaction_amount = order.specs.account.balance
             shares = transaction_amount / sharePrice
-            journal_entry["assetID"] =
-                journal_entry["assetID"] = addSecurityToPortfolio!(
-                    context.portfolio, journal_entry
-                ) # Implement change to Portfolio
-            addMoneyToAccount!(order.specs.account, journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
-            addJournalEntryToLedger!(context.ledger, journal_entry) # Audit Transaction in Ledger 
+            transaction_journal_entry["shares"] = shares
+            transaction_journal_entry["amount"] = transaction_amount
+            addSecurityToPortfolio!(
+                context.portfolio, transaction_journal_entry
+            ) # Implement change to Portfolio
+            addMoneyToAccount!(order.specs.account, transaction_journal_entry) # Implement change in Account (or exchanged asset of Portfolio)
+            addJournalEntryToLedger!(context.ledger, transaction_journal_entry) # Audit Transaction in Ledger 
 
-            order.specs.shares -= journal_entry["shares"] # Reduce the amount of shares
+            order.specs.shares -= transaction_journal_entry["shares"] # Reduce the amount of shares
             push!(waterfall_orders, order)
         end
 

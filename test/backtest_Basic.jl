@@ -7,6 +7,7 @@ using Logging
     using AirBorne.Engines.DEDS: run
     using AirBorne.Markets.StaticMarket:
         execute_orders!, expose_data, parse_portfolioHistory, parse_accountHistory
+    using DataFrames: DataFrame
     include("./assets/AlwaysBuyStrategy.jl")
     cache_dir = joinpath(@__DIR__, "assets", "cache")
     data = load_bundle("demo"; cache_dir=cache_dir)
@@ -28,6 +29,9 @@ using Logging
     @test round(
         parse_portfolioHistory(results.audit.portfolioHistory)[end, :"NMS/AAPL"]; digits=2
     ) == 3303.55
+    ledger = DataFrame()
+    [push!(ledger, row; cols=:union) for row in results.ledger]
+    @test size(ledger, 1) == 49 # Check number of transactions in Ledger
     @test round(
         parse_accountHistory(results.audit.accountHistory)[end, :"usd"]; digits=2
     ) == 0.0

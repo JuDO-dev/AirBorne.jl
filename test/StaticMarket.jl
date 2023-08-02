@@ -85,7 +85,7 @@ using Test
 
     context3 = deepcopy(context)
     order_specs_3 = deepcopy(order_specs)
-    order_specs_3.feeStructures = [feeStructB,feeStructC]
+    order_specs_3.feeStructures = [feeStructB, feeStructC]
     order_specs_3.account = context3.accounts.usd
     order_specs_3.shares = 10^3
     order3 = Order("NMS", order_specs_3)

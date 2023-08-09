@@ -37,7 +37,10 @@ makedocs(;
             "Financial Modelling" => "./pages/financialModelling.md",
             "Event Driven Simulation" => "./pages/backtesting/eventDrivenSimulation.md",
         ],
-        "Examples" => ["Strategies" => "./pages/examples/Strategies.md"],
+        "Examples" => [
+            "Strategies" => "./pages/examples/Strategies.md",
+            "Data Pipeline" => "./pages/examples/ETL.md",
+        ],
         "Autodocs" => "./pages/autodocs.md",
         "Contribution Guidelines" => "./pages/contributionGuidelines.md",
     ],

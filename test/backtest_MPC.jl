@@ -2,7 +2,7 @@
 using AirBorne.ETL.AssetValuation: stockValuation, returns
 using AirBorne.ETL.Cache: load_bundle
 using AirBorne.Engines.DEDS: run
-using AirBorne.Markets.StaticMarket: execute_orders!, expose_data, keyJE
+using AirBorne.Markets.StaticMarket: execute_orders!, expose_data
 using AirBorne.Strategies.MeanVarianceMPC: predeterminedReturns
 import AirBorne.Strategies.MeanVarianceMPC as mpc
 

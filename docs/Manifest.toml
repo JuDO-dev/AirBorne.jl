@@ -2,7 +2,7 @@
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "749b9c3f87d6ea2e196ccdf216aca902c98c991f"
+project_hash = "adbcca575feac3ebd0e2588736deaa8f4a4316dd"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -27,7 +27,7 @@ uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 version = "3.6.2"
 
 [[deps.AirBorne]]
-deps = ["Bijections", "CSV", "Currencies", "DataFrames", "Dates", "DirectSearch", "DotMaps", "HTTP", "Ipopt", "JSON", "JuMP", "Logging", "MathOptInterface", "Parquet2", "Pipe", "Printf", "SparseArrays", "Statistics", "Suppressor", "Tables", "TestEnv"]
+deps = ["Bijections", "CSV", "Currencies", "DataFrames", "Dates", "DirectSearch", "DotMaps", "HTTP", "Ipopt", "JSON", "JuMP", "Logging", "MathOptInterface", "Parquet2", "Pipe", "Printf", "SparseArrays", "Statistics", "Suppressor", "Tables", "TestEnv", "UUIDs"]
 path = ".."
 uuid = "4a232ea9-7d1f-4dd8-a126-b47d2ae9e134"
 version = "1.0.0-DEV"

@@ -1,6 +1,6 @@
 # Technical glossary
 This page describes the modelling behind different financial structures and data types.
-In this section we will describe the entities present in the package, used during backtesting. Some are related to simulation frameworks, data structures or object oriented archiqutecture whilst other entities reflect a model of choice for financial objects found in the real world. It is important to point out that **Julia is not an object-oriented programming language**, therefore we avoid at all cost of refering to any of our data structures or modules as such.
+In this section we will describe the entities present in the package, used during backtesting. Some are related to simulation frameworks, data structures or object oriented archiqutecture whilst other entities reflect a model of choice for financial objects found in the real world. It is important to point out that **Julia is not an object-oriented programming language**, therefore we avoid at all cost of referring to any of our data structures or modules as such.
 
 Where possible we try to align the technical definitions with the ones of the [Financial Glossary](@ref financial_glossary).
 
@@ -19,13 +19,13 @@ An engine is the orchastrator of a simulation, it dictates the sequence of actio
 ### Market
 Markets are a conceptual group usually represented in a submodule that executes trading orders placed by trading strategies. Two functions are what define a market
 
-1. **execute_order!**: This function takes an order placed by a strategy and modifies the portfolio and ledger accordingly, reflecting the order execution. The nature of the pricing and characteristc of the transaction is left for each market to specify. For example a market model may take a probablistic or stochastic process approach for valuation and may treat the price and volume as probability distributions whilst another market may just model the price as a fixed value given a dataset. Some markets may introduce a delay between the order time and executions and some other may not.
+1. **execute_order!**: This function takes an order placed by a strategy and modifies the portfolio and ledger accordingly, reflecting the order execution. The nature of the pricing and characteristics of the transaction is left for each market to specify. For example a market model may take a probabilistic or stochastic process approach for valuation and may treat the price and volume as probability distributions whilst another market may just model the price as a fixed value given a dataset. Some markets may introduce a delay between the order time and executions and some other may not.
 1. **expose_data**: Since there is some diversity on the formats of data available and the way the data is transferred the expose_data method is the one responsible to send data to the strategy when requested, this can be by slicing or transforming a large dataset and provide the strategy just with the data that it would see if it was trading in a real environment, the purpose of a market having the flexibility of exposing data in different formats is to allow a realistic data pipeline handling for the strategy. I.e., some markets may do a an SFTP drop into a server, some markets may send an email with summary data, and some markets may just simply write/respond an REST API call.
 
 ### Strategies
 A strategy is a combination of an **initialization routine** were data structures and parameter relevant for the trading logic are initialized and  a **trading logic** routine were given new data a decision to place orders in a market may be applied. 
 
-Strategies may also decide when to check for data again (in the form of an schedule or iteratively setting next check dates) or not. Market may provide particular mechanisms to place orders and and may have limited support for different types of orders, strategies should have this nuances in mind when designed such that they can place orders succesfully.
+Strategies may also decide when to check for data again (in the form of an schedule or iteratively setting next check dates) or not. Market may provide particular mechanisms to place orders and and may have limited support for different types of orders, strategies should have this nuances in mind when designed such that they can place orders successfully.
 
 ## Money, Currency and Wallets
 

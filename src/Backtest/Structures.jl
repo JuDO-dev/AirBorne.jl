@@ -47,7 +47,7 @@ end
 """ c_get(context::ContextTypeA,key::Union{Symbol,String},default::Any; paramFirst::Bool=true) 
 
     Returns a value from within the extra or parameters hashmaps of the context object. Use the paramFirst attribute to determine 
-    wether the parameters is looked into first or not. 
+    whether the parameters is looked into first or not. 
 
     This function is particularly useful when a datapoint may come from either "extra" or "parameters", "parameters" tend to contain dynamic hyperparameters
     that can be modified after an optimization routing whilst "extra" contains static hyperparameters, some strategy templates will fetch hyperparameters from either.

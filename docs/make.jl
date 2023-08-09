@@ -31,11 +31,14 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        "High Level Design" => [
-            "Glossary" => "./pages/highLevelDesign.md",
-            "Data Pipeline" => "./pages/etl/etl.md",
-            "Financial Modelling" => "./pages/financialModelling.md",
-            "Event Driven Simulation" => "./pages/backtesting/eventDrivenSimulation.md",
+        "High Level Design (HLD)" => [
+            "Introduction to HLD" => "./pages/hld/highLevelDesign.md",
+            "Data Pipeline" => "./pages/hld/etl.md",
+            "Event Driven Simulation" => "./pages/hld/eventDrivenSimulation.md",
+        ],
+        "Glossary" => [
+        "Financial Glossary" => "./pages/glossaries/financialGlossary.md",
+        "Technical Glossary" => "./pages/glossaries/technicalGlossary.md",
         ],
         "Examples" => [
             "Strategies" => "./pages/examples/Strategies.md",

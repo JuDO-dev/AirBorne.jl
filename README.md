@@ -25,7 +25,7 @@ Pkg.add(url="https://github.com/JuDO-dev/AirBorne.jl#dev");
 ```
 
 ### Usage
-There are many examples through our documentation from how to define trading strategies for a backtesting engine using Model Predictive Control to how to perform simple queries to fetch ticker data using the ETL and store it for later use.
+There are many examples through our documentation from [how to define trading strategies](https://judo.dev/AirBorne.jl/dev/pages/examples/Strategies/) for a backtesting engine using Model Predictive Control to [how to perform simple queries to fetch ticker data using the ETL and store it for later use](https://judo.dev/AirBorne.jl/dev/pages/examples/ETL/).
 
 Nonetheless a very brief example on some of the functionalities of this package will be shown here.
 
@@ -45,9 +45,8 @@ first(data,4) # Display first 4 rows
 ![Yahoo results](docs/drawings/resultsReadmeYahooData.png)
 
 #### Backtesting
-Backtesting has nuances, it basically consists of testing a trading strategy using past data. 
+Backtesting has nuances, consists of testing a trading strategy using past data and looking closer one needs to consider many things such as:
 
-But looking closer one needs to consider many things such as:
 1. In which format and over which times an exchange provides data?
 2. How is an asset priced in the market, would it depend on the order size? There are many theories around this, which one to use?
 3. Can orders be unsuccessful? How an order be executed partially?
@@ -55,7 +54,7 @@ But looking closer one needs to consider many things such as:
 5. How is the simulation executed?  
 
 
-All of the points above are dealt thoroughly in AirBorne's documentation. 
+All of the points above are dealt thoroughly in [AirBorne's documentation](https://judo.dev/AirBorne.jl/dev/). 
 
 Observe how easily and in few lines one can do 5 years of backtesting using the data extracted in the previous example, using AirBorne's **Discrete Event Driven Simulation** (DEDS) engine along with our **Static Market** model whilst implementing a Markowtiz mean variance strategy. 
 

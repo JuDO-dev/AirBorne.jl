@@ -1,6 +1,8 @@
 # Example: Building Strategies for DEDS & Static Markets
 In this page you will find examples on the creation of strategies.
 
+> **Each example is developed in a Jupyter Notebook, click on the title of the example you would like to see and you will be taken to the relevant Jupyter Notebook.**
+
 ### [Building a Simple Moving Average Strategy](https://github.com/JuDO-dev/AirBorne.jl/blob/dev/docs/example_notebooks/SMA_Example.ipynb).
 This example will show you how to build a simple moving average strategy for a **Static Market** using the **Discrete Event Driven Simulation** (DEDS) engine as well as an introduction to the template provided by [AirBorne.jl](https://github.com/JuDO-dev/AirBorne.jl). 
 

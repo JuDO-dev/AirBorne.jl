@@ -24,4 +24,4 @@ The MeanVariance MPC strategy models uses predictions of the expected returns an
 
 The full example can be found in the [AirBorne.jl](https://github.com/JuDO-dev/AirBorne.jl) repository in the form of a Jupyter Notebook following [this link](https://github.com/JuDO-dev/AirBorne.jl/blob/mpc/docs/example_notebooks/MPC_Example.ipynb).
 
-**Bonus material on forecasting:** A second notebook is also available were examples for diferent forecasting techniques compatible withe the Mean Variance MPC strategy can be found, including Hidden Markov Models, Linear Regression and Behavioural Models. See **["MPC Additional Resources: Forecasting"](https://github.com/JuDO-dev/AirBorne.jl/blob/dev/docs/example_notebooks/MPC_Example_Forecasts.ipynb)**.
+**Bonus material on forecasting:** A second notebook is also available were examples for different forecasting techniques compatible withe the Mean Variance MPC strategy can be found, including Hidden Markov Models, Linear Regression and Behavioural Models. See **["MPC Additional Resources: Forecasting"](https://github.com/JuDO-dev/AirBorne.jl/blob/dev/docs/example_notebooks/MPC_Example_Forecasts.ipynb)**.

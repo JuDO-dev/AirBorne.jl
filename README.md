@@ -5,13 +5,13 @@
 [![dev-docs](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages)](https://judo.dev/AirBorne.jl/dev/)
 [![ColPrac: Contributor's Guide](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
 
-![./docs/src/assets/logo.svg]
+![AirBorne Logo](docs/src/assets/logo.svg)
 
 Welcome to the AirBorne a complete algorithmic trading framework for Julia.
 
 This module simplifies algorithmic trading by providing a set of ready to use backtesting algorithms, templates for common trading strategies, full ETL (Extract Transform Load) data pipelines with datasources such as NASDAQ and Yahoo Finance. The philosophy of the design of this module is best represented by the diagram below.
 
-![./docs/drawings/SoftwareArchitecture.svg]
+![AirBorne Architecture](docs/drawings/SoftwareArchitecture.svg)
 
 > **Note:** As of version 0.1.0 AirBorne does not have the functionality to operate as live server nor interact with third party broker APIs, however a seamless transition between trading strategies in AirBorne backtesting engines is one of the goals of the project and shall be prioritized in due course.
 

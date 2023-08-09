@@ -21,9 +21,10 @@ The software at its core is composed of 3 elements:
 3. **Live Trading Framework:** When executing a trading strategy in real time, a reactive fast and efficient computational centre needs to be put in place, moreover its design needs to be compatible with the broker and or exchanges executing the orders, the aim of the **Live Trading Framework** is to provide a seamless interface between Trading strategies and real time trading agents like brokers and exchanges, being as fast, safe, reliable and accurate as possible. 
 
 
-## Module Piramyd
-The module tree is helpful to visualize the dependencies and structures inside the AirBorne module. 
-![./figures/ModulesOrganization.svg]
+## Module Pyramid
+The module pyramid is helpful to visualize the dependencies and structures inside the AirBorne module. 
+
+![ModulesOrganization](./figures/ModulesOrganization.svg)
 
 AirBorne in fact is made of several submodules interconnected in a purposeful manner. 
 

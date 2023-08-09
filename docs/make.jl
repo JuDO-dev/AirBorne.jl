@@ -37,8 +37,8 @@ makedocs(;
             "Event Driven Simulation" => "./pages/hld/eventDrivenSimulation.md",
         ],
         "Glossary" => [
-        "Financial Glossary" => "./pages/glossaries/financialGlossary.md",
-        "Technical Glossary" => "./pages/glossaries/technicalGlossary.md",
+            "Financial Glossary" => "./pages/glossaries/financialGlossary.md",
+            "Technical Glossary" => "./pages/glossaries/technicalGlossary.md",
         ],
         "Examples" => [
             "Strategies" => "./pages/examples/Strategies.md",

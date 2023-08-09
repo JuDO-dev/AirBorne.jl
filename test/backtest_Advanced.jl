@@ -1,6 +1,6 @@
 using AirBorne: AirBorne, Money, Portfolio, Wallet, Security, get_symbol
 using AirBorne.ETL.Cache: load_bundle
-using AirBorne.Structures: ContextTypeB, TimeEvent, summarizePerformance, nextDay!
+using AirBorne.Structures: ContextTypeB, TimeEvent, summarizePerformance, nextDay!, c_get
 using AirBorne.Markets.StaticMarket:
     addMoneyToAccount!, addSecurityToPortfolio!, execute_orders!, expose_data, keyJE
 using AirBorne.Engines.DEDS: run
@@ -73,6 +73,24 @@ using Logging
     )
     @test size(contextSMA.audit.portfolioHistory) == (760,)
     @test size(summarizePerformance(data, contextSMA; removeWeekend=true), 1) == 544
+
+    # Thorough testing on c_get
+    contextSMA.extra.testFieldA = 20
+    contextSMA.parameters.testFieldA = 10
+
+    @test c_get(contextSMA, "testFieldA", nothing; paramFirst=false) == 20 # Look First in Extra
+    @test c_get(contextSMA, "testFieldA", nothing) == 10 # Look First in Param  
+
+    contextSMA.parameters.onlyExtraField = 10
+
+    @test c_get(contextSMA, "onlyExtraField", nothing; paramFirst=false) == 10 # Look First in Extra
+    @test c_get(contextSMA, "onlyExtraField", nothing) == 10 # Look First in Param  
+
+    contextSMA.parameters.onlyParamField = 10
+    @test c_get(contextSMA, "onlyParamField", nothing; paramFirst=false) == 10 # Look First in Extra
+    @test c_get(contextSMA, "onlyParamField", nothing) == 10 # Look First in Param  
+
+    @test isnothing(c_get(contextSMA, "made_up_field", nothing))
 
     ############################
     ###  Markowitz Strategy  ###

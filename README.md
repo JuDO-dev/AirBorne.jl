@@ -1,11 +1,11 @@
+<img align="left" width="80" height="80" src="https://raw.githubusercontent.com/JuDO-dev/AirBorne.jl/97ab1e6300772023314a45adcef96aaa6810b329/docs/src/assets/logo.svg" alt="AirBorne Logo">
+
 # AirBorne
 [![CI](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml/badge.svg?branch=dev)](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml)
 [![code style blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/Blue)
 [![Coverage](https://codecov.io/gh/JuDO-dev/AirBorne.jl/branch/dev/graph/badge.svg)](https://codecov.io/gh/JuDO-dev/AirBorne.jl)
 [![dev-docs](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages)](https://judo.dev/AirBorne.jl/dev/)
 [![ColPrac: Contributor's Guide](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
-
-![AirBorne Logo](docs/src/assets/logo.svg)
 
 Welcome to the AirBorne a complete algorithmic trading framework for Julia.
 
@@ -18,11 +18,12 @@ This module simplifies algorithmic trading by providing a set of ready to use ba
 ## How to use AirBorne
 
 ### Installation
-Airborne is a %100 Julia native package, so making use of it is as simple as installing a module
+Airborne is a %100 Julia native package, so making use of it is as simple as installing a module.
 ```julia
 using Pkg;
 Pkg.add(url="https://github.com/JuDO-dev/AirBorne.jl#dev");
 ```
+
 ### Usage
 There are many examples through our documentation from how to define trading strategies for a backtesting engine using Model Predictive Control to how to perform simple queries to fetch ticker data using the ETL and store it for later use.
 
@@ -39,7 +40,9 @@ using AirBorne.ETL.YFinance: get_interday_data
 using Dates: DateTime,datetime2unix
 unix(x) = string(round(Int, datetime2unix(DateTime(x))))
 data = get_interday_data(["AAPL","GOOG"], unix("2017-01-01"), unix("2022-01-01"))
+first(data,4) # Display first 4 rows
 ```
+![Yahoo results](docs/drawings/resultsReadmeYahooData.png)
 
 #### Backtesting
 Backtesting has nuances, it basically consists of testing a trading strategy using past data. 
@@ -80,12 +83,13 @@ current_accounts_at_end_of_trading_simulation = context.accounts
 # If audit is set to true during the simulation it also contain snapshots
 snapshot_of_portfolio_at_the_end_of_each_simulation_event = context.audit.portfolioHistory
 
-# Visual
+# Visualize portfolio value over time
 using AirBorne.Structures: summarizePerformance
 using Plots: plot
 results = summarizePerformance(data, context) # Use the audit history to ana
-plot(results.date, results.dollarValue, title="Markowtiz Strategy: Porfolio Dollar Value", label="value",xlabel="date",ylabel=" Portfolio Value - USD", linewidth=3)
+plot(results.date, results.dollarValue, title="Markowtiz Strategy: Porfolio Dollar Value", label="value", xlabel="date", ylabel=" Portfolio Value - USD", linewidth=3)
 ```
+![Backtest results](docs/drawings/resultsReadmeBacktest.png)
 
 
 ## Want new features or questions answered?

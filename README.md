@@ -1,4 +1,4 @@
-<img align="left" width="80" height="80" src="https://raw.githubusercontent.com/JuDO-dev/AirBorne.jl/97ab1e6300772023314a45adcef96aaa6810b329/docs/src/assets/logo.svg" alt="AirBorne Logo">
+<img align="left" width="60" height="60" src="https://raw.githubusercontent.com/JuDO-dev/AirBorne.jl/97ab1e6300772023314a45adcef96aaa6810b329/docs/src/assets/logo.svg" alt="AirBorne Logo">
 
 # AirBorne
 [![CI](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml/badge.svg?branch=dev)](https://github.com/JuDO-dev/AirBorne.jl/actions/workflows/CI.yml)

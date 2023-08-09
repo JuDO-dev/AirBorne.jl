@@ -1,9 +1,35 @@
-# Financial Modelling 
+# Technical glossary
 This page describes the modelling behind different financial structures and data types.
+In this section we will describe the entities present in the package, used during backtesting. Some are related to simulation frameworks, data structures or object oriented archiqutecture whilst other entities reflect a model of choice for financial objects found in the real world. It is important to point out that **Julia is not an object-oriented programming language**, therefore we avoid at all cost of referring to any of our data structures or modules as such.
 
-### Money, Currency and Wallets
+Where possible we try to align the technical definitions with the ones of the [Financial Glossary](@ref financial_glossary).
 
-###### Money
+## Data Pipeline
+
+### ETL
+> ETL, standing for Extract, Transform and Load, is the process of combining data from multiple sources into a large central repository of data.
+> [What is ETL? (AWS)](https://aws.amazon.com/what-is/etl/)
+
+## Backtesting
+This section provides a quick definition of the entities modelled in AirBorne regarding backtesting. For a deep dive see [Backtesting and Event Driven Simulation](@ref backtesting).
+
+### Engines
+An engine is the orchastrator of a simulation, it dictates the sequence of actions carried out during the simulation. At the moment only one simulation engine is present in AirBorne, the **Discrete Event Driven Simulation** or DEDS for short. An engine dictates how markets, brokers and investors interact with each other during a simulation, what processes gets executed first and which later.
+ 
+### Market
+Markets are a conceptual group usually represented in a submodule that executes trading orders placed by trading strategies. Two functions are what define a market
+
+1. **execute_order!**: This function takes an order placed by a strategy and modifies the portfolio and ledger accordingly, reflecting the order execution. The nature of the pricing and characteristics of the transaction is left for each market to specify. For example a market model may take a probabilistic or stochastic process approach for valuation and may treat the price and volume as probability distributions whilst another market may just model the price as a fixed value given a dataset. Some markets may introduce a delay between the order time and executions and some other may not.
+1. **expose_data**: Since there is some diversity on the formats of data available and the way the data is transferred the expose_data method is the one responsible to send data to the strategy when requested, this can be by slicing or transforming a large dataset and provide the strategy just with the data that it would see if it was trading in a real environment, the purpose of a market having the flexibility of exposing data in different formats is to allow a realistic data pipeline handling for the strategy. I.e., some markets may do a an SFTP drop into a server, some markets may send an email with summary data, and some markets may just simply write/respond an REST API call.
+
+### Strategies
+A strategy is a combination of an **initialization routine** were data structures and parameter relevant for the trading logic are initialized and  a **trading logic** routine were given new data a decision to place orders in a market may be applied. 
+
+Strategies may also decide when to check for data again (in the form of an schedule or iteratively setting next check dates) or not. Market may provide particular mechanisms to place orders and and may have limited support for different types of orders, strategies should have this nuances in mind when designed such that they can place orders successfully.
+
+## Money, Currency and Wallets
+
+### Money
 AirBorne provides a self-contained representation of money. Money is represented as a number with an associated *Symbol* parameter type that acts as the currency. Money with the same currency can be added together and Money can be multiplied by any real number. However Money cannot be multiplied by Money.
 
 AirBorne is fully compatible with the module [Currencies](https://github.com/JuliaFinance/Currencies.jl/). But it can also support currencies outside ISO 4217, because the implementation of a currency is just through a Symbol representation.
@@ -25,7 +51,7 @@ AirBorne is fully compatible with the module [Currencies](https://github.com/Jul
     println(USD * 2 == USD * 2.0)
 ```
 
-###### Wallets
+### Wallets
 A Wallet is a collection of different types of Money. At its core is a dictionary with extra features for algebraic operations as one can add Money to a Wallet just by using the "+" operator, and wallets can be added together using the "+" operator as well. Moreover if a particular currency is not present in a wallet if you try to retrieve the amount of such currency from the wallet the answer will be 0 (instead of a KeyError response).
 
 ```julia 

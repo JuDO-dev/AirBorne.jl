@@ -9,7 +9,7 @@ module AssetValuation
 #AirBorne.ETL.AssetValuation
 # ..=ETL
 # ...= AirBorne 
-using ...Utils: movingAverage, makeRunning
+using ...Utils: movingAverage
 using DataFrames: DataFrame, groupby, unstack, combine, Not, select!
 using Dates: DateTime
 using Statistics: std, cov, mean

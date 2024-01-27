@@ -13,8 +13,17 @@ using Dates: DateTime, dayofweek, Day
 import DotMaps.DotMap as DM
 using Statistics: std, mean
 using ...AirBorne: Wallet, Portfolio
-using ..Utils: makeRunning, lagFill, sortedStructInsert!
+using ..Utils: lagFill, sortedStructInsert!
 using ..ETL.AssetValuation: stockValuation, sharpe, valuePortfolio, returns
+using RollingFunctions: rollmean, rollstd, runstd, runmean
+
+"""
+    TimeEvent
+
+    This structure is used to define events in the simulation. 
+    The date attribute is used to determine the order of events in the simulation.
+    The type attribute is used to determine the type of event, for example "data_transfer" or "trading_logic".
+"""
 
 struct TimeEvent
     date::DateTime
@@ -135,6 +144,7 @@ function summarizePerformance(
     riskFreeRate::Real=0.0,
     includeAccounts::Bool=true,
 )
+    println("Summarizing performance")
     summary = DataFrame(
         "date" => [e.date for e in context.audit.eventHistory],
         "type" => [e.type for e in context.audit.eventHistory],
@@ -157,13 +167,11 @@ function summarizePerformance(
         (includeAccounts ? r.account.usd.balance : 0) for r in eachrow(summary)
     ]
     summary[!, "return"] = returns(summary.dollarValue)
-    summary[!, "mean_return"] = makeRunning(
-        summary[!, "return"], mean; windowSize=windowSize
-    )
-    summary[!, "std_return"] = makeRunning(summary[!, "return"], std; windowSize=windowSize)
-    summary[!, "sharpe"] = sharpe(
-        summary.mean_return, summary.std_return; riskFreeRate=riskFreeRate
-    )
+    summary[!, "mean_return"] = runmean(summary[!, "return"], windowSize)
+    summary[!, "std_return"] = runstd(summary[!, "return"], windowSize)
+    summary[!, "sharpe"] = sharpe(summary.mean_return, summary.std_return; riskFreeRate=riskFreeRate)
+    summary[!, "sharpe"] = (summary.mean_return .- riskFreeRate) ./ summary.std_return
+
     return summary
 end
 

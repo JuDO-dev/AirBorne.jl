@@ -150,30 +150,6 @@ function lagFill(inV::Vector; fill::Vector=[missing, nothing])
 end
 
 """
-    Given a function (mean, variance, sharpe,...) from an 1-D array to a single element
-    It creates an array with same size of original with the function applied from the 
-    beginning of the array to the index of the output. 
-
-    !!! Tip "Performance"
-        This function is not meant to be highly performant. If a function is used function is
-        advised to have a specialized function to calculate its running counterpart.
-
-    # Optional Arguments
-    - `windowSize::Union{Int,Nothing}`: If its desired to truncate the number of past elements to be considered, this field can be set to the maximum number of past elements to take into account. This can be used for Moving Averages for example. 
-    - `ignoreFirst::Int`: Indicates for how many elements the operation should not be applied. In those elements "nothing" will be placed instead.
-"""
-function makeRunning(
-    array::Vector, fun::Function; windowSize::Union{Int64,Nothing}=nothing, startFrom::Int=1
-)
-    out = Array{Union{Float64,Nothing}}(undef, length(array)) # Preallocate memory
-    start(i) = windowSize === nothing ? startFrom : max(i - windowSize + 1, startFrom)
-    for i in startFrom:length(array)
-        out[i] = fun(array[start(i):i])
-    end
-    return out
-end
-
-"""
     More efficient implementation of a moving average (mean running).
 """
 function movingAverage(array::Vector; windowSize::Int=1, startFrom::Int=1)

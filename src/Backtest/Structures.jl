@@ -169,7 +169,6 @@ function summarizePerformance(
     summary[!, "return"] = returns(summary.dollarValue)
     summary[!, "mean_return"] = runmean(summary[!, "return"], windowSize)
     summary[!, "std_return"] = runstd(summary[!, "return"], windowSize)
-    summary[!, "sharpe"] = sharpe(summary.mean_return, summary.std_return; riskFreeRate=riskFreeRate)
     summary[!, "sharpe"] = (summary.mean_return .- riskFreeRate) ./ summary.std_return
 
     return summary

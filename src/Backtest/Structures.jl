@@ -145,7 +145,7 @@ function summarizePerformance(
     windowSize::Int=5,
     riskFreeRate::Real=0.0,
     includeAccounts::Bool=true,
-    plotSummary::Bool=false
+    plotSummary::Bool=false,
 )
     println("Summarizing performance")
     summary = DataFrame(
@@ -174,12 +174,16 @@ function summarizePerformance(
     summary[!, "std_return"] = runstd(summary[!, "return"], windowSize)
     summary[!, "sharpe"] = (summary.mean_return .- riskFreeRate) ./ summary.std_return
     summary[!, "drawdown"] = [
-        100 * (summary.dollarValue[i] - maximum(summary.dollarValue[1:i])) / maximum(summary.dollarValue[1:i])
-        for i in 1:length(summary.dollarValue)
+        100 * (summary.dollarValue[i] - maximum(summary.dollarValue[1:i])) /
+        maximum(summary.dollarValue[1:i]) for i in 1:length(summary.dollarValue)
     ]
-    summary[!, "annual_return"] .= (summary.dollarValue[end] / summary.dollarValue[1]) ^ (1 / (length(summary.dollarValue) / 252)) - 1
+    summary[!, "annual_return"] .=
+        (
+            summary.dollarValue[end] / summary.dollarValue[1]
+        )^(1 / (length(summary.dollarValue) / 252)) - 1
     summary[!, "total_vol"] .= std(summary.return)
-    summary[!, "total_sharpe"] .= (summary.annual_return .- riskFreeRate) ./ summary.total_vol
+    summary[!, "total_sharpe"] .=
+        (summary.annual_return .- riskFreeRate) ./ summary.total_vol
     if plotSummary
         plot_summary(summary)
     end
@@ -196,12 +200,56 @@ end
         Must be same format as the output of `summarizePerformance` function.
 """
 function plot_summary(summary)
-    sharpe = plot(summary.date, summary.sharpe, title="Sharpe Ratio", label="value", linewidth=1, xlabel="date",ylabel="Sharpe Ratio")
-    rets = plot(summary.date, summary.return, title="Returns", label="value", linewidth=1, xlabel="date",ylabel="Returns")
-    vol = plot(summary.date, summary.std_return, title="Volatility", label="value", linewidth=1, xlabel="date",ylabel="Volatility")
-    drawdown = plot(summary.date, summary.drawdown, title="Drawdown", label="value", linewidth=1, xlabel="date",ylabel="Drawdown (%)")
-    p = plot(sharpe,rets,vol, drawdown, layout=(2,2),legend=false, show=true, size=(1000, 800), 
-        top_margin=10Plots.mm, bottom_margin=10Plots.mm, left_margin=10Plots.mm, right_margin=10Plots.mm)
+    sharpe = plot(
+        summary.date,
+        summary.sharpe;
+        title="Sharpe Ratio",
+        label="value",
+        linewidth=1,
+        xlabel="date",
+        ylabel="Sharpe Ratio",
+    )
+    rets = plot(
+        summary.date,
+        summary.return;
+        title="Returns",
+        label="value",
+        linewidth=1,
+        xlabel="date",
+        ylabel="Returns",
+    )
+    vol = plot(
+        summary.date,
+        summary.std_return;
+        title="Volatility",
+        label="value",
+        linewidth=1,
+        xlabel="date",
+        ylabel="Volatility",
+    )
+    drawdown = plot(
+        summary.date,
+        summary.drawdown;
+        title="Drawdown",
+        label="value",
+        linewidth=1,
+        xlabel="date",
+        ylabel="Drawdown (%)",
+    )
+    p = plot(
+        sharpe,
+        rets,
+        vol,
+        drawdown;
+        layout=(2, 2),
+        legend=false,
+        show=true,
+        size=(1000, 800),
+        top_margin=10Plots.mm,
+        bottom_margin=10Plots.mm,
+        left_margin=10Plots.mm,
+        right_margin=10Plots.mm,
+    )
     println("Annual Return: ", summary.annual_return[end])
     println("Total Volatility: ", summary.total_vol[end])
     println("Total Sharpe Ratio: ", summary.total_sharpe[end])

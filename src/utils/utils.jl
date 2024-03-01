@@ -150,6 +150,22 @@ function lagFill(inV::Vector; fill::Vector=[missing, nothing])
 end
 
 """
+    More efficient implementation of a moving average (mean running).
+"""
+function movingAverage(array::Vector; windowSize::Int=1, startFrom::Int=1)
+    out = Array{Union{Float64,Nothing}}(undef, length(array)) # Preallocate memory
+    start(i) = max(i - windowSize, 1)
+    factor(i) = min(windowSize, i + 1 - startFrom)
+    sum_value = 0
+    for i in startFrom:length(array)
+        sum_value += array[i]
+        sum_value -= i + 1 - startFrom > windowSize ? array[start(i)] : 0
+        out[i] = sum_value / factor(i)
+    end
+    return out
+end
+
+"""
     Given a function (mean, variance, sharpe,...) from an 1-D array to a single element
     It creates an array with same size of original with the function applied from the 
     beginning of the array to the index of the output. 
@@ -173,20 +189,5 @@ function makeRunning(
     return out
 end
 
-"""
-    More efficient implementation of a moving average (mean running).
-"""
-function movingAverage(array::Vector; windowSize::Int=1, startFrom::Int=1)
-    out = Array{Union{Float64,Nothing}}(undef, length(array)) # Preallocate memory
-    start(i) = max(i - windowSize, 1)
-    factor(i) = min(windowSize, i + 1 - startFrom)
-    sum_value = 0
-    for i in startFrom:length(array)
-        sum_value += array[i]
-        sum_value -= i + 1 - startFrom > windowSize ? array[start(i)] : 0
-        out[i] = sum_value / factor(i)
-    end
-    return out
-end
 
 end
